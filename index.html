@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scottish Protected Areas — Environmental Pressures</title>
+<style>
+/* ═══════════════════════════════════════════
+   RESET & VARIABLES
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink: #0a0a0a;
+  --paper: #f5f2eb;
+  --accent: #d63030;
+  --accent-light: #fbe8e8;
+  --mid: #6b6b6b;
+  --rule: #c8c3b8;
+  --field-bg: #ffffff;
+  --field-border: #a8a49a;
+  --field-focus: #0a0a0a;
+  --success: #1a7a3a;
+  --warning: #b85c00;
+  --table-stripe: rgba(0,0,0,0.025);
+  --mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --sans: 'Söhne', 'Helvetica Neue', 'Arial', sans-serif;
+  --display: 'Georgia', 'Times New Roman', serif;
+}
+
+html {
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT — Swiss-style grid
+   ═══════════════════════════════════════════ */
+.frame {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem;
+}
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid var(--ink);
+  margin-bottom: 2rem;
+}
+
+.masthead-title {
+  font-family: var(--display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.masthead-sub {
+  font-size: 0.75rem;
+  color: var(--mid);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ═══════════════════════════════════════════
+   CONTROLS — flat, grid-aligned
+   ═══════════════════════════════════════════ */
+.controls {
+  display: grid;
+  grid-template-columns: 220px auto 1fr 1fr 1fr;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 2rem;
+}
+
+.field-group { display: flex; flex-direction: column; gap: 0.25rem; }
+
+.field-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mid);
+  font-weight: 600;
+}
+
+.field-row {
+  display: flex;
+  gap: 0;
+}
+
+.field-input {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  padding: 0.55rem 0.75rem;
+  border: 2px solid var(--field-border);
+  background: var(--field-bg);
+  color: var(--ink);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+
+.field-input:focus {
+  border-color: var(--field-focus);
+}
+
+.field-input::placeholder {
+  color: var(--rule);
+  font-style: italic;
+}
+
+.btn-search {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.55rem 1.2rem;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-search:hover { background: var(--accent); border-color: var(--accent); }
+.btn-search:active { transform: translateY(1px); }
+
+select.field-input {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6b6b' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+/* ═══════════════════════════════════════════
+   DIVIDER
+   ═══════════════════════════════════════════ */
+.divider {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 0 0 1.5rem;
+}
+
+/* ═══════════════════════════════════════════
+   STATUS BAR
+   ═══════════════════════════════════════════ */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  min-height: 1.5rem;
+}
+
+.status-text {
+  font-size: 0.75rem;
+  color: var(--mid);
+  font-family: var(--mono);
+}
+
+.status-text[data-state="error"] { color: var(--accent); }
+.status-text[data-state="success"] { color: var(--success); }
+.status-text[data-state="loading"] { color: var(--warning); }
+
+.status-count {
+  font-size: 0.7rem;
+  font-family: var(--mono);
+  color: var(--mid);
+}
+
+/* ═══════════════════════════════════════════
+   RESULTS TABLE
+   ═══════════════════════════════════════════ */
+.results-wrap {
+  overflow-x: auto;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.results-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.results-table th {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.results-table th:hover {
+  background: #222;
+}
+
+.results-table th::after {
+  content: '';
+  display: inline-block;
+  width: 0;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
+.results-table th.sort-asc::after {
+  content: '▲';
+  font-size: 0.5rem;
+}
+
+.results-table th.sort-desc::after {
+  content: '▼';
+  font-size: 0.5rem;
+}
+
+.results-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.results-table tbody tr:nth-child(even) {
+  background: var(--table-stripe);
+}
+
+.results-table tbody tr:hover {
+  background: var(--accent-light);
+}
+
+/* Effect tags */
+.tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.5rem;
+  line-height: 1.4;
+}
+
+.tag--negative {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tag--positive {
+  background: var(--success);
+  color: #fff;
+}
+
+.tag--neutral {
+  background: var(--mid);
+  color: #fff;
+}
+
+/* Keyword pill */
+.keyword {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-family: var(--mono);
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--rule);
+  margin-left: 0.3rem;
+  vertical-align: middle;
+}
+
+/* ═══════════════════════════════════════════
+   EMPTY / LOADING STATES
+   ═══════════════════════════════════════════ */
+.state-message {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--mid);
+}
+
+.state-message p {
+  font-size: 0.85rem;
+  max-width: 36ch;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.state-message .state-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+  opacity: 0.4;
+}
+
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid var(--rule);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+.colophon {
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.65rem;
+  color: var(--mid);
+  display: flex;
+  justify-content: space-between;
+}
+
+.colophon a {
+  color: var(--mid);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .controls {
+    grid-template-columns: 1fr 1fr;
+  }
+  .controls .field-group:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .frame { padding: 1rem; }
+  .controls {
+    grid-template-columns: 1fr;
+  }
+  .masthead { flex-direction: column; gap: 0.25rem; }
+  .results-table { font-size: 0.72rem; }
+  .results-table th, .results-table td { padding: 0.4rem 0.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="frame">
+
+  <!-- ── Masthead ── -->
+  <header class="masthead">
+    <h1 class="masthead-title">Scottish Protected Areas</h1>
+    <span class="masthead-sub">Environmental Pressures Dashboard</span>
+  </header>
+
+  <!-- ── Controls ── -->
+  <div class="controls">
+    <div class="field-group">
+      <label class="field-label" for="postcode">Postcode</label>
+      <div class="field-row">
+        <input
+          type="text"
+          id="postcode"
+          class="field-input"
+          placeholder="e.g. EH1 1RF"
+          autocomplete="postal-code"
+          spellcheck="false"
+        >
+        <button class="btn-search" id="btn-search">Search</button>
+      </div>
+    </div>
+
+    <div class="field-group" style="align-self: end;">
+      <!-- Spacer / visual separation between postcode and dropdowns -->
+      <span class="field-label" style="color:var(--rule);">or filter by</span>
+      <div style="height:2px; background:var(--rule);margin-top:auto;"></div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="dd-uta">Local Authority</label>
+      <select id="dd-uta" class="field-input">
+        <option value="">— All —</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="dd-spc">Constituency</label>
+      <select id="dd-spc" class="field-input">
+        <option value="">— All —</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="dd-spe">Region</label>
+      <select id="dd-spe" class="field-input">
+        <option value="">— All —</option>
+      </select>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── Status ── -->
+  <div class="status-bar">
+    <span class="status-text" id="status"></span>
+    <span class="status-count" id="count"></span>
+  </div>
+
+  <!-- ── Results ── -->
+  <div id="results">
+    <div class="state-message" id="empty-state">
+      <span class="state-icon">⌖</span>
+      <p>Enter a Scottish postcode or select a region to view environmental pressures on protected areas.</p>
+    </div>
+  </div>
+
+  <!-- ── Colophon ── -->
+  <footer class="colophon">
+    <span>Data: NatureScot SCM/Remedies. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
+    <span id="data-date"></span>
+  </footer>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIGURATION
+   ═══════════════════════════════════════════════════════════ */
+
+const CONFIG = {
+  // ┌──────────────────────────────────────────────────────┐
+  // │  REPLACE THIS with your actual MapIt API key         │
+  // └──────────────────────────────────────────────────────┘
+  MAPIT_API_KEY: "YOUR_API_KEY",
+  MAPIT_BASE: "https://mapit.mysociety.org",
+
+  // Data file paths (relative to index.html)
+  DATA_DIR: "data/",
+  FILES: {
+    pressures: "pressures.json",
+    metadata: "metadata.json",
+    regions: "regions.json",
+  }
+};
+
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════ */
+
+const STATE = {
+  pressures: null,   // { siteCode: { name, designation, pressures: [...] } }
+  metadata: null,    // { mapitAreaId: [siteCode, ...] }
+  regions: null,     // { UTA: [...], SPC: [...], SPE: [...] }
+  lastQuery: null,   // Description of current filter for status bar
+  sortCol: null,
+  sortDir: "asc",
+};
+
+
+/* ═══════════════════════════════════════════════════════════
+   DOM REFS
+   ═══════════════════════════════════════════════════════════ */
+
+const $ = (sel) => document.querySelector(sel);
+const EL = {
+  postcode: $("#postcode"),
+  btnSearch: $("#btn-search"),
+  ddUTA: $("#dd-uta"),
+  ddSPC: $("#dd-spc"),
+  ddSPE: $("#dd-spe"),
+  status: $("#status"),
+  count: $("#count"),
+  results: $("#results"),
+  emptyState: $("#empty-state"),
+};
+
+
+/* ═══════════════════════════════════════════════════════════
+   INITIALISATION
+   ═══════════════════════════════════════════════════════════ */
+
+async function init() {
+  setStatus("loading", "Loading data…");
+
+  try {
+    const [pressures, metadata, regions] = await Promise.all([
+      fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.pressures),
+      fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.metadata),
+      fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.regions),
+    ]);
+
+    STATE.pressures = pressures;
+    STATE.metadata = metadata;
+    STATE.regions = regions;
+
+    populateDropdowns();
+    bindEvents();
+    setStatus("", "");
+
+  } catch (err) {
+    setStatus("error", `Failed to load data: ${err.message}`);
+    console.error("Init error:", err);
+  }
+}
+
+async function fetchJSON(path) {
+  const resp = await fetch(path);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status} loading ${path}`);
+  return resp.json();
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   DROPDOWNS
+   ═══════════════════════════════════════════════════════════ */
+
+function populateDropdowns() {
+  const { UTA = [], SPC = [], SPE = [] } = STATE.regions;
+  fillSelect(EL.ddUTA, UTA);
+  fillSelect(EL.ddSPC, SPC);
+  fillSelect(EL.ddSPE, SPE);
+}
+
+function fillSelect(el, items) {
+  // Keep the first "— All —" option
+  while (el.options.length > 1) el.remove(1);
+  for (const item of items) {
+    const opt = document.createElement("option");
+    opt.value = item.id;
+    opt.textContent = item.name;
+    el.appendChild(opt);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   EVENTS & STATE SYNC
+   ═══════════════════════════════════════════════════════════ */
+
+function bindEvents() {
+  // Postcode search
+  EL.btnSearch.addEventListener("click", handlePostcodeSearch);
+  EL.postcode.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handlePostcodeSearch();
+  });
+
+  // Postcode input clears dropdowns
+  EL.postcode.addEventListener("input", () => {
+    if (EL.postcode.value.trim()) {
+      EL.ddUTA.value = "";
+      EL.ddSPC.value = "";
+      EL.ddSPE.value = "";
+    }
+  });
+
+  // Dropdown change clears postcode and triggers filter
+  for (const dd of [EL.ddUTA, EL.ddSPC, EL.ddSPE]) {
+    dd.addEventListener("change", () => {
+      EL.postcode.value = "";
+      handleDropdownFilter();
+    });
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   POSTCODE → MAPIT → RESULTS
+   ═══════════════════════════════════════════════════════════ */
+
+async function handlePostcodeSearch() {
+  const raw = EL.postcode.value.trim();
+  if (!raw) return;
+
+  // Basic format check
+  const pc = raw.replace(/\s+/g, "").toUpperCase();
+  if (pc.length < 5 || pc.length > 7) {
+    setStatus("error", "Invalid postcode format.");
+    return;
+  }
+
+  setStatus("loading", "Looking up postcode…");
+
+  try {
+    const url = `${CONFIG.MAPIT_BASE}/postcode/${encodeURIComponent(pc)}.json`;
+    const resp = await fetch(url, {
+      headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY }
+    });
+
+    if (resp.status === 404 || resp.status === 400) {
+      setStatus("error", `Postcode "${raw}" not found.`);
+      clearResults();
+      return;
+    }
+    if (!resp.ok) {
+      const body = await resp.json().catch(() => ({}));
+      throw new Error(body.error || `MapIt returned HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    const areas = data.areas || {};
+
+    // Extract Scottish admin area IDs
+    const ids = [];
+    const areaNames = [];
+    for (const [id, info] of Object.entries(areas)) {
+      // Accept both current (SPC/SPE) and future (SPCF/SPEF) boundary codes.
+      // Before 7 May 2026: MapIt returns SPCF/SPEF for new boundaries.
+      // After 7 May 2026: MapIt migrates them to SPC/SPE.
+      // UTA (Local Authorities) are unchanged.
+      const validTypes = ["UTA", "SPC", "SPE", "SPCF", "SPEF"];
+      if (validTypes.includes(info.type) && info.country === "S") {
+        ids.push(id);
+        areaNames.push(info.name);
+      }
+    }
+
+    if (!ids.length) {
+      setStatus("error", "This postcode is not in Scotland or has no mapped admin areas.");
+      clearResults();
+      return;
+    }
+
+    // Collect all sites across all matching areas (union)
+    const siteSet = new Set();
+    for (const areaId of ids) {
+      const sites = STATE.metadata[areaId] || [];
+      sites.forEach(s => siteSet.add(s));
+    }
+
+    STATE.lastQuery = raw.toUpperCase() + " → " + areaNames.join(", ");
+    renderSites(siteSet);
+
+  } catch (err) {
+    if (err.message.includes("Usage limit")) {
+      setStatus("error", "MapIt API quota exceeded. Try again later.");
+    } else {
+      setStatus("error", err.message);
+    }
+    console.error("Postcode lookup error:", err);
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   DROPDOWN → RESULTS
+   ═══════════════════════════════════════════════════════════ */
+
+function handleDropdownFilter() {
+  const selectedIds = [];
+  const labels = [];
+
+  for (const dd of [EL.ddUTA, EL.ddSPC, EL.ddSPE]) {
+    if (dd.value) {
+      selectedIds.push(dd.value);
+      const opt = dd.options[dd.selectedIndex];
+      labels.push(opt.textContent);
+    }
+  }
+
+  if (!selectedIds.length) {
+    clearResults();
+    setStatus("", "");
+    return;
+  }
+
+  // Union of all sites across selected areas
+  const siteSet = new Set();
+  for (const areaId of selectedIds) {
+    const sites = STATE.metadata[areaId] || [];
+    sites.forEach(s => siteSet.add(s));
+  }
+
+  STATE.lastQuery = labels.join(" + ");
+  renderSites(siteSet);
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   RENDERING
+   ═══════════════════════════════════════════════════════════ */
+
+function renderSites(siteCodeSet) {
+  // Build flat array of pressure rows for the table
+  const rows = [];
+
+  for (const code of siteCodeSet) {
+    const site = STATE.pressures[code];
+    if (!site) continue;
+
+    for (const p of site.pressures) {
+      rows.push({
+        siteCode: code,
+        siteName: site.name || "—",
+        designation: site.designation || "—",
+        feature: p.feature || "—",
+        featureCategory: p.featureCategory || "—",
+        pressureGroup: p.pressureGroup || "—",
+        pressure: p.pressure || "—",
+        effect: p.effect || "—",
+        visitDate: p.visitDate || "—",
+        certainty: p.certainty || "—",
+        keyword: p.keyword || "",
+      });
+    }
+  }
+
+  if (!rows.length) {
+    if (siteCodeSet.size === 0) {
+      setStatus("error", "No protected areas found in this area.");
+    } else {
+      setStatus("error", `Found ${siteCodeSet.size} site(s) but no matching pressure data.`);
+    }
+    clearResults();
+    return;
+  }
+
+  // Sort
+  const sorted = sortRows(rows);
+
+  setStatus("success", STATE.lastQuery || "");
+  EL.count.textContent = `${siteCodeSet.size} sites · ${rows.length} pressures`;
+
+  // Build table
+  const html = `
+    <div class="results-wrap">
+    <table class="results-table" id="results-table">
+      <thead>
+        <tr>
+          <th data-col="siteName">Site</th>
+          <th data-col="designation">Type</th>
+          <th data-col="feature">Feature</th>
+          <th data-col="featureCategory">Category</th>
+          <th data-col="pressure">Pressure</th>
+          <th data-col="effect">Effect</th>
+          <th data-col="visitDate">Assessed</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.map(r => `
+          <tr>
+            <td>${esc(r.siteName)}</td>
+            <td>${esc(r.designation)}</td>
+            <td>${esc(r.feature)}</td>
+            <td>${esc(r.featureCategory)}</td>
+            <td>${esc(r.pressure)}${r.keyword ? `<span class="keyword">${esc(r.keyword)}</span>` : ""}</td>
+            <td>${effectTag(r.effect)}</td>
+            <td>${esc(r.visitDate)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+    </div>
+  `;
+
+  EL.results.innerHTML = html;
+
+  // Bind sort headers
+  const ths = EL.results.querySelectorAll("th[data-col]");
+  ths.forEach(th => {
+    th.addEventListener("click", () => {
+      const col = th.dataset.col;
+      if (STATE.sortCol === col) {
+        STATE.sortDir = STATE.sortDir === "asc" ? "desc" : "asc";
+      } else {
+        STATE.sortCol = col;
+        STATE.sortDir = "asc";
+      }
+      // Update header classes
+      ths.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+      th.classList.add(STATE.sortDir === "asc" ? "sort-asc" : "sort-desc");
+      // Re-render sorted
+      const tbody = EL.results.querySelector("tbody");
+      const sortedAgain = sortRows(rows);
+      tbody.innerHTML = sortedAgain.map(r => `
+        <tr>
+          <td>${esc(r.siteName)}</td>
+          <td>${esc(r.designation)}</td>
+          <td>${esc(r.feature)}</td>
+          <td>${esc(r.featureCategory)}</td>
+          <td>${esc(r.pressure)}${r.keyword ? `<span class="keyword">${esc(r.keyword)}</span>` : ""}</td>
+          <td>${effectTag(r.effect)}</td>
+          <td>${esc(r.visitDate)}</td>
+        </tr>
+      `).join("");
+    });
+  });
+}
+
+function sortRows(rows) {
+  if (!STATE.sortCol) return [...rows];
+  const col = STATE.sortCol;
+  const dir = STATE.sortDir === "asc" ? 1 : -1;
+  return [...rows].sort((a, b) => {
+    const av = (a[col] || "").toLowerCase();
+    const bv = (b[col] || "").toLowerCase();
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+    return 0;
+  });
+}
+
+function effectTag(effect) {
+  const e = (effect || "").toLowerCase();
+  if (e.includes("negative")) return `<span class="tag tag--negative">Negative</span>`;
+  if (e.includes("positive")) return `<span class="tag tag--positive">Positive</span>`;
+  return `<span class="tag tag--neutral">${esc(effect)}</span>`;
+}
+
+function clearResults() {
+  EL.results.innerHTML = `
+    <div class="state-message">
+      <span class="state-icon">∅</span>
+      <p>No results to display.</p>
+    </div>
+  `;
+  EL.count.textContent = "";
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════════ */
+
+function setStatus(state, text) {
+  EL.status.dataset.state = state;
+  if (state === "loading") {
+    EL.status.innerHTML = `<span class="spinner"></span>${esc(text)}`;
+  } else {
+    EL.status.textContent = text;
+  }
+}
+
+function esc(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   GO
+   ═══════════════════════════════════════════════════════════ */
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+
+</body>
+</html>
