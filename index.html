@@ -67,6 +67,23 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .site-expand-icon{font-size:.7rem;color:var(--mid);transition:transform .15s;width:1.2rem;text-align:center}
 .site-row.open .site-expand-icon{transform:rotate(90deg)}
 
+/* ── Headline summary panel ── */
+.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;padding:1rem 1.25rem;border:1px solid var(--rule);background:var(--field-bg)}
+.summary-section h3{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
+.condition-bars{display:flex;flex-direction:column;gap:.35rem}
+.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.65rem}
+.cond-bar-track{flex:1;height:.65rem;background:#f0f0ec;position:relative;overflow:hidden}
+.cond-bar-fill{height:100%;position:absolute;left:0;top:0}
+.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+.pressure-rank{display:flex;flex-direction:column;gap:.3rem}
+.pressure-rank-item{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.pressure-rank-bar{flex:1;height:.65rem;background:#f0f0ec;position:relative;overflow:hidden}
+.pressure-rank-fill{height:100%;background:var(--accent);opacity:.55;position:absolute;left:0;top:0}
+.pressure-rank-name{width:12rem;text-align:right;font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pressure-rank-count{width:2.5rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label,.pressure-rank-name{width:7rem}}
+
 /* ── Feature detail (collapsed by default) ── */
 .site-detail{display:none;border-top:1px solid var(--rule);padding:.75rem 1rem}
 .site-row.open .site-detail{display:block}
@@ -79,7 +96,8 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .cond-tag{display:inline-block;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.1rem .4rem}
 .pressure-list{font-size:.7rem;color:var(--ink);line-height:1.6}
 .pressure-item{display:inline-block;background:#f0f0ec;padding:.1rem .4rem;margin:.1rem .2rem .1rem 0;font-size:.65rem}
-.pressure-item .kw{color:var(--accent);margin-left:.2rem}
+.pressure-item .kw{color:var(--accent);margin-left:.2rem;font-weight:600}
+.pressure-item .certainty{color:var(--mid);margin-left:.3rem;font-style:italic;font-size:.6rem}
 .effect-neg{border-left:2px solid var(--accent);padding-left:.3rem}
 .effect-pos{border-left:2px solid var(--success);padding-left:.3rem}
 .no-pressures{color:var(--mid);font-style:italic;font-size:.7rem}
@@ -164,14 +182,14 @@ const CONFIG = {
   MAPIT_API_KEY: "ELNTpDEh11ZUqJUj21zLAmKSWsBOCVSiSniMPIu6",
   MAPIT_BASE: "https://mapit.mysociety.org",
   DATA_DIR: "data/",
-  FILES: { siteData: "site_data.json", metadata: "metadata.json", regions: "regions.json", sites: "sites.json" },
+  FILES: { siteData: "site_data.json", metadata: "metadata.json", regions: "regions.json", sites: "sites.json", pressures: "pressures.json" },
   PROXIMITY_KM: 10,
 };
 
 /* ═══════════════════════════════════════════════════════════
    STATE
    ═══════════════════════════════════════════════════════════ */
-const STATE = { siteData: null, metadata: null, regions: null, sites: null, lastQuery: null };
+const STATE = { siteData: null, metadata: null, regions: null, sites: null, pressures: null, lastQuery: null };
 
 const $ = s => document.querySelector(s);
 const EL = {
@@ -186,14 +204,15 @@ const EL = {
 async function init() {
   setStatus("loading", "Loading data…");
   try {
-    const [siteData, metadata, regions, sites] = await Promise.all([
+    const [siteData, metadata, regions, sites, pressures] = await Promise.all([
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.siteData),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.metadata),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.regions),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.sites),
+      fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.pressures),
     ]);
     STATE.siteData = siteData; STATE.metadata = metadata;
-    STATE.regions = regions; STATE.sites = sites;
+    STATE.regions = regions; STATE.sites = sites; STATE.pressures = pressures;
     populateDropdowns(); bindEvents(); setStatus("", "");
   } catch (err) {
     setStatus("error", `Failed to load data: ${err.message}`);
@@ -230,8 +249,14 @@ function bindEvents() {
   EL.postcode.addEventListener("input", () => {
     if (EL.postcode.value.trim()) { EL.ddUTA.value = ""; EL.ddSPC.value = ""; EL.ddSPE.value = ""; }
   });
-  for (const dd of [EL.ddUTA, EL.ddSPC, EL.ddSPE]) {
-    dd.addEventListener("change", () => { EL.postcode.value = ""; handleDropdownFilter(); });
+  const allDropdowns = [EL.ddUTA, EL.ddSPC, EL.ddSPE];
+  for (const dd of allDropdowns) {
+    dd.addEventListener("change", () => {
+      EL.postcode.value = "";
+      // Reset the other dropdowns so only one filter is active
+      for (const other of allDropdowns) { if (other !== dd) other.value = ""; }
+      handleDropdownFilter();
+    });
   }
 }
 
@@ -322,13 +347,29 @@ function renderSites(sitesArr, showDistance) {
     const desigObj = sd.designation || {};
     const desigCode = desigObj.code || "";
 
+    // Enrich features with detailed pressure data from pressures.json
+    const richPressures = (STATE.pressures[paCode] || {}).pressures || [];
+    const features = (sd.features || []).map(f => {
+      // Find matching detailed pressures for this feature
+      const matching = richPressures.filter(rp => rp.feature === f.name);
+      if (!matching.length) return f;
+      return { ...f, pressures: matching.map(rp => ({
+        name: rp.pressureGroup || rp.pressure || "Unknown",
+        pressure: rp.pressure || "",
+        keyword: rp.keyword || "",
+        effect: rp.effect || "",
+        certainty: rp.certainty || "",
+        visitDate: rp.visitDate || "",
+      }))};
+    });
+
     rawCards.push({
       paCode, dist, name: sd.name || "Unknown",
       designations: desigCode ? [desigCode] : [],
       area: sd.area || 0,
       localAuthority: sd.localAuthority || "",
       url: sd.url || "",
-      features: sd.features || [],
+      features,
     });
   }
 
@@ -383,7 +424,8 @@ function renderSites(sitesArr, showDistance) {
   setStatus("success", STATE.lastQuery || "");
   EL.count.textContent = `${cards.length} sites`;
 
-  let html = '<div class="site-list">';
+  let html = renderSummaryPanel(cards);
+  html += '<div class="site-list">';
   for (const c of cards) {
     const distStr = c.dist !== null ? `<span class="site-distance">${c.dist} km</span>` : "";
     const condClass = conditionClass(c.worstCondition);
@@ -428,8 +470,11 @@ function renderFeatureTable(card) {
     const pressuresHtml = (f.pressures || []).length
       ? (f.pressures || []).map(p => {
           const effectClass = (p.effect || "").toLowerCase().includes("negative") ? "effect-neg" : (p.effect || "").toLowerCase().includes("positive") ? "effect-pos" : "";
+          // Use detailed pressure description when available, fall back to group name
+          const label = p.pressure || p.name || "Unknown";
           const kw = p.keyword ? `<span class="kw">${esc(p.keyword)}</span>` : "";
-          return `<span class="pressure-item ${effectClass}">${esc(p.name)}${kw}</span>`;
+          const cert = p.certainty ? `<span class="certainty">${esc(p.certainty)}</span>` : "";
+          return `<span class="pressure-item ${effectClass}">${esc(label)}${kw}${cert}</span>`;
         }).join("")
       : '<span class="no-pressures">None recorded</span>';
 
@@ -443,6 +488,67 @@ function renderFeatureTable(card) {
   }
   table += "</tbody></table>";
   return table;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HEADLINE SUMMARY
+   ═══════════════════════════════════════════════════════════ */
+function renderSummaryPanel(cards) {
+  // Aggregate conditions across all features in all cards
+  const condCounts = { "Favourable": 0, "Unfavourable": 0, "Recovering": 0, "Not Assessed": 0 };
+  const pressureCounts = {};
+  let totalFeatures = 0;
+
+  for (const c of cards) {
+    for (const f of c.features) {
+      totalFeatures++;
+      const cs = f.conditionSummary || "Not Assessed";
+      if (cs in condCounts) condCounts[cs]++;
+      else condCounts["Not Assessed"]++;
+
+      for (const p of (f.pressures || [])) {
+        const name = p.name || "Unknown";
+        pressureCounts[name] = (pressureCounts[name] || 0) + 1;
+      }
+    }
+  }
+
+  if (!totalFeatures) return "";
+
+  // Condition bars
+  const condColours = {
+    "Favourable": "var(--success)", "Recovering": "var(--warning)",
+    "Unfavourable": "var(--unfav)", "Not Assessed": "var(--mid)"
+  };
+  let condHtml = '<div class="condition-bars">';
+  for (const [label, count] of Object.entries(condCounts)) {
+    const pct = totalFeatures ? (count / totalFeatures * 100) : 0;
+    condHtml += `<div class="cond-bar-row">
+      <span class="cond-bar-label">${esc(label)}</span>
+      <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${condColours[label]}"></div></div>
+      <span class="cond-bar-count">${count}</span>
+    </div>`;
+  }
+  condHtml += '</div>';
+
+  // Top pressures (up to 5)
+  const topPressures = Object.entries(pressureCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const maxP = topPressures.length ? topPressures[0][1] : 1;
+  let pressHtml = '<div class="pressure-rank">';
+  for (const [name, count] of topPressures) {
+    const pct = (count / maxP * 100);
+    pressHtml += `<div class="pressure-rank-item">
+      <span class="pressure-rank-name">${esc(name)}</span>
+      <div class="pressure-rank-bar"><div class="pressure-rank-fill" style="width:${pct.toFixed(1)}%"></div></div>
+      <span class="pressure-rank-count">${count}</span>
+    </div>`;
+  }
+  pressHtml += '</div>';
+
+  return `<div class="summary-panel">
+    <div class="summary-section"><h3>Feature condition (${totalFeatures} features across ${cards.length} sites)</h3>${condHtml}</div>
+    <div class="summary-section"><h3>Top pressures</h3>${pressHtml}</div>
+  </div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════
