@@ -286,40 +286,18 @@ async function handlePostcodeSearch() {
 
     if (!lat || !lng) { setStatus("error", "Could not determine coordinates for this postcode."); clearResults(); return; }
 
-    // 1) Proximity search — find sites within PROXIMITY_KM
-    const nearbyMap = new Map();
+    // Find all sites within PROXIMITY_KM
+    const nearby = [];
     for (const [paCode, info] of Object.entries(STATE.sites)) {
       if (!info.lat || !info.lng) continue;
       const dist = haversine(lat, lng, info.lat, info.lng);
       if (dist <= CONFIG.PROXIMITY_KM) {
-        nearbyMap.set(paCode, Math.round(dist * 10) / 10);
+        nearby.push({ paCode, dist: Math.round(dist * 10) / 10 });
       }
     }
 
-    // 2) Also include sites that belong to the same local authority,
-    //    constituency, or region as the postcode. Large/elongated sites
-    //    (e.g. Firth of Forth) can have centroids far from the boundary,
-    //    so proximity alone misses them. MapIt returns the political
-    //    areas containing this postcode — metadata.json maps those
-    //    same area IDs to site codes.
-    const areas = data.areas || {};
-    for (const areaId of Object.keys(areas)) {
-      const areaSites = STATE.metadata[areaId] || [];
-      for (const paCode of areaSites) {
-        if (!nearbyMap.has(paCode)) {
-          const info = STATE.sites[paCode];
-          const dist = info && info.lat && info.lng
-            ? Math.round(haversine(lat, lng, info.lat, info.lng) * 10) / 10
-            : null;
-          nearbyMap.set(paCode, dist);
-        }
-      }
-    }
-
-    const nearby = [...nearbyMap.entries()]
-      .map(([paCode, dist]) => ({ paCode, dist }))
-      .sort((a, b) => (a.dist ?? Infinity) - (b.dist ?? Infinity));
-    STATE.lastQuery = `${raw.toUpperCase()} — ${nearby.length} sites within ${CONFIG.PROXIMITY_KM}km / local area`;
+    nearby.sort((a, b) => a.dist - b.dist);
+    STATE.lastQuery = `${raw.toUpperCase()} — ${nearby.length} sites within ${CONFIG.PROXIMITY_KM}km`;
     renderSites(nearby, true);
 
   } catch (err) {
