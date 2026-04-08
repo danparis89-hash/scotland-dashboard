@@ -51,7 +51,8 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .site-row:hover{border-color:var(--ink)}
 .site-header{display:grid;grid-template-columns:1fr auto auto auto;gap:1.5rem;align-items:center;padding:.65rem 1rem}
 .site-name{font-weight:700;font-size:.85rem}
-.site-name .site-designation{font-weight:400;color:var(--mid);margin-left:.4rem;font-size:.75rem}
+.site-name .site-designations{font-weight:400;margin-left:.4rem;display:inline}
+.desig-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.06em;padding:.1rem .35rem;margin-left:.25rem;background:#edeae3;color:var(--mid);border:1px solid var(--rule);vertical-align:middle}
 .site-name .site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.7rem}
 .site-meta{font-size:.7rem;color:var(--mid);text-align:right;white-space:nowrap}
 .site-condition-summary{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.15rem .5rem;white-space:nowrap}
@@ -312,29 +313,65 @@ function renderSites(sitesArr, showDistance) {
     clearResults(); return;
   }
 
-  // Build summaries
-  const cards = [];
+  // Build per-entry cards
+  const rawCards = [];
   for (const { paCode, dist } of sitesArr) {
     const sd = STATE.siteData[paCode];
     if (!sd) continue;
 
-    const features = sd.features || [];
-    const conditions = features.map(f => f.conditionSummary || "").filter(Boolean);
-    const pressureNames = new Set();
-    features.forEach(f => (f.pressures || []).forEach(p => pressureNames.add(p.name)));
+    const desigObj = sd.designation || {};
+    const desigCode = desigObj.code || "";
 
-    // Determine worst condition for the summary badge
-    const worstCondition = getWorstCondition(features);
-
-    cards.push({
+    rawCards.push({
       paCode, dist, name: sd.name || "Unknown",
-      designation: sd.designation || "",
-      area: sd.area,
+      designations: desigCode ? [desigCode] : [],
+      area: sd.area || 0,
       localAuthority: sd.localAuthority || "",
       url: sd.url || "",
-      features, worstCondition,
+      features: sd.features || [],
+    });
+  }
+
+  // Merge entries that share the same site name + local authority
+  const mergeKey = c => `${c.name}\0${c.localAuthority}`;
+  const merged = new Map();
+  for (const c of rawCards) {
+    const key = mergeKey(c);
+    if (merged.has(key)) {
+      const existing = merged.get(key);
+      // Add new designation codes (no duplicates)
+      for (const d of c.designations) {
+        if (!existing.designations.includes(d)) existing.designations.push(d);
+      }
+      // Use largest area
+      if (c.area > existing.area) existing.area = c.area;
+      // Keep closest distance
+      if (c.dist !== null && (existing.dist === null || c.dist < existing.dist)) existing.dist = c.dist;
+      // Merge features, avoiding duplicates by name+category
+      const existingFeatureKeys = new Set(existing.features.map(f => `${f.name}\0${f.category}`));
+      for (const f of c.features) {
+        if (!existingFeatureKeys.has(`${f.name}\0${f.category}`)) {
+          existing.features.push(f);
+          existingFeatureKeys.add(`${f.name}\0${f.category}`);
+        }
+      }
+      // Keep first URL if current is empty
+      if (!existing.url && c.url) existing.url = c.url;
+    } else {
+      merged.set(key, { ...c, designations: [...c.designations], features: [...c.features] });
+    }
+  }
+
+  // Build final cards with computed summaries
+  const cards = [];
+  for (const c of merged.values()) {
+    const pressureNames = new Set();
+    c.features.forEach(f => (f.pressures || []).forEach(p => pressureNames.add(p.name)));
+    cards.push({
+      ...c,
+      worstCondition: getWorstCondition(c.features),
       pressureCount: pressureNames.size,
-      featureCount: features.length,
+      featureCount: c.features.length,
     });
   }
 
@@ -352,10 +389,11 @@ function renderSites(sitesArr, showDistance) {
     const condClass = conditionClass(c.worstCondition);
     const condLabel = c.worstCondition || "Not assessed";
     const areaStr = c.area ? `${Math.round(c.area)} ha` : "";
+    const desigHtml = c.designations.map(d => `<span class="desig-tag">${esc(d)}</span>`).join("");
 
     html += `<div class="site-row" data-pa="${esc(c.paCode)}">
       <div class="site-header">
-        <div class="site-name">${esc(c.name)}<span class="site-designation">${esc(c.designation)}</span>${distStr}</div>
+        <div class="site-name">${esc(c.name)}<span class="site-designations">${desigHtml}</span>${distStr}</div>
         <div class="site-meta">${esc(areaStr)}</div>
         <div class="site-condition-summary ${condClass}">${esc(condLabel)}</div>
         <div class="site-expand-icon">▶</div>
