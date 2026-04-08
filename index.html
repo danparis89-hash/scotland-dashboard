@@ -22,6 +22,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .masthead{display:flex;align-items:baseline;gap:1rem;padding-bottom:.75rem;border-bottom:3px solid var(--ink);margin-bottom:2rem}
 .masthead-title{font-family:var(--display);font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
 .masthead-sub{font-size:.75rem;color:var(--mid);text-transform:uppercase;letter-spacing:.12em}
+.masthead-nav{margin-left:auto;font-size:.75rem}
+.masthead-nav a{color:var(--mid);text-decoration:underline;text-underline-offset:2px}
 
 /* ── Controls ── */
 .controls{display:grid;grid-template-columns:220px auto 1fr 1fr 1fr;gap:1rem;align-items:end;margin-bottom:2rem}
@@ -126,6 +128,7 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
   <header class="masthead">
     <h1 class="masthead-title">Scottish Protected Areas</h1>
     <span class="masthead-sub">Environmental Pressures Dashboard</span>
+    <nav class="masthead-nav"><a href="aboutprotectedsites.html">About protected areas</a></nav>
   </header>
 
   <div class="controls">
