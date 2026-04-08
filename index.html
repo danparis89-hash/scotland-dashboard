@@ -476,8 +476,7 @@ function renderFeatureTable(card) {
           // Use detailed pressure description when available, fall back to group name
           const label = p.pressure || p.name || "Unknown";
           const kw = p.keyword ? `<span class="kw">${esc(p.keyword)}</span>` : "";
-          const cert = p.certainty ? `<span class="certainty">${esc(p.certainty)}</span>` : "";
-          return `<span class="pressure-item ${effectClass}">${esc(label)}${kw}${cert}</span>`;
+          return `<span class="pressure-item ${effectClass}">${esc(label)}${kw}</span>`;
         }).join("")
       : '<span class="no-pressures">None recorded</span>';
 
