@@ -67,6 +67,23 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .site-expand-icon{font-size:.7rem;color:var(--mid);transition:transform .15s;width:1.2rem;text-align:center}
 .site-row.open .site-expand-icon{transform:rotate(90deg)}
 
+/* ── Headline summary panel ── */
+.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;padding:1rem 1.25rem;border:1px solid var(--rule);background:var(--field-bg)}
+.summary-section h3{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
+.condition-bars{display:flex;flex-direction:column;gap:.35rem}
+.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.65rem}
+.cond-bar-track{flex:1;height:.65rem;background:#f0f0ec;position:relative;overflow:hidden}
+.cond-bar-fill{height:100%;position:absolute;left:0;top:0}
+.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+.pressure-rank{display:flex;flex-direction:column;gap:.3rem}
+.pressure-rank-item{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.pressure-rank-bar{flex:1;height:.65rem;background:#f0f0ec;position:relative;overflow:hidden}
+.pressure-rank-fill{height:100%;background:var(--accent);opacity:.55;position:absolute;left:0;top:0}
+.pressure-rank-name{width:12rem;text-align:right;font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pressure-rank-count{width:2.5rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label,.pressure-rank-name{width:7rem}}
+
 /* ── Feature detail (collapsed by default) ── */
 .site-detail{display:none;border-top:1px solid var(--rule);padding:.75rem 1rem}
 .site-row.open .site-detail{display:block}
@@ -230,8 +247,14 @@ function bindEvents() {
   EL.postcode.addEventListener("input", () => {
     if (EL.postcode.value.trim()) { EL.ddUTA.value = ""; EL.ddSPC.value = ""; EL.ddSPE.value = ""; }
   });
-  for (const dd of [EL.ddUTA, EL.ddSPC, EL.ddSPE]) {
-    dd.addEventListener("change", () => { EL.postcode.value = ""; handleDropdownFilter(); });
+  const allDropdowns = [EL.ddUTA, EL.ddSPC, EL.ddSPE];
+  for (const dd of allDropdowns) {
+    dd.addEventListener("change", () => {
+      EL.postcode.value = "";
+      // Reset the other dropdowns so only one filter is active
+      for (const other of allDropdowns) { if (other !== dd) other.value = ""; }
+      handleDropdownFilter();
+    });
   }
 }
 
@@ -383,7 +406,8 @@ function renderSites(sitesArr, showDistance) {
   setStatus("success", STATE.lastQuery || "");
   EL.count.textContent = `${cards.length} sites`;
 
-  let html = '<div class="site-list">';
+  let html = renderSummaryPanel(cards);
+  html += '<div class="site-list">';
   for (const c of cards) {
     const distStr = c.dist !== null ? `<span class="site-distance">${c.dist} km</span>` : "";
     const condClass = conditionClass(c.worstCondition);
@@ -443,6 +467,67 @@ function renderFeatureTable(card) {
   }
   table += "</tbody></table>";
   return table;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HEADLINE SUMMARY
+   ═══════════════════════════════════════════════════════════ */
+function renderSummaryPanel(cards) {
+  // Aggregate conditions across all features in all cards
+  const condCounts = { "Favourable": 0, "Unfavourable": 0, "Recovering": 0, "Not Assessed": 0 };
+  const pressureCounts = {};
+  let totalFeatures = 0;
+
+  for (const c of cards) {
+    for (const f of c.features) {
+      totalFeatures++;
+      const cs = f.conditionSummary || "Not Assessed";
+      if (cs in condCounts) condCounts[cs]++;
+      else condCounts["Not Assessed"]++;
+
+      for (const p of (f.pressures || [])) {
+        const name = p.name || "Unknown";
+        pressureCounts[name] = (pressureCounts[name] || 0) + 1;
+      }
+    }
+  }
+
+  if (!totalFeatures) return "";
+
+  // Condition bars
+  const condColours = {
+    "Favourable": "var(--success)", "Recovering": "var(--warning)",
+    "Unfavourable": "var(--unfav)", "Not Assessed": "var(--mid)"
+  };
+  let condHtml = '<div class="condition-bars">';
+  for (const [label, count] of Object.entries(condCounts)) {
+    const pct = totalFeatures ? (count / totalFeatures * 100) : 0;
+    condHtml += `<div class="cond-bar-row">
+      <span class="cond-bar-label">${esc(label)}</span>
+      <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${condColours[label]}"></div></div>
+      <span class="cond-bar-count">${count}</span>
+    </div>`;
+  }
+  condHtml += '</div>';
+
+  // Top pressures (up to 5)
+  const topPressures = Object.entries(pressureCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const maxP = topPressures.length ? topPressures[0][1] : 1;
+  let pressHtml = '<div class="pressure-rank">';
+  for (const [name, count] of topPressures) {
+    const pct = (count / maxP * 100);
+    pressHtml += `<div class="pressure-rank-item">
+      <span class="pressure-rank-name">${esc(name)}</span>
+      <div class="pressure-rank-bar"><div class="pressure-rank-fill" style="width:${pct.toFixed(1)}%"></div></div>
+      <span class="pressure-rank-count">${count}</span>
+    </div>`;
+  }
+  pressHtml += '</div>';
+
+  return `<div class="summary-panel">
+    <div class="summary-section"><h3>Feature condition (${totalFeatures} features across ${cards.length} sites)</h3>${condHtml}</div>
+    <div class="summary-section"><h3>Top pressures</h3>${pressHtml}</div>
+  </div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════
