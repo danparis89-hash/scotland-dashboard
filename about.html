@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Protected Areas — Scottish Protected Areas</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#0a0a0a;--paper:#f5f2eb;--accent:#d63030;--accent-light:#fbe8e8;
+  --mid:#6b6b6b;--rule:#c8c3b8;--field-bg:#fff;--field-border:#a8a49a;
+  --success:#1a7a3a;--success-light:#e8f5ec;--warning:#b85c00;--warning-light:#fef3e5;
+  --unfav:#9e3a00;--unfav-light:#fef0e8;--unfav-decline:#d63030;
+  --mono:'JetBrains Mono','Fira Code','Consolas',monospace;
+  --sans:'Söhne','Helvetica Neue','Arial',sans-serif;
+  --display:'Georgia','Times New Roman',serif;
+}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5;min-height:100vh}
+
+.frame{max-width:1120px;margin:0 auto;padding:2rem 2rem 4rem}
+.masthead{display:flex;align-items:baseline;gap:1rem;padding-bottom:.75rem;border-bottom:3px solid var(--ink);margin-bottom:2rem}
+.masthead-title{font-family:var(--display);font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
+.masthead-sub{font-size:.75rem;color:var(--mid);text-transform:uppercase;letter-spacing:.12em}
+.masthead-nav{margin-left:auto;font-size:.75rem}
+.masthead-nav a{color:var(--mid);text-decoration:underline;text-underline-offset:2px}
+
+.about-content{margin-bottom:2rem}
+.about-content p{font-size:.9rem;line-height:1.7;max-width:65ch;margin-bottom:1rem}
+
+/* ── Summary panel (shared with dashboard) ── */
+.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;padding:1rem 1.25rem;border:1px solid var(--rule);background:var(--field-bg)}
+.summary-section h3{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
+.condition-bars{display:flex;flex-direction:column;gap:.35rem}
+.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.65rem}
+.cond-bar-track{flex:1;height:.65rem;background:#f0f0ec;position:relative;overflow:hidden}
+.cond-bar-fill{height:100%;position:absolute;left:0;top:0}
+.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+.pressure-rank{display:flex;flex-direction:column;gap:.3rem}
+.pressure-rank-item{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.pressure-rank-bar{flex:1;height:.65rem;background:#f0f0ec;position:relative;overflow:hidden}
+.pressure-rank-fill{height:100%;background:var(--accent);opacity:.55;position:absolute;left:0;top:0}
+.pressure-rank-name{width:12rem;text-align:right;font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pressure-rank-count{width:2.5rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label,.pressure-rank-name{width:7rem}}
+
+/* ── Loading ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--rule);border-top-color:var(--ink);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.5rem}
+.status-text{font-size:.75rem;color:var(--mid);font-family:var(--mono)}
+
+/* ── Footer ── */
+.colophon{margin-top:3rem;padding-top:.75rem;border-top:1px solid var(--rule);font-size:.65rem;color:var(--mid);display:flex;justify-content:space-between}
+.colophon a{color:var(--mid);text-decoration:underline;text-underline-offset:2px}
+
+/* ── Responsive ── */
+@media(max-width:600px){.frame{padding:1rem}.masthead{flex-direction:column;gap:.25rem}}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header class="masthead">
+    <h1 class="masthead-title">About Protected Areas</h1>
+    <span class="masthead-sub">Scottish Protected Areas</span>
+    <nav class="masthead-nav"><a href="index.html">Back to dashboard</a></nav>
+  </header>
+
+  <div class="about-content" id="about-text">
+    <!-- Content to be provided -->
+  </div>
+
+  <div id="summary-loading" class="status-text"><span class="spinner"></span>Loading national data&hellip;</div>
+  <div id="summary"></div>
+
+  <footer class="colophon">
+    <span>Data: NatureScot SiteLink &amp; SCM. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
+  </footer>
+
+</div>
+
+<script>
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+async function init() {
+  try {
+    const resp = await fetch("data/site_data.json");
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const siteData = await resp.json();
+
+    // Aggregate across ALL sites nationally
+    const condCounts = { "Favourable": 0, "Unfavourable": 0, "Recovering": 0, "Not Assessed": 0 };
+    const pressureCounts = {};
+    let totalFeatures = 0;
+    let totalSites = 0;
+    const siteNames = new Set();
+
+    for (const sd of Object.values(siteData)) {
+      const key = sd.name || "";
+      if (siteNames.has(key)) continue; // count each site name once
+      siteNames.add(key);
+      totalSites++;
+      for (const f of (sd.features || [])) {
+        totalFeatures++;
+        const cs = f.conditionSummary || "Not Assessed";
+        if (cs in condCounts) condCounts[cs]++;
+        else condCounts["Not Assessed"]++;
+        for (const p of (f.pressures || [])) {
+          const name = p.name || "Unknown";
+          pressureCounts[name] = (pressureCounts[name] || 0) + 1;
+        }
+      }
+    }
+
+    // Condition bars
+    const condColours = {
+      "Favourable": "var(--success)", "Recovering": "var(--warning)",
+      "Unfavourable": "var(--unfav)", "Not Assessed": "var(--mid)"
+    };
+    let condHtml = '<div class="condition-bars">';
+    for (const [label, count] of Object.entries(condCounts)) {
+      const pct = totalFeatures ? (count / totalFeatures * 100) : 0;
+      condHtml += `<div class="cond-bar-row">
+        <span class="cond-bar-label">${esc(label)}</span>
+        <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${condColours[label]}"></div></div>
+        <span class="cond-bar-count">${count}</span>
+      </div>`;
+    }
+    condHtml += '</div>';
+
+    // Top pressures
+    const topPressures = Object.entries(pressureCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const maxP = topPressures.length ? topPressures[0][1] : 1;
+    let pressHtml = '<div class="pressure-rank">';
+    for (const [name, count] of topPressures) {
+      const pct = (count / maxP * 100);
+      pressHtml += `<div class="pressure-rank-item">
+        <span class="pressure-rank-name">${esc(name)}</span>
+        <div class="pressure-rank-bar"><div class="pressure-rank-fill" style="width:${pct.toFixed(1)}%"></div></div>
+        <span class="pressure-rank-count">${count}</span>
+      </div>`;
+    }
+    pressHtml += '</div>';
+
+    document.getElementById("summary-loading").style.display = "none";
+    document.getElementById("summary").innerHTML = `<div class="summary-panel">
+      <div class="summary-section"><h3>Feature condition (${totalFeatures} features across ${totalSites} sites)</h3>${condHtml}</div>
+      <div class="summary-section"><h3>Top pressures</h3>${pressHtml}</div>
+    </div>`;
+
+  } catch (err) {
+    document.getElementById("summary-loading").textContent = "Failed to load data: " + err.message;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
