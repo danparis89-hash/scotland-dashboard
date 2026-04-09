@@ -287,19 +287,25 @@ async function handlePostcodeSearch() {
     const data = await resp.json();
     const lat = data.wgs84_lat; const lng = data.wgs84_lon;
 
-    if (!lat || !lng) { setStatus("error", "Could not determine coordinates for this postcode."); clearResults(); return; }
-
-    // Find all sites where any part could be within PROXIMITY_KM.
-    // edgeDist = centroidDist - maxExtentKm estimates the nearest possible
-    // edge distance. If negative or zero, the postcode is likely inside the site.
+// Find all sites where any part could be within PROXIMITY_KM.
     const nearby = [];
     for (const [paCode, info] of Object.entries(STATE.sites)) {
       if (!info.lat || !info.lng) continue;
-      const centroidDist = haversine(lat, lng, info.lat, info.lng);
-      const maxExtent = info.maxExtentKm || 0;
-      const edgeDist = Math.max(0, centroidDist - maxExtent);
-      if (edgeDist <= CONFIG.PROXIMITY_KM) {
-        nearby.push({ paCode, dist: Math.round(edgeDist * 10) / 10 });
+      const bbox = info.bbox;
+      let dist;
+      if (bbox) {
+        const nearLat = Math.max(bbox[1], Math.min(lat, bbox[3]));
+        const nearLng = Math.max(bbox[0], Math.min(lng, bbox[2]));
+        if (nearLat === lat && nearLng === lng) {
+          dist = 0;
+        } else {
+          dist = haversine(lat, lng, nearLat, nearLng);
+        }
+      } else {
+        dist = haversine(lat, lng, info.lat, info.lng);
+      }
+      if (dist <= CONFIG.PROXIMITY_KM) {
+        nearby.push({ paCode, dist: Math.round(dist * 10) / 10 });
       }
     }
 
