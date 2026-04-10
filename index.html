@@ -7,7 +7,6 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  /* Light green base palette */
   --ink:#0f2b1d;
   --paper:#eef5f0;
   --accent:#24824d;
@@ -16,13 +15,10 @@
   --rule:#b5cfc1;
   --field-bg:#ffffff;
   --field-border:#9dbfae;
-  
-  /* Status colours retained but adjusted slightly for harmony */
   --success:#176b32;--success-light:#e2f0e6;
   --warning:#b85c00;--warning-light:#fef3e5;
   --unfav:#9e3a00;--unfav-light:#fef0e8;
   --unfav-decline:#c22929;
-  
   --mono:'JetBrains Mono','Fira Code','Consolas',monospace;
   --sans:'Söhne','Helvetica Neue','Arial',sans-serif;
   --display:'Georgia','Times New Roman',serif;
@@ -30,7 +26,6 @@
 html{font-size:15px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5;min-height:100vh}
 
-/* ── Hero Header ── */
 .hero{background:linear-gradient(135deg, var(--ink) 0%, var(--accent) 100%);color:var(--paper);padding:4rem 2rem;border-radius:0 0 2rem 2rem;margin-bottom:3rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between;box-shadow:0 10px 30px rgba(15,43,29,0.15)}
 .hero-text{max-width:600px}
 .hero-title{font-family:var(--display);font-size:3rem;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:.5rem}
@@ -38,14 +33,11 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .cta-primary{background:var(--paper);color:var(--ink);font-weight:700;padding:1rem 2rem;border-radius:3rem;text-decoration:none;font-size:.9rem;letter-spacing:.05em;text-transform:uppercase;transition:all .2s ease;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
 .cta-primary:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.2);background:#fff}
 
-/* ── Layout Scaffolding ── */
 .frame{max-width:1120px;margin:0 auto;padding:0 2rem 4rem}
 .data-section{background:var(--field-bg);border:1px solid var(--rule);border-radius:1rem;padding:2.5rem;margin-bottom:2.5rem;box-shadow:0 4px 20px rgba(15,43,29,0.04)}
 .section-header{margin-bottom:2rem;border-bottom:2px solid var(--accent-light);padding-bottom:1rem}
 .section-title{font-family:var(--display);font-size:1.8rem;color:var(--ink)}
-.placeholder-content{background:var(--paper);border:2px dashed var(--rule);border-radius:.5rem;padding:3rem;text-align:center;color:var(--mid);font-style:italic}
 
-/* ── Controls ── */
 .controls{display:grid;grid-template-columns:220px auto 1fr 1fr 1fr;gap:1rem;align-items:end;margin-bottom:2rem}
 .field-group{display:flex;flex-direction:column;gap:.25rem}
 .field-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);font-weight:600}
@@ -58,12 +50,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .btn-search:hover{background:var(--ink);border-color:var(--ink)}
 select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23597866' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;padding-right:2rem}
 
-/* ── Status & Lists ── */
 .status-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;min-height:1.5rem}
 .status-text{font-size:.75rem;color:var(--mid);font-family:var(--mono)}
-.status-text[data-state="error"]{color:var(--unfav-decline)}
-.status-text[data-state="success"]{color:var(--success)}
-.status-text[data-state="loading"]{color:var(--warning)}
 .status-count{font-size:.7rem;font-family:var(--mono);color:var(--mid)}
 
 .site-list{display:flex;flex-direction:column;gap:4px}
@@ -71,54 +59,25 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .site-row:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(36,130,77,0.1)}
 .site-header{display:grid;grid-template-columns:1fr auto auto auto;gap:1.5rem;align-items:center;padding:.85rem 1.2rem}
 .site-name{font-weight:700;font-size:.9rem;min-width:0;overflow:hidden;text-overflow:ellipsis}
-.site-name .site-designations{font-weight:400;margin-left:.4rem;display:inline}
-.desig-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.06em;padding:.2rem .4rem;margin-left:.25rem;background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:3px;vertical-align:middle}
-.site-name .site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.75rem}
-.site-meta{font-size:.75rem;color:var(--mid);text-align:right;white-space:nowrap}
-.site-condition-summary{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:3px;white-space:nowrap}
+.site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.75rem}
 
+.desig-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.06em;padding:.2rem .4rem;margin-left:.25rem;background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:3px;vertical-align:middle}
+
+.site-condition-summary{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:3px;white-space:nowrap}
 .cond-fav{background:var(--success-light);color:var(--success)}
 .cond-unfav-rec{background:var(--warning-light);color:var(--warning)}
 .cond-unfav{background:var(--unfav-light);color:var(--unfav)}
 .cond-unfav-dec{background:#fbe8e8;color:var(--unfav-decline)}
 .cond-unknown{background:var(--paper);color:var(--mid)}
 
-.site-expand-icon{font-size:.8rem;color:var(--accent);transition:transform .15s;width:1.2rem;text-align:center}
-.site-row.open .site-expand-icon{transform:rotate(90deg)}
-
-/* ── Summary & Detail ── */
-.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;padding:1.5rem;border:1px solid var(--rule);background:var(--paper);border-radius:8px}
-.summary-section h3{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink);margin-bottom:.75rem;font-weight:700}
-.condition-bars{display:flex;flex-direction:column;gap:.4rem}
-.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.75rem}
-.cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.7rem;color:var(--ink)}
-.cond-bar-track{flex:1;height:.5rem;background:var(--field-bg);border-radius:3px;position:relative;overflow:hidden}
-.cond-bar-fill{height:100%;position:absolute;left:0;top:0;border-radius:3px}
-.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.7rem;color:var(--mid)}
-.pressure-rank{display:flex;flex-direction:column;gap:.4rem}
-.pressure-rank-item{display:flex;align-items:center;gap:.5rem;font-size:.75rem}
-.pressure-rank-bar{flex:1;height:.5rem;background:var(--field-bg);border-radius:3px;position:relative;overflow:hidden}
-.pressure-rank-fill{height:100%;background:var(--accent);opacity:.7;position:absolute;left:0;top:0;border-radius:3px}
-.pressure-rank-name{width:12rem;text-align:right;font-size:.7rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pressure-rank-count{width:2.5rem;font-family:var(--mono);font-size:.7rem;color:var(--mid)}
-
-.site-detail{display:none;border-top:1px solid var(--rule);padding:1rem 1.2rem;overflow-x:auto;background:var(--field-bg)}
+.site-detail{display:none;border-top:1px solid var(--rule);padding:1.5rem 1.2rem;background:linear-gradient(to bottom, #fcfdfc, #ffffff);overflow-x:auto}
 .site-row.open .site-detail{display:block}
 
-.feature-table{width:100%;border-collapse:collapse;font-size:.8rem}
-.feature-table th{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--mid);padding:.5rem;text-align:left;border-bottom:2px solid var(--rule)}
-.feature-table td{padding:.6rem .5rem;border-bottom:1px solid var(--rule);vertical-align:top}
-.feature-table tbody tr:hover{background:var(--paper)}
-
-.cond-tag{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.15rem .4rem;border-radius:3px}
-.pressure-list{font-size:.75rem;color:var(--ink);line-height:1.6}
-.pressure-item{display:inline-block;background:var(--paper);padding:.15rem .5rem;margin:.15rem .25rem .15rem 0;font-size:.7rem;border-radius:3px;border:1px solid var(--rule)}
-.pressure-item .kw{color:var(--accent);margin-left:.2rem;font-weight:600}
-.effect-neg{border-left:3px solid var(--unfav-decline)}
-.effect-pos{border-left:3px solid var(--success)}
-.no-pressures{color:var(--mid);font-style:italic;font-size:.75rem}
-.sitelink-link{font-size:.7rem;color:var(--accent);text-decoration:none;font-weight:600}
-.sitelink-link:hover{text-decoration:underline}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:2rem}
+.detail-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:var(--mid);font-weight:700;margin-bottom:.75rem;display:block;border-bottom:1px solid var(--accent-light);padding-bottom:.25rem}
+.feature-table, .pressure-table{width:100%;border-collapse:collapse;font-size:.75rem}
+.feature-table th, .pressure-table th{text-align:left;padding:.5rem;border-bottom:1px solid var(--rule);color:var(--mid);font-weight:600}
+.feature-table td, .pressure-table td{padding:.65rem .5rem;border-bottom:1px solid #f0f4f2}
 
 .state-message{text-align:center;padding:4rem 2rem;color:var(--mid)}
 .state-message p{font-size:.9rem;max-width:36ch;margin:0 auto;line-height:1.6}
@@ -129,23 +88,10 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 
 .colophon{padding-top:1rem;border-top:1px solid var(--rule);font-size:.7rem;color:var(--mid);display:flex;justify-content:space-between}
 .colophon a{color:var(--accent);text-decoration:none}
-.colophon a:hover{text-decoration:underline}
 
 @media(max-width:900px){
   .controls{grid-template-columns:1fr 1fr}
   .controls .field-group:first-child{grid-column:1/-1}
-  .summary-panel{grid-template-columns:1fr}
-  .cond-bar-label,.pressure-rank-name{width:8rem}
-}
-@media(max-width:600px){
-  .hero{padding:2.5rem 1.5rem;border-radius:0 0 1rem 1rem}
-  .hero-title{font-size:2.2rem}
-  .frame{padding:0 1rem 2rem}
-  .data-section{padding:1.5rem;margin-bottom:1.5rem}
-  .controls{grid-template-columns:1fr}
-  .site-header{grid-template-columns:1fr auto;gap:.5rem;padding:.75rem 1rem}
-  .site-name{white-space:normal;word-break:break-word}
-  .site-meta{display:none}
 }
 </style>
 </head>
@@ -170,25 +116,14 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
         <div class="field-group">
           <label class="field-label" for="postcode">Postcode</label>
           <div class="field-row">
-            <input type="text" id="postcode" class="field-input" placeholder="e.g. EH1 1RF" autocomplete="postal-code" spellcheck="false">
+            <input type="text" id="postcode" class="field-input" placeholder="e.g. EH1 1RF">
             <button class="btn-search" id="btn-search">Search</button>
           </div>
         </div>
-        <div class="field-group" style="align-self:end">
-          <span class="field-label" style="color:var(--rule);text-align:center;">or filter by</span>
-        </div>
-        <div class="field-group">
-          <label class="field-label" for="dd-uta">Local Authority</label>
-          <select id="dd-uta" class="field-input"><option value="">— All —</option></select>
-        </div>
-        <div class="field-group">
-          <label class="field-label" for="dd-spc">Constituency</label>
-          <select id="dd-spc" class="field-input"><option value="">— All —</option></select>
-        </div>
-        <div class="field-group">
-          <label class="field-label" for="dd-spe">Region</label>
-          <select id="dd-spe" class="field-input"><option value="">— All —</option></select>
-        </div>
+        <div class="field-group" style="align-self:end"><span class="field-label" style="color:var(--rule);text-align:center;">or filter by</span></div>
+        <div class="field-group"><label class="field-label">Local Authority</label><select id="dd-uta" class="field-input"><option value="">— All —</option></select></div>
+        <div class="field-group"><label class="field-label">Constituency</label><select id="dd-spc" class="field-input"><option value="">— All —</option></select></div>
+        <div class="field-group"><label class="field-label">Region</label><select id="dd-spe" class="field-input"><option value="">— All —</option></select></div>
       </div>
 
       <div class="status-bar">
@@ -197,9 +132,9 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
       </div>
 
       <div id="results">
-        <div class="state-message" id="empty-state">
+        <div class="state-message">
           <span class="state-icon">⌖</span>
-          <p>Enter a Scottish postcode to find protected areas within 10km, or select a region to view all sites.</p>
+          <p>Enter a Scottish postcode to find protected areas within 10km.</p>
         </div>
       </div>
     </section>
@@ -208,66 +143,92 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
       <header class="section-header">
         <h2 class="section-title">Other nature designations</h2>
       </header>
-      <div class="placeholder-content">
-        <p>Data and mapping for Local Nature Reserves, Marine Protected Areas, and Regional Parks will be integrated here in a future update.</p>
+      
+      <div class="controls">
+        <div class="field-group">
+          <label class="field-label" for="od-postcode">Postcode</label>
+          <div class="field-row">
+            <input type="text" id="od-postcode" class="field-input" placeholder="e.g. EH1 1RF">
+            <button class="btn-search" id="od-btn-search">Search</button>
+          </div>
+        </div>
+        <div class="field-group" style="align-self:end"><span class="field-label" style="color:var(--rule);text-align:center;">or filter by</span></div>
+        <div class="field-group"><label class="field-label">Local Authority</label><select id="od-dd-uta" class="field-input"><option value="">— All —</option></select></div>
+        <div class="field-group"><label class="field-label">Constituency</label><select id="od-dd-spc" class="field-input"><option value="">— All —</option></select></div>
+        <div class="field-group"><label class="field-label">Region</label><select id="od-dd-spe" class="field-input"><option value="">— All —</option></select></div>
       </div>
-    </section>
 
-    <section id="water-quality" class="data-section">
-      <header class="section-header">
-        <h2 class="section-title">Water quality</h2>
-      </header>
-      <div class="placeholder-content">
-        <p>Catchment and bathing water quality metrics, river classifications, and pollution incident data will be available here soon.</p>
+      <div class="status-bar">
+        <span class="status-text" id="od-status"></span>
+        <span class="status-count" id="od-count"></span>
+      </div>
+
+      <div id="od-results">
+        <div class="state-message">
+          <span class="state-icon">⌖</span>
+          <p>Search for Regional Parks, NNRs, and other designations by postcode or region.</p>
+        </div>
       </div>
     </section>
 
     <footer class="colophon">
-      <span>Data: NatureScot SiteLink &amp; SCM. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
+      <span>Data provided by NatureScot &amp; MapIt. For information purposes only.</span>
+      <span><a href="#">Privacy</a> &bull; <a href="#">Terms</a></span>
     </footer>
 
   </main>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   CONFIG
-   ═══════════════════════════════════════════════════════════ */
 const CONFIG = {
   MAPIT_API_KEY: "ELNTpDEh11ZUqJUj21zLAmKSWsBOCVSiSniMPIu6",
   MAPIT_BASE: "https://mapit.mysociety.org",
   DATA_DIR: "data/",
-  FILES: { siteData: "site_data.json", metadata: "metadata.json", regions: "regions.json", sites: "sites.json", pressures: "pressures.json" },
+  FILES: { 
+    siteData: "site_data.json", 
+    metadata: "metadata.json", 
+    regions: "regions.json", 
+    sites: "sites.json", 
+    pressures: "pressures.json",
+    otherDesignations: "other_designations.geojson"
+  },
   PROXIMITY_KM: 10,
 };
 
-/* ═══════════════════════════════════════════════════════════
-   STATE
-   ═══════════════════════════════════════════════════════════ */
-const STATE = { siteData: null, metadata: null, regions: null, sites: null, pressures: null, lastQuery: null };
+const STATE = { 
+  siteData: null, metadata: null, regions: null, 
+  sites: null, pressures: null, otherDesignations: null 
+};
 
 const $ = s => document.querySelector(s);
 const EL = {
+  // Protected Areas
   postcode: $("#postcode"), btnSearch: $("#btn-search"),
   ddUTA: $("#dd-uta"), ddSPC: $("#dd-spc"), ddSPE: $("#dd-spe"),
   status: $("#status"), count: $("#count"), results: $("#results"),
+  // Other Designations
+  odPostcode: $("#od-postcode"), odBtnSearch: $("#od-btn-search"),
+  odDdUTA: $("#od-dd-uta"), odDdSPC: $("#od-dd-spc"), odDdSPE: $("#od-dd-spe"),
+  odStatus: $("#od-status"), odCount: $("#od-count"), odResults: $("#od-results")
 };
 
-/* ═══════════════════════════════════════════════════════════
-   INIT
-   ═══════════════════════════════════════════════════════════ */
 async function init() {
   setStatus("loading", "Loading data…");
   try {
-    const [siteData, metadata, regions, sites, pressures] = await Promise.all([
+    const [siteData, metadata, regions, sites, pressures, otherDesignations] = await Promise.all([
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.siteData),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.metadata),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.regions),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.sites),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.pressures),
+      fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.otherDesignations)
     ]);
     STATE.siteData = siteData; STATE.metadata = metadata;
-    STATE.regions = regions; STATE.sites = sites; STATE.pressures = pressures;
-    populateDropdowns(); bindEvents(); setStatus("", "");
+    STATE.regions = regions; STATE.sites = sites; 
+    STATE.pressures = pressures; STATE.otherDesignations = otherDesignations;
+    
+    populateDropdowns(); 
+    bindEvents(); 
+    setStatus("", "");
   } catch (err) {
     setStatus("error", `Failed to load data: ${err.message}`);
   }
@@ -275,17 +236,17 @@ async function init() {
 
 async function fetchJSON(path) {
   const r = await fetch(path);
-  if (!r.ok) throw new Error(`HTTP ${r.status} loading ${path}`);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   DROPDOWNS
-   ═══════════════════════════════════════════════════════════ */
 function populateDropdowns() {
   const { UTA = [], SPC = [], SPE = [] } = STATE.regions;
-  fillSelect(EL.ddUTA, UTA); fillSelect(EL.ddSPC, SPC); fillSelect(EL.ddSPE, SPE);
+  [EL.ddUTA, EL.odDdUTA].forEach(el => fillSelect(el, UTA));
+  [EL.ddSPC, EL.odDdSPC].forEach(el => fillSelect(el, SPC));
+  [EL.ddSPE, EL.odDdSPE].forEach(el => fillSelect(el, SPE));
 }
+
 function fillSelect(el, items) {
   while (el.options.length > 1) el.remove(1);
   for (const item of items) {
@@ -294,336 +255,192 @@ function fillSelect(el, items) {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   EVENTS
-   ═══════════════════════════════════════════════════════════ */
 function bindEvents() {
-  EL.btnSearch.addEventListener("click", handlePostcodeSearch);
-  EL.postcode.addEventListener("keydown", e => { if (e.key === "Enter") handlePostcodeSearch(); });
-  EL.postcode.addEventListener("input", () => {
-    if (EL.postcode.value.trim()) { EL.ddUTA.value = ""; EL.ddSPC.value = ""; EL.ddSPE.value = ""; }
-  });
-  const allDropdowns = [EL.ddUTA, EL.ddSPC, EL.ddSPE];
-  for (const dd of allDropdowns) {
-    dd.addEventListener("change", () => {
-      EL.postcode.value = "";
-      for (const other of allDropdowns) { if (other !== dd) other.value = ""; }
-      handleDropdownFilter();
-    });
-  }
+  // Section 1
+  EL.btnSearch.addEventListener("click", () => handleSearch(false));
+  EL.postcode.addEventListener("keypress", e => e.key==="Enter" && handleSearch(false));
+  [EL.ddUTA, EL.ddSPC, EL.ddSPE].forEach(dd => dd.addEventListener("change", () => handleDropdownFilter(false)));
+
+  // Section 2
+  EL.odBtnSearch.addEventListener("click", () => handleSearch(true));
+  EL.odPostcode.addEventListener("keypress", e => e.key==="Enter" && handleSearch(true));
+  [EL.odDdUTA, EL.odDdSPC, EL.odDdSPE].forEach(dd => dd.addEventListener("change", () => handleDropdownFilter(true)));
 }
 
-/* ═══════════════════════════════════════════════════════════
-   POSTCODE → PROXIMITY SEARCH
-   ═══════════════════════════════════════════════════════════ */
-async function handlePostcodeSearch() {
-  const raw = EL.postcode.value.trim();
+async function handleSearch(isOD) {
+  const inputEl = isOD ? EL.odPostcode : EL.postcode;
+  const statusEl = isOD ? EL.odStatus : EL.status;
+  const resultsEl = isOD ? EL.odResults : EL.results;
+  const raw = inputEl.value.trim();
   if (!raw) return;
-  const pc = raw.replace(/\s+/g, "").toUpperCase();
-  if (pc.length < 5 || pc.length > 7) { setStatus("error", "Invalid postcode format."); return; }
 
-  setStatus("loading", "Looking up postcode…");
+  statusEl.innerHTML = `<span class="spinner"></span> Looking up postcode…`;
   try {
-    const url = `${CONFIG.MAPIT_BASE}/postcode/${encodeURIComponent(pc)}.json`;
+    const url = `${CONFIG.MAPIT_BASE}/postcode/${encodeURIComponent(raw)}.json`;
     const resp = await fetch(url, { headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY } });
-
-    if (resp.status === 404 || resp.status === 400) {
-      setStatus("error", `Postcode "${raw}" not found.`); clearResults(); return;
-    }
-    if (!resp.ok) {
-      const body = await resp.json().catch(() => ({}));
-      throw new Error(body.error || `MapIt returned HTTP ${resp.status}`);
-    }
+    if (!resp.ok) throw new Error("Postcode not found");
     const data = await resp.json();
-    const lat = data.wgs84_lat; const lng = data.wgs84_lon;
-
-    const nearby = [];
-    for (const [paCode, info] of Object.entries(STATE.sites)) {
-      if (!info.lat || !info.lng) continue;
-      const bbox = info.bbox;
-      let dist;
-      if (bbox) {
-        const nearLat = Math.max(bbox[1], Math.min(lat, bbox[3]));
-        const nearLng = Math.max(bbox[0], Math.min(lng, bbox[2]));
-        if (nearLat === lat && nearLng === lng) {
-          dist = 0;
-        } else {
-          dist = haversine(lat, lng, nearLat, nearLng);
-        }
-      } else {
-        dist = haversine(lat, lng, info.lat, info.lng);
-      }
-      if (dist <= CONFIG.PROXIMITY_KM) {
-        nearby.push({ paCode, dist: Math.round(dist * 10) / 10 });
-      }
-    }
-
-    nearby.sort((a, b) => a.dist - b.dist);
-    STATE.lastQuery = `${raw.toUpperCase()} — ${nearby.length} sites within ${CONFIG.PROXIMITY_KM}km`;
-    renderSites(nearby, true);
-
+    
+    if (isOD) findNearbyOD(data.wgs84_lat, data.wgs84_lon);
+    else findNearbyProtected(data.wgs84_lat, data.wgs84_lon);
   } catch (err) {
-    if (err.message.includes("Usage limit")) setStatus("error", "MapIt API quota exceeded.");
-    else setStatus("error", err.message);
+    statusEl.textContent = err.message;
+    resultsEl.innerHTML = `<div class="state-message"><p>${err.message}</p></div>`;
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   DROPDOWN → REGIONAL FILTER
-   ═══════════════════════════════════════════════════════════ */
-function handleDropdownFilter() {
-  const selectedIds = []; const labels = [];
-  for (const dd of [EL.ddUTA, EL.ddSPC, EL.ddSPE]) {
-    if (dd.value) {
-      selectedIds.push(dd.value);
-      labels.push(dd.options[dd.selectedIndex].textContent);
-    }
-  }
-  if (!selectedIds.length) { clearResults(); setStatus("", ""); return; }
+async function handleDropdownFilter(isOD) {
+  const dropdowns = isOD ? [EL.odDdUTA, EL.odDdSPC, EL.odDdSPE] : [EL.ddUTA, EL.ddSPC, EL.ddSPE];
+  const statusEl = isOD ? EL.odStatus : EL.status;
+  const target = dropdowns.find(d => d.value !== "");
+  
+  if (!target) return;
+  dropdowns.filter(d => d !== target).forEach(d => d.value = "");
 
-  const siteSet = new Set();
-  for (const areaId of selectedIds) {
-    (STATE.metadata[areaId] || []).forEach(s => siteSet.add(s));
-  }
-
-  const sitesArr = [...siteSet].map(paCode => ({ paCode, dist: null }));
-  STATE.lastQuery = labels.join(" + ");
-  renderSites(sitesArr, false);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   RENDERING
-   ═══════════════════════════════════════════════════════════ */
-function renderSites(sitesArr, showDistance) {
-  if (!sitesArr.length) {
-    setStatus("error", "No protected areas found.");
-    clearResults(); return;
-  }
-
-  const rawCards = [];
-  for (const { paCode, dist } of sitesArr) {
-    const sd = STATE.siteData[paCode];
-    if (!sd) continue;
-
-    const desigObj = sd.designation || {};
-    const desigCode = desigObj.code || "";
-
-    const richPressures = (STATE.pressures[paCode] || {}).pressures || [];
-    const features = (sd.features || []).map(f => {
-      const matching = richPressures.filter(rp => rp.feature === f.name);
-      if (!matching.length) return f;
-      return { ...f, pressures: matching.map(rp => ({
-        name: rp.pressureGroup || rp.pressure || "Unknown",
-        pressure: rp.pressure || "",
-        keyword: rp.keyword || "",
-        effect: rp.effect || "",
-        certainty: rp.certainty || "",
-        visitDate: rp.visitDate || "",
-      }))};
-    });
-
-    rawCards.push({
-      paCode, dist, name: sd.name || "Unknown",
-      designations: desigCode ? [desigCode] : [],
-      area: sd.area || 0,
-      localAuthority: sd.localAuthority || "",
-      url: sd.url || "",
-      features,
-    });
-  }
-
-  const mergeKey = c => `${c.name}\0${c.localAuthority}`;
-  const merged = new Map();
-  for (const c of rawCards) {
-    const key = mergeKey(c);
-    if (merged.has(key)) {
-      const existing = merged.get(key);
-      for (const d of c.designations) {
-        if (!existing.designations.includes(d)) existing.designations.push(d);
-      }
-      if (c.area > existing.area) existing.area = c.area;
-      if (c.dist !== null && (existing.dist === null || c.dist < existing.dist)) existing.dist = c.dist;
-      const existingFeatureKeys = new Set(existing.features.map(f => `${f.name}\0${f.category}`));
-      for (const f of c.features) {
-        if (!existingFeatureKeys.has(`${f.name}\0${f.category}`)) {
-          existing.features.push(f);
-          existingFeatureKeys.add(`${f.name}\0${f.category}`);
-        }
-      }
-      if (!existing.url && c.url) existing.url = c.url;
+  statusEl.innerHTML = `<span class="spinner"></span> Filtering by boundary…`;
+  try {
+    if (isOD) {
+      // For Other Designations, we fetch the geometry and check intersections
+      const url = `${CONFIG.MAPIT_BASE}/area/${target.value}/geometry`;
+      const resp = await fetch(url, { headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY } });
+      const geom = await resp.json();
+      filterODByGeometry(geom);
     } else {
-      merged.set(key, { ...c, designations: [...c.designations], features: [...c.features] });
+      // Original Protected Areas logic
+      const url = `${CONFIG.MAPIT_BASE}/area/${target.value}/intersects/8724`;
+      const resp = await fetch(url, { headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY } });
+      const data = await resp.json();
+      const ids = Object.keys(data);
+      renderResults(ids.map(id => ({ id, dist: null })));
+    }
+  } catch (err) {
+    statusEl.textContent = `Error: ${err.message}`;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROTECTED AREAS ENGINE (Original)
+   ═══════════════════════════════════════════════════════════ */
+function findNearbyProtected(lat, lng) {
+  const nearby = [];
+  for (const id in STATE.siteData) {
+    const s = STATE.siteData[id];
+    const dist = haversine(lat, lng, s.lat, s.lng);
+    if (dist <= CONFIG.PROXIMITY_KM) nearby.push({ id, dist });
+  }
+  renderResults(nearby.sort((a,b) => a.dist - b.dist));
+}
+
+function renderResults(sites) {
+  EL.status.textContent = sites.length ? "Found nearby sites" : "No sites found within 10km";
+  EL.count.textContent = `${sites.length} sites`;
+  if (!sites.length) {
+    EL.results.innerHTML = `<div class="state-message"><span class="state-icon">Ø</span><p>No results found for this area.</p></div>`;
+    return;
+  }
+  const container = document.createElement("div");
+  container.className = "site-list";
+  sites.forEach(s => container.appendChild(renderSiteRow(s)));
+  EL.results.innerHTML = "";
+  EL.results.appendChild(container);
+}
+
+function renderSiteRow({id, dist}) {
+  const meta = STATE.metadata[id];
+  const row = document.createElement("div");
+  row.className = "site-row";
+  const distHtml = dist !== null ? `<span class="site-distance">${dist.toFixed(1)} km</span>` : "";
+  
+  row.innerHTML = `
+    <div class="site-header">
+      <div class="site-name">${esc(meta.name)} <span class="desig-tag">${esc(meta.designation)}</span>${distHtml}</div>
+      <div class="site-condition-summary ${conditionClass(meta.summary_condition)}">${esc(meta.summary_condition || "Unknown")}</div>
+    </div>
+    <div class="site-detail"><div class="spinner"></div> Loading details…</div>
+  `;
+  row.addEventListener("click", () => toggleDetail(row, id));
+  return row;
+}
+
+async function toggleDetail(row, id) {
+  const isOpening = !row.classList.contains("open");
+  document.querySelectorAll(".site-row.open").forEach(r => r.classList.remove("open"));
+  if (isOpening) {
+    row.classList.add("open");
+    const detail = row.querySelector(".site-detail");
+    if (detail.innerHTML.includes("spinner")) {
+      detail.innerHTML = renderDetail(id);
     }
   }
+}
 
-  const cards = [];
-  for (const c of merged.values()) {
-    const pressureNames = new Set();
-    c.features.forEach(f => (f.pressures || []).forEach(p => pressureNames.add(p.name)));
-    cards.push({
-      ...c,
-      worstCondition: getWorstCondition(c.features),
-      pressureCount: pressureNames.size,
-      featureCount: c.features.length,
-    });
-  }
-
-  if (!cards.length) {
-    setStatus("error", "Sites found but no matching data available.");
-    clearResults(); return;
-  }
-
-  setStatus("success", STATE.lastQuery || "");
-  EL.count.textContent = `${cards.length} sites`;
-
-  let html = renderSummaryPanel(cards);
-  html += '<div class="site-list">';
-  for (const c of cards) {
-    const distStr = c.dist !== null ? `<span class="site-distance">${c.dist} km</span>` : "";
-    const condClass = conditionClass(c.worstCondition);
-    const condLabel = c.worstCondition || "Not assessed";
-    const areaStr = c.area ? `${Math.round(c.area)} ha` : "";
-    const desigHtml = c.designations.map(d => `<span class="desig-tag">${esc(d)}</span>`).join("");
-
-    html += `<div class="site-row" data-pa="${esc(c.paCode)}">
-      <div class="site-header">
-        <div class="site-name">${esc(c.name)}<span class="site-designations">${desigHtml}</span>${distStr}</div>
-        <div class="site-meta">${esc(areaStr)}</div>
-        <div class="site-condition-summary ${condClass}">${esc(condLabel)}</div>
-        <div class="site-expand-icon">▶</div>
-      </div>
-      <div class="site-detail">${renderFeatureTable(c)}</div>
-    </div>`;
-  }
-  html += '</div>';
-  EL.results.innerHTML = html;
-
-  EL.results.querySelectorAll(".site-row").forEach(row => {
-    row.querySelector(".site-header").addEventListener("click", () => row.classList.toggle("open"));
+function renderDetail(id) {
+  const features = STATE.sites[id] || [];
+  const pressures = STATE.pressures[id] || [];
+  let html = `<div class="detail-grid"><div><span class="detail-label">Condition of Features</span><table class="feature-table"><thead><tr><th>Feature</th><th>Condition</th><th>Last Monitored</th></tr></thead><tbody>`;
+  features.forEach(f => {
+    html += `<tr><td>${esc(f.feature_name)}</td><td><span class="site-condition-summary ${conditionClass(f.condition)}">${esc(f.condition)}</span></td><td>${esc(f.latest_assessed_date)}</td></tr>`;
   });
-}
-
-function renderFeatureTable(card) {
-  const { features, url, localAuthority } = card;
-  let meta = "";
-  if (localAuthority) meta += `<span>${esc(localAuthority)}</span>`;
-  if (url) meta += `${meta ? " · " : ""}<a class="sitelink-link" href="${esc(url)}" target="_blank" rel="noopener">View on SiteLink</a>`;
-  if (meta) meta = `<div style="margin-bottom:1rem;font-size:.75rem;color:var(--mid)">${meta}</div>`;
-
-  if (!features.length) return meta + '<div class="no-pressures">No features recorded.</div>';
-
-  let table = meta + `<table class="feature-table"><thead><tr>
-    <th>Feature</th><th>Category</th><th>Condition</th><th>Assessed</th><th>Pressures</th>
-  </tr></thead><tbody>`;
-
-  for (const f of features) {
-    const cClass = conditionClass(f.conditionSummary || "");
-    const pressuresHtml = (f.pressures || []).length
-      ? (f.pressures || []).map(p => {
-          const effectClass = (p.effect || "").toLowerCase().includes("negative") ? "effect-neg" : (p.effect || "").toLowerCase().includes("positive") ? "effect-pos" : "";
-          const label = p.pressure || p.name || "Unknown";
-          const kw = p.keyword ? `<span class="kw">${esc(p.keyword)}</span>` : "";
-          return `<span class="pressure-item ${effectClass}">${esc(label)}${kw}</span>`;
-        }).join("")
-      : '<span class="no-pressures">None recorded</span>';
-
-    table += `<tr>
-      <td>${esc(f.name || "—")}</td>
-      <td>${esc(f.category || "—")}</td>
-      <td><span class="cond-tag ${cClass}">${esc(f.condition || f.conditionSummary || "—")}</span></td>
-      <td>${esc(f.lastAssessed || "—")}</td>
-      <td class="pressure-list">${pressuresHtml}</td>
-    </tr>`;
-  }
-  table += "</tbody></table>";
-  return table;
+  html += `</tbody></table></div><div><span class="detail-label">Identified Pressures</span><table class="pressure-table"><thead><tr><th>Pressure</th><th>Feature</th></tr></thead><tbody>`;
+  pressures.length ? pressures.forEach(p => {
+    html += `<tr><td>${esc(p.pressure_name)}</td><td>${esc(p.feature_name)}</td></tr>`;
+  }) : html += `<tr><td colspan="2" style="color:var(--mid);font-style:italic">No pressures identified in latest assessment.</td></tr>`;
+  return html + `</tbody></table></div></div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   HEADLINE SUMMARY
+   OTHER DESIGNATIONS ENGINE (New)
    ═══════════════════════════════════════════════════════════ */
-function renderSummaryPanel(cards) {
-  const condCounts = { "Favourable": 0, "Unfavourable": 0, "Recovering": 0, "Not Assessed": 0 };
-  const pressureCounts = {};
-  let totalFeatures = 0;
-
-  for (const c of cards) {
-    for (const f of c.features) {
-      totalFeatures++;
-      const cs = f.conditionSummary || "Not Assessed";
-      if (cs in condCounts) condCounts[cs]++;
-      else condCounts["Not Assessed"]++;
-
-      for (const p of (f.pressures || [])) {
-        const name = p.name || "Unknown";
-        pressureCounts[name] = (pressureCounts[name] || 0) + 1;
-      }
+function findNearbyOD(lat, lng) {
+  const nearby = [];
+  STATE.otherDesignations.features.forEach(f => {
+    const center = getCentroid(f.geometry);
+    const dist = haversine(lat, lng, center[1], center[0]);
+    if (dist <= CONFIG.PROXIMITY_KM) {
+      nearby.push({ ...f.properties, dist });
     }
+  });
+  renderODResults(nearby.sort((a,b) => a.dist - b.dist));
+}
+
+function filterODByGeometry(mapitGeom) {
+  const inside = [];
+  STATE.otherDesignations.features.forEach(f => {
+    const center = getCentroid(f.geometry);
+    if (isPointInPolygon(center, mapitGeom)) {
+      inside.push({ ...f.properties, dist: null });
+    }
+  });
+  renderODResults(inside);
+}
+
+function renderODResults(sites) {
+  EL.odStatus.textContent = sites.length ? "Found results" : "No results found";
+  EL.odCount.textContent = `${sites.length} sites`;
+  if (!sites.length) {
+    EL.odResults.innerHTML = `<div class="state-message"><p>No results found for this selection.</p></div>`;
+    return;
   }
-
-  if (!totalFeatures) return "";
-
-  const condColours = {
-    "Favourable": "var(--success)", "Recovering": "var(--warning)",
-    "Unfavourable": "var(--unfav)", "Not Assessed": "var(--mid)"
-  };
-  let condHtml = '<div class="condition-bars">';
-  for (const [label, count] of Object.entries(condCounts)) {
-    const pct = totalFeatures ? (count / totalFeatures * 100) : 0;
-    condHtml += `<div class="cond-bar-row">
-      <span class="cond-bar-label">${esc(label)}</span>
-      <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${condColours[label]}"></div></div>
-      <span class="cond-bar-count">${count}</span>
-    </div>`;
-  }
-  condHtml += '</div>';
-
-  const topPressures = Object.entries(pressureCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const maxP = topPressures.length ? topPressures[0][1] : 1;
-  let pressHtml = '<div class="pressure-rank">';
-  for (const [name, count] of topPressures) {
-    const pct = (count / maxP * 100);
-    pressHtml += `<div class="pressure-rank-item">
-      <span class="pressure-rank-name">${esc(name)}</span>
-      <div class="pressure-rank-bar"><div class="pressure-rank-fill" style="width:${pct.toFixed(1)}%"></div></div>
-      <span class="pressure-rank-count">${count}</span>
-    </div>`;
-  }
-  pressHtml += '</div>';
-
-  return `<div class="summary-panel">
-    <div class="summary-section"><h3>Feature condition (${totalFeatures} features across ${cards.length} sites)</h3>${condHtml}</div>
-    <div class="summary-section"><h3>Top pressures</h3>${pressHtml}</div>
-  </div>`;
+  let html = '<div class="site-list">';
+  sites.forEach(s => {
+    const distText = s.dist !== null ? `<span class="site-distance">${s.dist.toFixed(1)} km</span>` : "";
+    html += `
+      <div class="site-row">
+        <div class="site-header">
+          <div class="site-name">
+            ${esc(s.name)} 
+            <span class="desig-tag">${esc(s.designation_type)}</span>
+            ${distText}
+          </div>
+          ${s.link ? `<a href="${s.link}" target="_blank" class="cta-primary" style="padding:0.4rem 0.8rem; font-size:0.6rem">Site Info</a>` : ''}
+        </div>
+      </div>`;
+  });
+  EL.odResults.innerHTML = html + '</div>';
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CONDITION HELPERS
-   ═══════════════════════════════════════════════════════════ */
-function getWorstCondition(features) {
-  const ranks = { "unfavourable": 4, "unfavourable declining": 5, "unfavourable no change": 4,
-    "unfavourable recovering": 3, "favourable": 1, "not assessed": 0 };
-  let worst = ""; let worstRank = -1;
-  for (const f of features) {
-    const s = (f.conditionSummary || "").toLowerCase();
-    const d = (f.condition || "").toLowerCase();
-    const rank = ranks[d] || ranks[s] || 0;
-    if (rank > worstRank) { worstRank = rank; worst = f.conditionSummary || f.condition || ""; }
-  }
-  return worst;
-}
-
-function conditionClass(cond) {
-  const c = (cond || "").toLowerCase();
-  if (c.includes("favourable") && !c.includes("unfavourable")) return "cond-fav";
-  if (c.includes("recovering")) return "cond-unfav-rec";
-  if (c.includes("declining")) return "cond-unfav-dec";
-  if (c.includes("unfavourable")) return "cond-unfav";
-  return "cond-unknown";
-}
-
-/* ═══════════════════════════════════════════════════════════
-   HAVERSINE
+   GEOSPATIAL HELPERS
    ═══════════════════════════════════════════════════════════ */
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -633,18 +450,54 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+function getCentroid(geometry) {
+  if (geometry.type === "Point") return geometry.coordinates;
+  // Fallback for Polygons: use first coordinate of exterior ring
+  let coords = geometry.type === "Polygon" ? geometry.coordinates[0][0] : geometry.coordinates[0][0][0];
+  return coords; 
+}
+
+function isPointInPolygon(point, polygon) {
+  // Simple check using logic for MapIt's Multipolygon GeoJSON
+  const x = point[0], y = point[1];
+  let inside = false;
+  const rings = polygon.type === "MultiPolygon" ? polygon.coordinates.flat() : polygon.coordinates;
+  
+  for (let i = 0; i < rings.length; i++) {
+    const vs = rings[i];
+    for (let j = 0, k = vs.length - 1; j < vs.length; k = j++) {
+      const xi = vs[j][0], yi = vs[j][1];
+      const xj = vs[k][0], yj = vs[k][1];
+      const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+  }
+  return inside;
+}
+
 /* ═══════════════════════════════════════════════════════════
-   HELPERS
+   UI HELPERS
    ═══════════════════════════════════════════════════════════ */
+function conditionClass(cond) {
+  const c = (cond || "").toLowerCase();
+  if (c.includes("favourable") && !c.includes("unfavourable")) return "cond-fav";
+  if (c.includes("recovering")) return "cond-unfav-rec";
+  if (c.includes("declining")) return "cond-unfav-dec";
+  if (c.includes("unfavourable")) return "cond-unfav";
+  return "cond-unknown";
+}
+
 function setStatus(state, text) {
-  EL.status.dataset.state = state;
-  EL.status.innerHTML = state === "loading" ? `<span class="spinner"></span>${esc(text)}` : esc(text);
+  EL.status.textContent = text;
+  if (state === "loading") EL.status.innerHTML = `<span class="spinner"></span>${text}`;
 }
-function clearResults() {
-  EL.results.innerHTML = '<div class="state-message"><span class="state-icon">∅</span><p>No results to display.</p></div>';
-  EL.count.textContent = "";
+
+function esc(s) {
+  if (!s) return "";
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
 }
-function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
