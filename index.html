@@ -3,14 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scottish Protected Areas — Environmental Pressures</title>
+<title>Scottish Nature Data</title>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --ink:#0a0a0a;--paper:#f5f2eb;--accent:#d63030;--accent-light:#fbe8e8;
-  --mid:#6b6b6b;--rule:#c8c3b8;--field-bg:#fff;--field-border:#a8a49a;
-  --success:#1a7a3a;--success-light:#e8f5ec;--warning:#b85c00;--warning-light:#fef3e5;
-  --unfav:#9e3a00;--unfav-light:#fef0e8;--unfav-decline:#d63030;
+  /* Light green base palette */
+  --ink:#0f2b1d;
+  --paper:#eef5f0;
+  --accent:#24824d;
+  --accent-light:#dcede3;
+  --mid:#597866;
+  --rule:#b5cfc1;
+  --field-bg:#ffffff;
+  --field-border:#9dbfae;
+  
+  /* Status colours retained but adjusted slightly for harmony */
+  --success:#176b32;--success-light:#e2f0e6;
+  --warning:#b85c00;--warning-light:#fef3e5;
+  --unfav:#9e3a00;--unfav-light:#fef0e8;
+  --unfav-decline:#c22929;
+  
   --mono:'JetBrains Mono','Fira Code','Consolas',monospace;
   --sans:'Söhne','Helvetica Neue','Arial',sans-serif;
   --display:'Georgia','Times New Roman',serif;
@@ -18,164 +30,203 @@
 html{font-size:15px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5;min-height:100vh}
 
-.frame{max-width:1120px;margin:0 auto;padding:2rem 2rem 4rem}
-.masthead{display:flex;align-items:baseline;gap:1rem;padding-bottom:.75rem;border-bottom:3px solid var(--ink);margin-bottom:2rem}
-.masthead-title{font-family:var(--display);font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
-.masthead-sub{font-size:.75rem;color:var(--mid);text-transform:uppercase;letter-spacing:.12em}
-.masthead-nav{margin-left:auto;font-size:.75rem}
-.masthead-nav a{color:var(--mid);text-decoration:underline;text-underline-offset:2px}
+/* ── Hero Header ── */
+.hero{background:linear-gradient(135deg, var(--ink) 0%, var(--accent) 100%);color:var(--paper);padding:4rem 2rem;border-radius:0 0 2rem 2rem;margin-bottom:3rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between;box-shadow:0 10px 30px rgba(15,43,29,0.15)}
+.hero-text{max-width:600px}
+.hero-title{font-family:var(--display);font-size:3rem;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:.5rem}
+.hero-sub{font-size:1rem;color:var(--accent-light);letter-spacing:.05em;text-transform:uppercase;font-weight:600}
+.cta-primary{background:var(--paper);color:var(--ink);font-weight:700;padding:1rem 2rem;border-radius:3rem;text-decoration:none;font-size:.9rem;letter-spacing:.05em;text-transform:uppercase;transition:all .2s ease;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.cta-primary:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.2);background:#fff}
+
+/* ── Layout Scaffolding ── */
+.frame{max-width:1120px;margin:0 auto;padding:0 2rem 4rem}
+.data-section{background:var(--field-bg);border:1px solid var(--rule);border-radius:1rem;padding:2.5rem;margin-bottom:2.5rem;box-shadow:0 4px 20px rgba(15,43,29,0.04)}
+.section-header{margin-bottom:2rem;border-bottom:2px solid var(--accent-light);padding-bottom:1rem}
+.section-title{font-family:var(--display);font-size:1.8rem;color:var(--ink)}
+.placeholder-content{background:var(--paper);border:2px dashed var(--rule);border-radius:.5rem;padding:3rem;text-align:center;color:var(--mid);font-style:italic}
 
 /* ── Controls ── */
 .controls{display:grid;grid-template-columns:220px auto 1fr 1fr 1fr;gap:1rem;align-items:end;margin-bottom:2rem}
 .field-group{display:flex;flex-direction:column;gap:.25rem}
 .field-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);font-weight:600}
 .field-row{display:flex;gap:0}
-.field-input{font-family:var(--mono);font-size:.85rem;padding:.55rem .75rem;border:2px solid var(--field-border);background:var(--field-bg);color:var(--ink);outline:none;width:100%;transition:border-color .15s}
-.field-input:focus{border-color:var(--ink)}
-.field-input::placeholder{color:var(--rule);font-style:italic}
-.btn-search{font-family:var(--sans);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:.55rem 1.2rem;border:2px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;white-space:nowrap;transition:background .15s}
-.btn-search:hover{background:var(--accent);border-color:var(--accent)}
-select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6b6b' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;padding-right:2rem}
+.field-input{font-family:var(--mono);font-size:.85rem;padding:.55rem .75rem;border:2px solid var(--field-border);background:var(--field-bg);color:var(--ink);outline:none;width:100%;transition:border-color .15s;border-radius:4px}
+.field-input:focus{border-color:var(--accent)}
+.field-input::placeholder{color:var(--mid);font-style:italic;opacity:0.6}
+.btn-search{font-family:var(--sans);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:.55rem 1.2rem;border:2px solid var(--accent);background:var(--accent);color:var(--paper);cursor:pointer;white-space:nowrap;transition:background .15s;border-radius:0 4px 4px 0}
+.field-row .field-input{border-radius:4px 0 0 4px;border-right:none}
+.btn-search:hover{background:var(--ink);border-color:var(--ink)}
+select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23597866' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;padding-right:2rem}
 
-.divider{border:none;border-top:1px solid var(--rule);margin:0 0 1.5rem}
-
-/* ── Status ── */
+/* ── Status & Lists ── */
 .status-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;min-height:1.5rem}
 .status-text{font-size:.75rem;color:var(--mid);font-family:var(--mono)}
-.status-text[data-state="error"]{color:var(--accent)}
+.status-text[data-state="error"]{color:var(--unfav-decline)}
 .status-text[data-state="success"]{color:var(--success)}
 .status-text[data-state="loading"]{color:var(--warning)}
 .status-count{font-size:.7rem;font-family:var(--mono);color:var(--mid)}
 
-/* ── Site Cards ── */
-.site-list{display:flex;flex-direction:column;gap:2px}
-.site-row{border:1px solid var(--rule);background:var(--field-bg);cursor:pointer;transition:border-color .1s;overflow:hidden}
-.site-row:hover{border-color:var(--ink)}
-.site-header{display:grid;grid-template-columns:1fr auto auto auto;gap:1.5rem;align-items:center;padding:.65rem 1rem}
-.site-name{font-weight:700;font-size:.85rem;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.site-list{display:flex;flex-direction:column;gap:4px}
+.site-row{border:1px solid var(--rule);background:var(--field-bg);border-radius:6px;cursor:pointer;transition:border-color .1s, box-shadow .15s;overflow:hidden}
+.site-row:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(36,130,77,0.1)}
+.site-header{display:grid;grid-template-columns:1fr auto auto auto;gap:1.5rem;align-items:center;padding:.85rem 1.2rem}
+.site-name{font-weight:700;font-size:.9rem;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .site-name .site-designations{font-weight:400;margin-left:.4rem;display:inline}
-.desig-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.06em;padding:.1rem .35rem;margin-left:.25rem;background:#edeae3;color:var(--mid);border:1px solid var(--rule);vertical-align:middle}
-.site-name .site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.7rem}
-.site-meta{font-size:.7rem;color:var(--mid);text-align:right;white-space:nowrap}
-.site-condition-summary{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.15rem .5rem;white-space:nowrap}
+.desig-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.06em;padding:.2rem .4rem;margin-left:.25rem;background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:3px;vertical-align:middle}
+.site-name .site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.75rem}
+.site-meta{font-size:.75rem;color:var(--mid);text-align:right;white-space:nowrap}
+.site-condition-summary{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:3px;white-space:nowrap}
 
-/* Condition colours */
 .cond-fav{background:var(--success-light);color:var(--success)}
 .cond-unfav-rec{background:var(--warning-light);color:var(--warning)}
 .cond-unfav{background:var(--unfav-light);color:var(--unfav)}
-.cond-unfav-dec{background:var(--accent-light);color:var(--unfav-decline)}
-.cond-unknown{background:#f0f0ec;color:var(--mid)}
+.cond-unfav-dec{background:#fbe8e8;color:var(--unfav-decline)}
+.cond-unknown{background:var(--paper);color:var(--mid)}
 
-.site-expand-icon{font-size:.7rem;color:var(--mid);transition:transform .15s;width:1.2rem;text-align:center}
+.site-expand-icon{font-size:.8rem;color:var(--accent);transition:transform .15s;width:1.2rem;text-align:center}
 .site-row.open .site-expand-icon{transform:rotate(90deg)}
 
-/* ── Headline summary panel ── */
-.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;padding:1rem 1.25rem;border:1px solid var(--rule);background:var(--field-bg)}
-.summary-section h3{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
-.condition-bars{display:flex;flex-direction:column;gap:.35rem}
-.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
-.cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.65rem}
-.cond-bar-track{flex:1;height:.65rem;background:#f0f0ec;position:relative;overflow:hidden}
-.cond-bar-fill{height:100%;position:absolute;left:0;top:0}
-.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
-.pressure-rank{display:flex;flex-direction:column;gap:.3rem}
-.pressure-rank-item{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
-.pressure-rank-bar{flex:1;height:.65rem;background:#f0f0ec;position:relative;overflow:hidden}
-.pressure-rank-fill{height:100%;background:var(--accent);opacity:.55;position:absolute;left:0;top:0}
-.pressure-rank-name{width:12rem;text-align:right;font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pressure-rank-count{width:2.5rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
-@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label,.pressure-rank-name{width:7rem}}
+/* ── Summary & Detail ── */
+.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;padding:1.5rem;border:1px solid var(--rule);background:var(--paper);border-radius:8px}
+.summary-section h3{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink);margin-bottom:.75rem;font-weight:700}
+.condition-bars{display:flex;flex-direction:column;gap:.4rem}
+.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.75rem}
+.cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.7rem;color:var(--ink)}
+.cond-bar-track{flex:1;height:.5rem;background:var(--field-bg);border-radius:3px;position:relative;overflow:hidden}
+.cond-bar-fill{height:100%;position:absolute;left:0;top:0;border-radius:3px}
+.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.7rem;color:var(--mid)}
+.pressure-rank{display:flex;flex-direction:column;gap:.4rem}
+.pressure-rank-item{display:flex;align-items:center;gap:.5rem;font-size:.75rem}
+.pressure-rank-bar{flex:1;height:.5rem;background:var(--field-bg);border-radius:3px;position:relative;overflow:hidden}
+.pressure-rank-fill{height:100%;background:var(--accent);opacity:.7;position:absolute;left:0;top:0;border-radius:3px}
+.pressure-rank-name{width:12rem;text-align:right;font-size:.7rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pressure-rank-count{width:2.5rem;font-family:var(--mono);font-size:.7rem;color:var(--mid)}
 
-/* ── Feature detail (collapsed by default) ── */
-.site-detail{display:none;border-top:1px solid var(--rule);padding:.75rem 1rem;overflow-x:auto}
+.site-detail{display:none;border-top:1px solid var(--rule);padding:1rem 1.2rem;overflow-x:auto;background:var(--field-bg)}
 .site-row.open .site-detail{display:block}
 
-.feature-table{width:100%;border-collapse:collapse;font-size:.75rem}
-.feature-table th{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--mid);padding:.4rem .5rem;text-align:left;border-bottom:2px solid var(--rule)}
-.feature-table td{padding:.4rem .5rem;border-bottom:1px solid var(--rule);vertical-align:top}
-.feature-table tbody tr:hover{background:var(--accent-light)}
+.feature-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.feature-table th{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--mid);padding:.5rem;text-align:left;border-bottom:2px solid var(--rule)}
+.feature-table td{padding:.6rem .5rem;border-bottom:1px solid var(--rule);vertical-align:top}
+.feature-table tbody tr:hover{background:var(--paper)}
 
-.cond-tag{display:inline-block;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.1rem .4rem}
-.pressure-list{font-size:.7rem;color:var(--ink);line-height:1.6}
-.pressure-item{display:inline-block;background:#f0f0ec;padding:.1rem .4rem;margin:.1rem .2rem .1rem 0;font-size:.65rem}
+.cond-tag{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.15rem .4rem;border-radius:3px}
+.pressure-list{font-size:.75rem;color:var(--ink);line-height:1.6}
+.pressure-item{display:inline-block;background:var(--paper);padding:.15rem .5rem;margin:.15rem .25rem .15rem 0;font-size:.7rem;border-radius:3px;border:1px solid var(--rule)}
 .pressure-item .kw{color:var(--accent);margin-left:.2rem;font-weight:600}
-.pressure-item .certainty{color:var(--mid);margin-left:.3rem;font-style:italic;font-size:.6rem}
-.effect-neg{border-left:2px solid var(--accent);padding-left:.3rem}
-.effect-pos{border-left:2px solid var(--success);padding-left:.3rem}
-.no-pressures{color:var(--mid);font-style:italic;font-size:.7rem}
+.effect-neg{border-left:3px solid var(--unfav-decline)}
+.effect-pos{border-left:3px solid var(--success)}
+.no-pressures{color:var(--mid);font-style:italic;font-size:.75rem}
+.sitelink-link{font-size:.7rem;color:var(--accent);text-decoration:none;font-weight:600}
+.sitelink-link:hover{text-decoration:underline}
 
-.sitelink-link{font-size:.65rem;color:var(--mid);text-decoration:underline;text-underline-offset:2px}
-
-/* ── Empty/Loading ── */
 .state-message{text-align:center;padding:4rem 2rem;color:var(--mid)}
-.state-message p{font-size:.85rem;max-width:36ch;margin:0 auto;line-height:1.6}
-.state-message .state-icon{font-size:2rem;margin-bottom:.75rem;display:block;opacity:.4}
+.state-message p{font-size:.9rem;max-width:36ch;margin:0 auto;line-height:1.6}
+.state-message .state-icon{font-size:2.5rem;margin-bottom:1rem;display:block;opacity:.3;color:var(--accent)}
+
 @keyframes spin{to{transform:rotate(360deg)}}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--rule);border-top-color:var(--ink);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.5rem}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--rule);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.5rem}
 
-/* ── Footer ── */
-.colophon{margin-top:3rem;padding-top:.75rem;border-top:1px solid var(--rule);font-size:.65rem;color:var(--mid);display:flex;justify-content:space-between}
-.colophon a{color:var(--mid);text-decoration:underline;text-underline-offset:2px}
+.colophon{padding-top:1rem;border-top:1px solid var(--rule);font-size:.7rem;color:var(--mid);display:flex;justify-content:space-between}
+.colophon a{color:var(--accent);text-decoration:none}
+.colophon a:hover{text-decoration:underline}
 
-/* ── Responsive ── */
-@media(max-width:900px){.controls{grid-template-columns:1fr 1fr}.controls .field-group:first-child{grid-column:1/-1}}
-@media(max-width:600px){.frame{padding:1rem}.controls{grid-template-columns:1fr}.masthead{flex-direction:column;gap:.25rem}.site-header{grid-template-columns:1fr auto;gap:.4rem .5rem;padding:.5rem .75rem}.site-name{white-space:normal;word-break:break-word;overflow-wrap:break-word}.site-meta{display:none}.site-detail{padding:.5rem .75rem}.feature-table{font-size:.65rem}.feature-table th,.feature-table td{padding:.3rem .3rem}.desig-tag{margin-top:.15rem}}
+@media(max-width:900px){
+  .controls{grid-template-columns:1fr 1fr}
+  .controls .field-group:first-child{grid-column:1/-1}
+  .summary-panel{grid-template-columns:1fr}
+  .cond-bar-label,.pressure-rank-name{width:8rem}
+}
+@media(max-width:600px){
+  .hero{padding:2.5rem 1.5rem;border-radius:0 0 1rem 1rem}
+  .hero-title{font-size:2.2rem}
+  .frame{padding:0 1rem 2rem}
+  .data-section{padding:1.5rem;margin-bottom:1.5rem}
+  .controls{grid-template-columns:1fr}
+  .site-header{grid-template-columns:1fr auto;gap:.5rem;padding:.75rem 1rem}
+  .site-name{white-space:normal;word-break:break-word}
+  .site-meta{display:none}
+}
 </style>
 </head>
 <body>
-<div class="frame">
 
-  <header class="masthead">
-    <h1 class="masthead-title">Scottish Protected Areas</h1>
-    <span class="masthead-sub">Environmental Pressures Dashboard</span>
-    <nav class="masthead-nav"><a href="aboutprotectedsites.html">About protected areas</a></nav>
+  <header class="hero">
+    <div class="hero-text">
+      <h1 class="hero-title">Scottish Nature Data</h1>
+      <span class="hero-sub">Environmental Pressures Dashboard</span>
+    </div>
+    <a href="aboutprotectedsites.html" class="cta-primary">About Protected Areas ➔</a>
   </header>
 
-  <div class="controls">
-    <div class="field-group">
-      <label class="field-label" for="postcode">Postcode</label>
-      <div class="field-row">
-        <input type="text" id="postcode" class="field-input" placeholder="e.g. EH1 1RF" autocomplete="postal-code" spellcheck="false">
-        <button class="btn-search" id="btn-search">Search</button>
+  <main class="frame">
+    
+    <section id="protected-areas" class="data-section">
+      <header class="section-header">
+        <h2 class="section-title">Protected areas</h2>
+      </header>
+      
+      <div class="controls">
+        <div class="field-group">
+          <label class="field-label" for="postcode">Postcode</label>
+          <div class="field-row">
+            <input type="text" id="postcode" class="field-input" placeholder="e.g. EH1 1RF" autocomplete="postal-code" spellcheck="false">
+            <button class="btn-search" id="btn-search">Search</button>
+          </div>
+        </div>
+        <div class="field-group" style="align-self:end">
+          <span class="field-label" style="color:var(--rule);text-align:center;">or filter by</span>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="dd-uta">Local Authority</label>
+          <select id="dd-uta" class="field-input"><option value="">— All —</option></select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="dd-spc">Constituency</label>
+          <select id="dd-spc" class="field-input"><option value="">— All —</option></select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="dd-spe">Region</label>
+          <select id="dd-spe" class="field-input"><option value="">— All —</option></select>
+        </div>
       </div>
-    </div>
-    <div class="field-group" style="align-self:end">
-      <span class="field-label" style="color:var(--rule)">or filter by</span>
-      <div style="height:2px;background:var(--rule);margin-top:auto"></div>
-    </div>
-    <div class="field-group">
-      <label class="field-label" for="dd-uta">Local Authority</label>
-      <select id="dd-uta" class="field-input"><option value="">— All —</option></select>
-    </div>
-    <div class="field-group">
-      <label class="field-label" for="dd-spc">Constituency</label>
-      <select id="dd-spc" class="field-input"><option value="">— All —</option></select>
-    </div>
-    <div class="field-group">
-      <label class="field-label" for="dd-spe">Region</label>
-      <select id="dd-spe" class="field-input"><option value="">— All —</option></select>
-    </div>
-  </div>
 
-  <hr class="divider">
+      <div class="status-bar">
+        <span class="status-text" id="status"></span>
+        <span class="status-count" id="count"></span>
+      </div>
 
-  <div class="status-bar">
-    <span class="status-text" id="status"></span>
-    <span class="status-count" id="count"></span>
-  </div>
+      <div id="results">
+        <div class="state-message" id="empty-state">
+          <span class="state-icon">⌖</span>
+          <p>Enter a Scottish postcode to find protected areas within 10km, or select a region to view all sites.</p>
+        </div>
+      </div>
+    </section>
 
-  <div id="results">
-    <div class="state-message" id="empty-state">
-      <span class="state-icon">⌖</span>
-      <p>Enter a Scottish postcode to find protected areas within 10km, or select a region to view all sites.</p>
-    </div>
-  </div>
+    <section id="other-designations" class="data-section">
+      <header class="section-header">
+        <h2 class="section-title">Other nature designations</h2>
+      </header>
+      <div class="placeholder-content">
+        <p>Data and mapping for Local Nature Reserves, Marine Protected Areas, and Regional Parks will be integrated here in a future update.</p>
+      </div>
+    </section>
 
-  <footer class="colophon">
-    <span>Data: NatureScot SiteLink &amp; SCM. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
-  </footer>
+    <section id="water-quality" class="data-section">
+      <header class="section-header">
+        <h2 class="section-title">Water quality</h2>
+      </header>
+      <div class="placeholder-content">
+        <p>Catchment and bathing water quality metrics, river classifications, and pollution incident data will be available here soon.</p>
+      </div>
+    </section>
 
-</div>
+    <footer class="colophon">
+      <span>Data: NatureScot SiteLink &amp; SCM. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
+    </footer>
+
+  </main>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
@@ -256,7 +307,6 @@ function bindEvents() {
   for (const dd of allDropdowns) {
     dd.addEventListener("change", () => {
       EL.postcode.value = "";
-      // Reset the other dropdowns so only one filter is active
       for (const other of allDropdowns) { if (other !== dd) other.value = ""; }
       handleDropdownFilter();
     });
@@ -287,7 +337,6 @@ async function handlePostcodeSearch() {
     const data = await resp.json();
     const lat = data.wgs84_lat; const lng = data.wgs84_lon;
 
-// Find all sites where any part could be within PROXIMITY_KM.
     const nearby = [];
     for (const [paCode, info] of Object.entries(STATE.sites)) {
       if (!info.lat || !info.lng) continue;
@@ -351,7 +400,6 @@ function renderSites(sitesArr, showDistance) {
     clearResults(); return;
   }
 
-  // Build per-entry cards
   const rawCards = [];
   for (const { paCode, dist } of sitesArr) {
     const sd = STATE.siteData[paCode];
@@ -360,10 +408,8 @@ function renderSites(sitesArr, showDistance) {
     const desigObj = sd.designation || {};
     const desigCode = desigObj.code || "";
 
-    // Enrich features with detailed pressure data from pressures.json
     const richPressures = (STATE.pressures[paCode] || {}).pressures || [];
     const features = (sd.features || []).map(f => {
-      // Find matching detailed pressures for this feature
       const matching = richPressures.filter(rp => rp.feature === f.name);
       if (!matching.length) return f;
       return { ...f, pressures: matching.map(rp => ({
@@ -386,22 +432,17 @@ function renderSites(sitesArr, showDistance) {
     });
   }
 
-  // Merge entries that share the same site name + local authority
   const mergeKey = c => `${c.name}\0${c.localAuthority}`;
   const merged = new Map();
   for (const c of rawCards) {
     const key = mergeKey(c);
     if (merged.has(key)) {
       const existing = merged.get(key);
-      // Add new designation codes (no duplicates)
       for (const d of c.designations) {
         if (!existing.designations.includes(d)) existing.designations.push(d);
       }
-      // Use largest area
       if (c.area > existing.area) existing.area = c.area;
-      // Keep closest distance
       if (c.dist !== null && (existing.dist === null || c.dist < existing.dist)) existing.dist = c.dist;
-      // Merge features, avoiding duplicates by name+category
       const existingFeatureKeys = new Set(existing.features.map(f => `${f.name}\0${f.category}`));
       for (const f of c.features) {
         if (!existingFeatureKeys.has(`${f.name}\0${f.category}`)) {
@@ -409,14 +450,12 @@ function renderSites(sitesArr, showDistance) {
           existingFeatureKeys.add(`${f.name}\0${f.category}`);
         }
       }
-      // Keep first URL if current is empty
       if (!existing.url && c.url) existing.url = c.url;
     } else {
       merged.set(key, { ...c, designations: [...c.designations], features: [...c.features] });
     }
   }
 
-  // Build final cards with computed summaries
   const cards = [];
   for (const c of merged.values()) {
     const pressureNames = new Set();
@@ -459,7 +498,6 @@ function renderSites(sitesArr, showDistance) {
   html += '</div>';
   EL.results.innerHTML = html;
 
-  // Bind expand/collapse
   EL.results.querySelectorAll(".site-row").forEach(row => {
     row.querySelector(".site-header").addEventListener("click", () => row.classList.toggle("open"));
   });
@@ -470,7 +508,7 @@ function renderFeatureTable(card) {
   let meta = "";
   if (localAuthority) meta += `<span>${esc(localAuthority)}</span>`;
   if (url) meta += `${meta ? " · " : ""}<a class="sitelink-link" href="${esc(url)}" target="_blank" rel="noopener">View on SiteLink</a>`;
-  if (meta) meta = `<div style="margin-bottom:.5rem;font-size:.7rem;color:var(--mid)">${meta}</div>`;
+  if (meta) meta = `<div style="margin-bottom:1rem;font-size:.75rem;color:var(--mid)">${meta}</div>`;
 
   if (!features.length) return meta + '<div class="no-pressures">No features recorded.</div>';
 
@@ -483,7 +521,6 @@ function renderFeatureTable(card) {
     const pressuresHtml = (f.pressures || []).length
       ? (f.pressures || []).map(p => {
           const effectClass = (p.effect || "").toLowerCase().includes("negative") ? "effect-neg" : (p.effect || "").toLowerCase().includes("positive") ? "effect-pos" : "";
-          // Use detailed pressure description when available, fall back to group name
           const label = p.pressure || p.name || "Unknown";
           const kw = p.keyword ? `<span class="kw">${esc(p.keyword)}</span>` : "";
           return `<span class="pressure-item ${effectClass}">${esc(label)}${kw}</span>`;
@@ -506,7 +543,6 @@ function renderFeatureTable(card) {
    HEADLINE SUMMARY
    ═══════════════════════════════════════════════════════════ */
 function renderSummaryPanel(cards) {
-  // Aggregate conditions across all features in all cards
   const condCounts = { "Favourable": 0, "Unfavourable": 0, "Recovering": 0, "Not Assessed": 0 };
   const pressureCounts = {};
   let totalFeatures = 0;
@@ -527,7 +563,6 @@ function renderSummaryPanel(cards) {
 
   if (!totalFeatures) return "";
 
-  // Condition bars
   const condColours = {
     "Favourable": "var(--success)", "Recovering": "var(--warning)",
     "Unfavourable": "var(--unfav)", "Not Assessed": "var(--mid)"
@@ -543,7 +578,6 @@ function renderSummaryPanel(cards) {
   }
   condHtml += '</div>';
 
-  // Top pressures (up to 5)
   const topPressures = Object.entries(pressureCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const maxP = topPressures.length ? topPressures[0][1] : 1;
   let pressHtml = '<div class="pressure-rank">';
@@ -573,7 +607,6 @@ function getWorstCondition(features) {
   for (const f of features) {
     const s = (f.conditionSummary || "").toLowerCase();
     const d = (f.condition || "").toLowerCase();
-    // Use detailed condition for ranking
     const rank = ranks[d] || ranks[s] || 0;
     if (rank > worstRank) { worstRank = rank; worst = f.conditionSummary || f.condition || ""; }
   }
