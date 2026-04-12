@@ -147,6 +147,16 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
   .site-name{white-space:normal;word-break:break-word}
   .site-meta{display:none}
 }
+
+/* ── Other Designations ── */
+.od-group{margin-bottom:1.5rem}
+.od-group-title{font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:.5rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule)}
+.od-group-count{font-weight:400;color:var(--mid);font-size:.75rem}
+.od-items{display:flex;flex-direction:column;gap:4px}
+.od-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;border:1px solid var(--rule);border-radius:6px;background:var(--field-bg);transition:border-color .1s}
+.od-item:hover{border-color:var(--accent)}
+.od-name{font-weight:600;font-size:.85rem}
+.od-name .site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.75rem}
 </style>
 </head>
 <body>
@@ -208,8 +218,15 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
       <header class="section-header">
         <h2 class="section-title">Other nature designations</h2>
       </header>
-      <div class="placeholder-content">
-        <p>Data and mapping for Local Nature Reserves, Marine Protected Areas, and Regional Parks will be integrated here in a future update.</p>
+      <div class="status-bar">
+        <span class="status-text" id="od-status"></span>
+        <span class="status-count" id="od-count"></span>
+      </div>
+      <div id="od-results">
+        <div class="state-message" id="od-empty-state">
+          <span class="state-icon">⌖</span>
+          <p>Enter a Scottish postcode or select a region above to view other nature designations in your area.</p>
+        </div>
       </div>
     </section>
 
@@ -236,20 +253,21 @@ const CONFIG = {
   MAPIT_API_KEY: "ELNTpDEh11ZUqJUj21zLAmKSWsBOCVSiSniMPIu6",
   MAPIT_BASE: "https://mapit.mysociety.org",
   DATA_DIR: "data/",
-  FILES: { siteData: "site_data.json", metadata: "metadata.json", regions: "regions.json", sites: "sites.json", pressures: "pressures.json" },
+  FILES: { siteData: "site_data.json", metadata: "metadata.json", regions: "regions.json", sites: "sites.json", pressures: "pressures.json", otherDesignations: "other_designations.geojson" },
   PROXIMITY_KM: 10,
 };
 
 /* ═══════════════════════════════════════════════════════════
    STATE
    ═══════════════════════════════════════════════════════════ */
-const STATE = { siteData: null, metadata: null, regions: null, sites: null, pressures: null, lastQuery: null };
+const STATE = { siteData: null, metadata: null, regions: null, sites: null, pressures: null, otherDesigIndex: null, lastQuery: null };
 
 const $ = s => document.querySelector(s);
 const EL = {
   postcode: $("#postcode"), btnSearch: $("#btn-search"),
   ddUTA: $("#dd-uta"), ddSPC: $("#dd-spc"), ddSPE: $("#dd-spe"),
   status: $("#status"), count: $("#count"), results: $("#results"),
+  odStatus: $("#od-status"), odCount: $("#od-count"), odResults: $("#od-results"),
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -258,15 +276,17 @@ const EL = {
 async function init() {
   setStatus("loading", "Loading data…");
   try {
-    const [siteData, metadata, regions, sites, pressures] = await Promise.all([
+    const [siteData, metadata, regions, sites, pressures, otherDesigGeo] = await Promise.all([
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.siteData),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.metadata),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.regions),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.sites),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.pressures),
+      fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.otherDesignations),
     ]);
     STATE.siteData = siteData; STATE.metadata = metadata;
     STATE.regions = regions; STATE.sites = sites; STATE.pressures = pressures;
+    STATE.otherDesigIndex = buildDesignationIndex(otherDesigGeo);
     populateDropdowns(); bindEvents(); setStatus("", "");
   } catch (err) {
     setStatus("error", `Failed to load data: ${err.message}`);
@@ -362,6 +382,9 @@ async function handlePostcodeSearch() {
     STATE.lastQuery = `${raw.toUpperCase()} — ${nearby.length} sites within ${CONFIG.PROXIMITY_KM}km`;
     renderSites(nearby, true);
 
+    const odResults = searchDesignationsByProximity(lat, lng, CONFIG.PROXIMITY_KM);
+    renderOtherDesignations(odResults, true);
+
   } catch (err) {
     if (err.message.includes("Usage limit")) setStatus("error", "MapIt API quota exceeded.");
     else setStatus("error", err.message);
@@ -371,7 +394,7 @@ async function handlePostcodeSearch() {
 /* ═══════════════════════════════════════════════════════════
    DROPDOWN → REGIONAL FILTER
    ═══════════════════════════════════════════════════════════ */
-function handleDropdownFilter() {
+async function handleDropdownFilter() {
   const selectedIds = []; const labels = [];
   for (const dd of [EL.ddUTA, EL.ddSPC, EL.ddSPE]) {
     if (dd.value) {
@@ -379,7 +402,7 @@ function handleDropdownFilter() {
       labels.push(dd.options[dd.selectedIndex].textContent);
     }
   }
-  if (!selectedIds.length) { clearResults(); setStatus("", ""); return; }
+  if (!selectedIds.length) { clearResults(); clearODResults(); setStatus("", ""); setODStatus("", ""); return; }
 
   const siteSet = new Set();
   for (const areaId of selectedIds) {
@@ -389,6 +412,15 @@ function handleDropdownFilter() {
   const sitesArr = [...siteSet].map(paCode => ({ paCode, dist: null }));
   STATE.lastQuery = labels.join(" + ");
   renderSites(sitesArr, false);
+
+  setODStatus("loading", "Searching designations…");
+  try {
+    const odResults = await searchDesignationsByArea(selectedIds[0]);
+    renderOtherDesignations(odResults, false);
+  } catch {
+    setODStatus("error", "Could not load boundary data.");
+    clearODResults();
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -645,6 +677,132 @@ function clearResults() {
   EL.count.textContent = "";
 }
 function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+/* ═══════════════════════════════════════════════════════════
+   OTHER DESIGNATIONS — INDEX
+   ═══════════════════════════════════════════════════════════ */
+function buildDesignationIndex(geojson) {
+  return geojson.features.map(f => {
+    const coords = flattenCoords(f.geometry);
+    const centroid = computeCentroid(coords);
+    const bbox = computeBbox(coords);
+    return {
+      name: f.properties.name || "Unknown",
+      designationType: f.properties.designation_type || "Other",
+      link: f.properties.link || "",
+      code: f.properties.code,
+      lat: centroid[1], lng: centroid[0], bbox,
+    };
+  });
+}
+function flattenCoords(geometry) {
+  const coords = [];
+  (function recurse(arr) {
+    if (typeof arr[0] === "number") { coords.push(arr); return; }
+    for (const item of arr) recurse(item);
+  })(geometry.coordinates);
+  return coords;
+}
+function computeCentroid(coords) {
+  let sLng = 0, sLat = 0;
+  for (const [lng, lat] of coords) { sLng += lng; sLat += lat; }
+  return [sLng / coords.length, sLat / coords.length];
+}
+function computeBbox(coords) {
+  let mnLng = Infinity, mnLat = Infinity, mxLng = -Infinity, mxLat = -Infinity;
+  for (const [lng, lat] of coords) {
+    if (lng < mnLng) mnLng = lng; if (lat < mnLat) mnLat = lat;
+    if (lng > mxLng) mxLng = lng; if (lat > mxLat) mxLat = lat;
+  }
+  return [mnLng, mnLat, mxLng, mxLat];
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OTHER DESIGNATIONS — SEARCH
+   ═══════════════════════════════════════════════════════════ */
+function searchDesignationsByProximity(lat, lng, radiusKm) {
+  const results = [];
+  for (const d of STATE.otherDesigIndex) {
+    const b = d.bbox;
+    const nLat = Math.max(b[1], Math.min(lat, b[3]));
+    const nLng = Math.max(b[0], Math.min(lng, b[2]));
+    const dist = (nLat === lat && nLng === lng) ? 0 : haversine(lat, lng, nLat, nLng);
+    if (dist <= radiusKm) results.push({ ...d, dist: Math.round(dist * 10) / 10 });
+  }
+  results.sort((a, b) => a.dist - b.dist);
+  return results;
+}
+
+async function searchDesignationsByArea(areaId) {
+  const url = `${CONFIG.MAPIT_BASE}/area/${areaId}.geojson`;
+  const resp = await fetch(url, { headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY } });
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const areaGeo = await resp.json();
+  const results = [];
+  for (const d of STATE.otherDesigIndex) {
+    if (pointInGeometry(d.lat, d.lng, areaGeo)) results.push({ ...d, dist: null });
+  }
+  results.sort((a, b) => a.name.localeCompare(b.name));
+  return results;
+}
+
+function pointInPolygonRing(lat, lng, ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+    if (((yi > lat) !== (yj > lat)) && (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+function pointInGeometry(lat, lng, geo) {
+  if (geo.type === "Feature") return pointInGeometry(lat, lng, geo.geometry);
+  if (geo.type === "FeatureCollection") return geo.features.some(f => pointInGeometry(lat, lng, f.geometry));
+  if (geo.type === "Polygon") return pointInPolygonRing(lat, lng, geo.coordinates[0]);
+  if (geo.type === "MultiPolygon") return geo.coordinates.some(p => pointInPolygonRing(lat, lng, p[0]));
+  return false;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OTHER DESIGNATIONS — RENDER
+   ═══════════════════════════════════════════════════════════ */
+function renderOtherDesignations(designations, showDistance) {
+  if (!designations.length) {
+    setODStatus("", "");
+    EL.odResults.innerHTML = '<div class="state-message"><span class="state-icon">∅</span><p>No other nature designations found in this area.</p></div>';
+    EL.odCount.textContent = "";
+    return;
+  }
+  setODStatus("success", STATE.lastQuery || "");
+  EL.odCount.textContent = `${designations.length} designations`;
+
+  const groups = {};
+  for (const d of designations) {
+    const t = d.designationType;
+    if (!groups[t]) groups[t] = [];
+    groups[t].push(d);
+  }
+
+  let html = "";
+  for (const [type, items] of Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0]))) {
+    html += `<div class="od-group"><h3 class="od-group-title">${esc(type)} <span class="od-group-count">(${items.length})</span></h3><div class="od-items">`;
+    for (const d of items) {
+      const distStr = showDistance && d.dist !== null ? `<span class="site-distance">${d.dist} km</span>` : "";
+      const linkHtml = d.link ? `<a class="sitelink-link" href="${esc(d.link)}" target="_blank" rel="noopener">More info</a>` : "";
+      html += `<div class="od-item"><span class="od-name">${esc(d.name)}${distStr}</span>${linkHtml}</div>`;
+    }
+    html += "</div></div>";
+  }
+  EL.odResults.innerHTML = html;
+}
+
+function setODStatus(state, text) {
+  EL.odStatus.dataset.state = state;
+  EL.odStatus.innerHTML = state === "loading" ? `<span class="spinner"></span>${esc(text)}` : esc(text);
+}
+function clearODResults() {
+  EL.odResults.innerHTML = '<div class="state-message"><span class="state-icon">∅</span><p>No results to display.</p></div>';
+  EL.odCount.textContent = "";
+}
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
