@@ -690,21 +690,34 @@ function buildDesignationIndex(geojson) {
       groups.set(code, {
         name: f.properties.name || "Unknown",
         designationType: f.properties.designation_type || "Other",
-        link: f.properties.link || "",
         code,
         allCoords: [],
+        rings: [],
       });
     }
-    const coords = flattenCoords(f.geometry);
-    groups.get(code).allCoords.push(...coords);
+    const g = groups.get(code);
+    g.allCoords.push(...flattenCoords(f.geometry));
+    if (f.geometry.type === "Polygon") g.rings.push(f.geometry.coordinates[0]);
   }
   const index = [];
   for (const g of groups.values()) {
     const centroid = computeCentroid(g.allCoords);
     const bbox = computeBbox(g.allCoords);
-    index.push({ name: g.name, designationType: g.designationType, link: g.link, code: g.code, lat: centroid[1], lng: centroid[0], bbox });
+    const area = g.rings.reduce((sum, ring) => sum + polygonAreaHa(ring), 0);
+    index.push({ name: g.name, designationType: g.designationType, code: g.code, lat: centroid[1], lng: centroid[0], bbox, area: Math.round(area) });
   }
   return index;
+}
+function polygonAreaHa(ring) {
+  const R = 6371000;
+  let a = 0;
+  for (let i = 0, n = ring.length; i < n; i++) {
+    const j = (i + 1) % n;
+    const lng1 = ring[i][0] * Math.PI / 180, lat1 = ring[i][1] * Math.PI / 180;
+    const lng2 = ring[j][0] * Math.PI / 180, lat2 = ring[j][1] * Math.PI / 180;
+    a += (lng2 - lng1) * (2 + Math.sin(lat1) + Math.sin(lat2));
+  }
+  return Math.abs(a) * R * R / 2 / 10000;
 }
 function flattenCoords(geometry) {
   const coords = [];
@@ -798,8 +811,8 @@ function renderOtherDesignations(designations, showDistance) {
     html += `<div class="od-group"><h3 class="od-group-title">${esc(type)} <span class="od-group-count">(${items.length})</span></h3><div class="od-items">`;
     for (const d of items) {
       const distStr = showDistance && d.dist !== null ? `<span class="site-distance">${d.dist} km</span>` : "";
-      const linkHtml = d.link ? `<a class="sitelink-link" href="${esc(d.link)}" target="_blank" rel="noopener">More info</a>` : "";
-      html += `<div class="od-item"><span class="od-name">${esc(d.name)}${distStr}</span>${linkHtml}</div>`;
+      const areaStr = d.area ? `<span class="site-meta">${d.area.toLocaleString()} ha</span>` : "";
+      html += `<div class="od-item"><span class="od-name">${esc(d.name)}${distStr}</span>${areaStr}</div>`;
     }
     html += "</div></div>";
   }
