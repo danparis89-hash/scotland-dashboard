@@ -682,18 +682,29 @@ function esc(s) { const d = document.createElement("div"); d.textContent = s; re
    OTHER DESIGNATIONS — INDEX
    ═══════════════════════════════════════════════════════════ */
 function buildDesignationIndex(geojson) {
-  return geojson.features.map(f => {
+  /* Group by code to merge exploded MultiPolygon fragments */
+  const groups = new Map();
+  for (const f of geojson.features) {
+    const code = f.properties.code;
+    if (!groups.has(code)) {
+      groups.set(code, {
+        name: f.properties.name || "Unknown",
+        designationType: f.properties.designation_type || "Other",
+        link: f.properties.link || "",
+        code,
+        allCoords: [],
+      });
+    }
     const coords = flattenCoords(f.geometry);
-    const centroid = computeCentroid(coords);
-    const bbox = computeBbox(coords);
-    return {
-      name: f.properties.name || "Unknown",
-      designationType: f.properties.designation_type || "Other",
-      link: f.properties.link || "",
-      code: f.properties.code,
-      lat: centroid[1], lng: centroid[0], bbox,
-    };
-  });
+    groups.get(code).allCoords.push(...coords);
+  }
+  const index = [];
+  for (const g of groups.values()) {
+    const centroid = computeCentroid(g.allCoords);
+    const bbox = computeBbox(g.allCoords);
+    index.push({ name: g.name, designationType: g.designationType, link: g.link, code: g.code, lat: centroid[1], lng: centroid[0], bbox });
+  }
+  return index;
 }
 function flattenCoords(geometry) {
   const coords = [];
