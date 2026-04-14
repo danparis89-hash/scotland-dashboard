@@ -592,7 +592,6 @@ function renderFeatureTable(card) {
   const { features, url, localAuthority } = card;
   let meta = "";
   if (localAuthority) meta += `<span>${esc(localAuthority)}</span>`;
-  if (url) meta += `${meta ? " · " : ""}<a class="sitelink-link" href="${esc(url)}" target="_blank" rel="noopener">View on SiteLink</a>`;
   if (meta) meta = `<div style="margin-bottom:1rem;font-size:.75rem;color:var(--mid)">${meta}</div>`;
 
   if (!features.length) return meta + '<div class="no-pressures">No features recorded.</div>';
