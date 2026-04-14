@@ -1026,7 +1026,8 @@ function renderWQSummary(results) {
   const classCounts = { "High": 0, "Good": 0, "Moderate": 0, "Poor": 0, "Bad": 0 };
   const typeCounts = {};
   for (const r of results) {
-    if (r.classification in classCounts) classCounts[r.classification]++;
+    const level = extractWfdLevel(r.classification);
+    if (level) classCounts[level]++;
     typeCounts[r.type] = (typeCounts[r.type] || 0) + 1;
   }
   const total = results.length;
@@ -1052,13 +1053,23 @@ function renderWQSummary(results) {
   return `<div class="summary-panel"><div class="summary-section"><h3>WFD classification (${total} water bodies)</h3>${classHtml}</div><div class="summary-section"><h3>Water body types</h3>${typeHtml}</div></div>`;
 }
 
-function wqClassCss(classification) {
+function extractWfdLevel(classification) {
   const c = (classification || "").toLowerCase();
-  if (c === "high") return "wq-high";
-  if (c === "good") return "wq-good";
-  if (c === "moderate") return "wq-moderate";
-  if (c === "poor") return "wq-poor";
-  if (c === "bad") return "wq-bad";
+  if (c.includes("bad")) return "Bad";
+  if (c.includes("poor")) return "Poor";
+  if (c.includes("moderate")) return "Moderate";
+  if (c.includes("good")) return "Good";
+  if (c.includes("high")) return "High";
+  return null;
+}
+
+function wqClassCss(classification) {
+  const level = extractWfdLevel(classification);
+  if (level === "High") return "wq-high";
+  if (level === "Good") return "wq-good";
+  if (level === "Moderate") return "wq-moderate";
+  if (level === "Poor") return "wq-poor";
+  if (level === "Bad") return "wq-bad";
   return "wq-unknown";
 }
 
