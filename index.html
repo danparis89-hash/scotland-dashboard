@@ -178,6 +178,7 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .wq-poor{background:var(--warning-light);color:var(--warning)}
 .wq-bad{background:#fbe8e8;color:var(--unfav-decline)}
 .wq-unknown{background:var(--paper);color:var(--mid)}
+#water-quality .cond-bar-label{width:14rem}
 </style>
 </head>
 <body>
@@ -1023,20 +1024,25 @@ function renderWaterQuality(results) {
 }
 
 function renderWQSummary(results) {
-  const classCounts = { "High": 0, "Good": 0, "Moderate": 0, "Poor": 0, "Bad": 0 };
+  const classCounts = {};
   const typeCounts = {};
   for (const r of results) {
-    const level = extractWfdLevel(r.classification);
-    if (level) classCounts[level]++;
+    classCounts[r.classification] = (classCounts[r.classification] || 0) + 1;
     typeCounts[r.type] = (typeCounts[r.type] || 0) + 1;
   }
   const total = results.length;
-  const classColours = { "High": "#2563eb", "Good": "var(--success)", "Moderate": "#b8860b", "Poor": "var(--warning)", "Bad": "var(--unfav-decline)" };
+  const levelColours = { "High": "#2563eb", "Good": "var(--success)", "Moderate": "#b8860b", "Poor": "var(--warning)", "Bad": "var(--unfav-decline)" };
+  const levelRank = { "High": 0, "Good": 1, "Moderate": 2, "Poor": 3, "Bad": 4 };
+  const sorted = Object.entries(classCounts).sort((a, b) => {
+    const la = extractWfdLevel(a[0]), lb = extractWfdLevel(b[0]);
+    return (levelRank[la] ?? 5) - (levelRank[lb] ?? 5);
+  });
 
   let classHtml = '<div class="condition-bars">';
-  for (const [label, count] of Object.entries(classCounts)) {
+  for (const [label, count] of sorted) {
     const pct = total ? (count / total * 100) : 0;
-    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${classColours[label]}"></div></div><span class="cond-bar-count">${count}</span></div>`;
+    const colour = levelColours[extractWfdLevel(label)] || "var(--mid)";
+    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${colour}"></div></div><span class="cond-bar-count">${count}</span></div>`;
   }
   classHtml += '</div>';
 
