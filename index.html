@@ -592,7 +592,6 @@ function renderFeatureTable(card) {
   const { features, url, localAuthority } = card;
   let meta = "";
   if (localAuthority) meta += `<span>${esc(localAuthority)}</span>`;
-  if (url) meta += `${meta ? " · " : ""}<a class="sitelink-link" href="${esc(url)}" target="_blank" rel="noopener">View on SiteLink</a>`;
   if (meta) meta = `<div style="margin-bottom:1rem;font-size:.75rem;color:var(--mid)">${meta}</div>`;
 
   if (!features.length) return meta + '<div class="no-pressures">No features recorded.</div>';
@@ -890,7 +889,7 @@ const WQ_LAYER_IDS = Object.keys(WQ_LAYERS);
 async function querySepaLayer(layerId, params) {
   const base = `${CONFIG.SEPA_BASE}/${layerId}/query`;
   const fixed = {
-    outFields: "WATER_BODY_NAME,OVERALL_CLASSIFICATION,CLASSIFICATION_YEAR,TARGET_CLASS",
+    outFields: "*",
     inSR: "4326",
     spatialRel: "esriSpatialRelIntersects",
     returnGeometry: "false",
@@ -898,17 +897,24 @@ async function querySepaLayer(layerId, params) {
     ...params,
   };
   const qs = Object.entries(fixed).map(([k, v]) => `${k}=${v}`).join("&");
-  const resp = await fetch(`${base}?${qs}`);
-  if (!resp.ok) throw new Error(`SEPA HTTP ${resp.status}`);
+  const url = `${base}?${qs}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`SEPA HTTP ${resp.status} for layer ${layerId}`);
   const data = await resp.json();
-  if (data.error) throw new Error(data.error.message || "SEPA query failed");
-  return (data.features || []).map(f => ({
-    name: f.attributes.WATER_BODY_NAME || "Unknown",
-    classification: f.attributes.OVERALL_CLASSIFICATION || "Not assessed",
-    year: f.attributes.CLASSIFICATION_YEAR || null,
-    targetClass: f.attributes.TARGET_CLASS || null,
-    type: WQ_LAYERS[layerId],
-  }));
+  if (data.error) {
+    const details = (data.error.details || []).join("; ");
+    throw new Error(`${data.error.message || "SEPA query failed"} (code ${data.error.code || "?"}${details ? ": " + details : ""}) — ${url}`);
+  }
+  return (data.features || []).map(f => {
+    const a = f.attributes || {};
+    return {
+      name: a.WATER_BODY_NAME || a.water_body_name || a.WaterBodyName || "Unknown",
+      classification: a.OVERALL_CLASSIFICATION || a.overall_classification || a.OverallClassification || "Not assessed",
+      year: a.CLASSIFICATION_YEAR || a.classification_year || a.ClassificationYear || null,
+      targetClass: a.TARGET_CLASS || a.target_class || a.TargetClass || null,
+      type: WQ_LAYERS[layerId],
+    };
+  });
 }
 
 function deduplicateWQ(items) {
