@@ -146,6 +146,8 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
   .site-header{grid-template-columns:1fr auto;gap:.5rem;padding:.75rem 1rem}
   .site-name{white-space:normal;word-break:break-word}
   .site-meta{display:none}
+  .wq-item{flex-wrap:wrap;gap:.5rem}
+  .wq-name{white-space:normal;width:100%}
 }
 
 /* ── Other Designations ── */
@@ -157,6 +159,25 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .od-item:hover{border-color:var(--accent)}
 .od-name{font-weight:600;font-size:.85rem}
 .od-name .site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.75rem}
+
+/* ── Water Quality ── */
+.wq-group{margin-bottom:1.5rem}
+.wq-group-title{font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:.5rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule)}
+.wq-group-count{font-weight:400;color:var(--mid);font-size:.75rem}
+.wq-items{display:flex;flex-direction:column;gap:4px}
+.wq-item{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem 1rem;border:1px solid var(--rule);background:var(--field-bg);transition:border-color .1s}
+.wq-item:hover{border-color:var(--accent)}
+.wq-name{font-weight:600;font-size:.85rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wq-meta{display:flex;align-items:center;gap:.75rem;flex-shrink:0}
+.wq-class{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:3px;white-space:nowrap}
+.wq-year{font-family:var(--mono);font-size:.7rem;color:var(--mid);white-space:nowrap}
+.wq-target{font-size:.7rem;color:var(--mid);white-space:nowrap}
+.wq-high{background:#dbeafe;color:#1d4ed8}
+.wq-good{background:var(--success-light);color:var(--success)}
+.wq-moderate{background:#fef3c7;color:#92400e}
+.wq-poor{background:var(--warning-light);color:var(--warning)}
+.wq-bad{background:#fbe8e8;color:var(--unfav-decline)}
+.wq-unknown{background:var(--paper);color:var(--mid)}
 </style>
 </head>
 <body>
@@ -234,13 +255,20 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
       <header class="section-header">
         <h2 class="section-title">Water quality</h2>
       </header>
-      <div class="placeholder-content">
-        <p>Catchment and bathing water quality metrics, river classifications, and pollution incident data will be available here soon.</p>
+      <div class="status-bar">
+        <span class="status-text" id="wq-status"></span>
+        <span class="status-count" id="wq-count"></span>
+      </div>
+      <div id="wq-results">
+        <div class="state-message" id="wq-empty-state">
+          <span class="state-icon">⌖</span>
+          <p>Enter a Scottish postcode or select a region above to view water quality classifications in your area.</p>
+        </div>
       </div>
     </section>
 
     <footer class="colophon">
-      <span>Data: NatureScot SiteLink &amp; SCM. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
+      <span>Data: NatureScot SiteLink &amp; SCM, <a href="https://www.sepa.org.uk" target="_blank" rel="noopener">SEPA</a>. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
     </footer>
 
   </main>
@@ -255,6 +283,7 @@ const CONFIG = {
   DATA_DIR: "data/",
   FILES: { siteData: "site_data.json", metadata: "metadata.json", regions: "regions.json", sites: "sites.json", pressures: "pressures.json", otherDesignations: "other_designations.geojson" },
   PROXIMITY_KM: 10,
+  SEPA_BASE: "https://map.sepa.org.uk/server/rest/services/Open/Hydrography/MapServer",
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -268,6 +297,7 @@ const EL = {
   ddUTA: $("#dd-uta"), ddSPC: $("#dd-spc"), ddSPE: $("#dd-spe"),
   status: $("#status"), count: $("#count"), results: $("#results"),
   odStatus: $("#od-status"), odCount: $("#od-count"), odResults: $("#od-results"),
+  wqStatus: $("#wq-status"), wqCount: $("#wq-count"), wqResults: $("#wq-results"),
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -385,6 +415,8 @@ async function handlePostcodeSearch() {
     const odResults = searchDesignationsByProximity(lat, lng, CONFIG.PROXIMITY_KM);
     renderOtherDesignations(odResults, true);
 
+    fetchAndRenderWaterQuality(lat, lng);
+
   } catch (err) {
     if (err.message.includes("Usage limit")) setStatus("error", "MapIt API quota exceeded.");
     else setStatus("error", err.message);
@@ -402,7 +434,7 @@ async function handleDropdownFilter() {
       labels.push(dd.options[dd.selectedIndex].textContent);
     }
   }
-  if (!selectedIds.length) { clearResults(); clearODResults(); setStatus("", ""); setODStatus("", ""); return; }
+  if (!selectedIds.length) { clearResults(); clearODResults(); clearWQResults(); setStatus("", ""); setODStatus("", ""); setWQStatus("", ""); return; }
 
   const siteSet = new Set();
   for (const areaId of selectedIds) {
@@ -414,12 +446,33 @@ async function handleDropdownFilter() {
   renderSites(sitesArr, false);
 
   setODStatus("loading", "Searching designations…");
+  setWQStatus("loading", "Searching water bodies…");
   try {
-    const odResults = await searchDesignationsByArea(selectedIds[0]);
+    const areaUrl = `${CONFIG.MAPIT_BASE}/area/${selectedIds[0]}.geojson`;
+    const areaResp = await fetch(areaUrl, { headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY } });
+    if (!areaResp.ok) throw new Error(`HTTP ${areaResp.status}`);
+    const areaGeo = await areaResp.json();
+
+    const odResults = [];
+    for (const d of STATE.otherDesigIndex) {
+      if (pointInGeometry(d.lat, d.lng, areaGeo)) odResults.push({ ...d, dist: null });
+    }
+    odResults.sort((a, b) => a.name.localeCompare(b.name));
     renderOtherDesignations(odResults, false);
+
+    try {
+      const bbox = geojsonBbox(areaGeo);
+      const wqResults = await fetchWaterQualityByEnvelope(bbox);
+      renderWaterQuality(wqResults);
+    } catch {
+      setWQStatus("error", "Could not load water quality data.");
+      clearWQResults();
+    }
   } catch {
     setODStatus("error", "Could not load boundary data.");
     clearODResults();
+    setWQStatus("error", "Could not load boundary data.");
+    clearWQResults();
   }
 }
 
@@ -826,6 +879,181 @@ function setODStatus(state, text) {
 function clearODResults() {
   EL.odResults.innerHTML = '<div class="state-message"><span class="state-icon">∅</span><p>No results to display.</p></div>';
   EL.odCount.textContent = "";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   WATER QUALITY — SEPA QUERIES
+   ═══════════════════════════════════════════════════════════ */
+const WQ_LAYERS = { 0: "Groundwater", 1: "Estuaries", 2: "Coastal", 3: "Loch", 4: "River" };
+const WQ_LAYER_IDS = Object.keys(WQ_LAYERS);
+
+async function querySepaLayer(layerId, params) {
+  const base = `${CONFIG.SEPA_BASE}/${layerId}/query`;
+  const qs = new URLSearchParams({
+    outFields: "WATER_BODY_NAME,OVERALL_CLASSIFICATION,CLASSIFICATION_YEAR,TARGET_CLASS",
+    inSR: "4326",
+    spatialRel: "esriSpatialRelIntersects",
+    returnGeometry: "false",
+    f: "json",
+    ...params,
+  });
+  const resp = await fetch(`${base}?${qs}`);
+  if (!resp.ok) throw new Error(`SEPA HTTP ${resp.status}`);
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error.message || "SEPA query failed");
+  return (data.features || []).map(f => ({
+    name: f.attributes.WATER_BODY_NAME || "Unknown",
+    classification: f.attributes.OVERALL_CLASSIFICATION || "Not assessed",
+    year: f.attributes.CLASSIFICATION_YEAR || null,
+    targetClass: f.attributes.TARGET_CLASS || null,
+    type: WQ_LAYERS[layerId],
+  }));
+}
+
+function deduplicateWQ(items) {
+  const seen = new Map();
+  for (const item of items) {
+    const key = `${item.name}\0${item.type}`;
+    const existing = seen.get(key);
+    if (!existing || (item.year && (!existing.year || item.year > existing.year))) {
+      seen.set(key, item);
+    }
+  }
+  return [...seen.values()];
+}
+
+async function fetchWaterQualityByPoint(lat, lng, radiusKm) {
+  const params = {
+    geometry: `${lng},${lat}`,
+    geometryType: "esriGeometryPoint",
+    distance: String(radiusKm * 1000),
+    units: "esriSRUnit_Meter",
+  };
+  const results = await Promise.all(WQ_LAYER_IDS.map(id => querySepaLayer(id, params).catch(() => [])));
+  return deduplicateWQ(results.flat());
+}
+
+async function fetchWaterQualityByEnvelope(bbox) {
+  const params = {
+    geometry: `${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]}`,
+    geometryType: "esriGeometryEnvelope",
+  };
+  const results = await Promise.all(WQ_LAYER_IDS.map(id => querySepaLayer(id, params).catch(() => [])));
+  return deduplicateWQ(results.flat());
+}
+
+function geojsonBbox(geo) {
+  let mnLng = Infinity, mnLat = Infinity, mxLng = -Infinity, mxLat = -Infinity;
+  function walk(arr) {
+    if (typeof arr[0] === "number") {
+      if (arr[0] < mnLng) mnLng = arr[0]; if (arr[1] < mnLat) mnLat = arr[1];
+      if (arr[0] > mxLng) mxLng = arr[0]; if (arr[1] > mxLat) mxLat = arr[1];
+      return;
+    }
+    for (const c of arr) walk(c);
+  }
+  function process(g) {
+    if (g.type === "Feature") process(g.geometry);
+    else if (g.type === "FeatureCollection") g.features.forEach(f => process(f));
+    else if (g.coordinates) walk(g.coordinates);
+  }
+  process(geo);
+  return [mnLng, mnLat, mxLng, mxLat];
+}
+
+async function fetchAndRenderWaterQuality(lat, lng) {
+  setWQStatus("loading", "Searching water bodies…");
+  try {
+    const results = await fetchWaterQualityByPoint(lat, lng, CONFIG.PROXIMITY_KM);
+    renderWaterQuality(results);
+  } catch {
+    setWQStatus("error", "Could not load water quality data.");
+    clearWQResults();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   WATER QUALITY — RENDER
+   ═══════════════════════════════════════════════════════════ */
+function renderWaterQuality(results) {
+  if (!results.length) {
+    setWQStatus("", "");
+    EL.wqResults.innerHTML = '<div class="state-message"><span class="state-icon">∅</span><p>No water body classifications found in this area.</p></div>';
+    EL.wqCount.textContent = "";
+    return;
+  }
+  setWQStatus("success", STATE.lastQuery || "");
+  EL.wqCount.textContent = `${results.length} water bodies`;
+
+  let html = renderWQSummary(results);
+  const groups = {};
+  for (const r of results) { (groups[r.type] || (groups[r.type] = [])).push(r); }
+
+  const typeOrder = ["River", "Loch", "Coastal", "Estuaries", "Groundwater"];
+  for (const type of typeOrder) {
+    const items = groups[type];
+    if (!items || !items.length) continue;
+    items.sort((a, b) => a.name.localeCompare(b.name));
+    html += `<div class="wq-group"><h3 class="wq-group-title">${esc(type)} <span class="wq-group-count">(${items.length})</span></h3><div class="wq-items">`;
+    for (const item of items) {
+      const cls = wqClassCss(item.classification);
+      const yearStr = item.year ? `<span class="wq-year">${esc(String(item.year))}</span>` : "";
+      const targetStr = item.targetClass && item.targetClass !== item.classification
+        ? `<span class="wq-target">\u2192 ${esc(item.targetClass)}</span>` : "";
+      html += `<div class="wq-item"><div class="wq-name">${esc(item.name)}</div><div class="wq-meta"><span class="wq-class ${cls}">${esc(item.classification)}</span>${yearStr}${targetStr}</div></div>`;
+    }
+    html += "</div></div>";
+  }
+  EL.wqResults.innerHTML = html;
+}
+
+function renderWQSummary(results) {
+  const classCounts = { "High": 0, "Good": 0, "Moderate": 0, "Poor": 0, "Bad": 0 };
+  const typeCounts = {};
+  for (const r of results) {
+    if (r.classification in classCounts) classCounts[r.classification]++;
+    typeCounts[r.type] = (typeCounts[r.type] || 0) + 1;
+  }
+  const total = results.length;
+  const classColours = { "High": "#2563eb", "Good": "var(--success)", "Moderate": "#b8860b", "Poor": "var(--warning)", "Bad": "var(--unfav-decline)" };
+
+  let classHtml = '<div class="condition-bars">';
+  for (const [label, count] of Object.entries(classCounts)) {
+    const pct = total ? (count / total * 100) : 0;
+    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${classColours[label]}"></div></div><span class="cond-bar-count">${count}</span></div>`;
+  }
+  classHtml += '</div>';
+
+  const typeOrder = ["River", "Loch", "Coastal", "Estuaries", "Groundwater"];
+  const maxT = Math.max(...Object.values(typeCounts), 1);
+  let typeHtml = '<div class="pressure-rank">';
+  for (const type of typeOrder) {
+    const count = typeCounts[type] || 0;
+    if (!count) continue;
+    typeHtml += `<div class="pressure-rank-item"><span class="pressure-rank-name">${esc(type)}</span><div class="pressure-rank-bar"><div class="pressure-rank-fill" style="width:${(count / maxT * 100).toFixed(1)}%"></div></div><span class="pressure-rank-count">${count}</span></div>`;
+  }
+  typeHtml += '</div>';
+
+  return `<div class="summary-panel"><div class="summary-section"><h3>WFD classification (${total} water bodies)</h3>${classHtml}</div><div class="summary-section"><h3>Water body types</h3>${typeHtml}</div></div>`;
+}
+
+function wqClassCss(classification) {
+  const c = (classification || "").toLowerCase();
+  if (c === "high") return "wq-high";
+  if (c === "good") return "wq-good";
+  if (c === "moderate") return "wq-moderate";
+  if (c === "poor") return "wq-poor";
+  if (c === "bad") return "wq-bad";
+  return "wq-unknown";
+}
+
+function setWQStatus(state, text) {
+  EL.wqStatus.dataset.state = state;
+  EL.wqStatus.innerHTML = state === "loading" ? `<span class="spinner"></span>${esc(text)}` : esc(text);
+}
+function clearWQResults() {
+  EL.wqResults.innerHTML = '<div class="state-message"><span class="state-icon">\u2205</span><p>No results to display.</p></div>';
+  EL.wqCount.textContent = "";
 }
 
 document.addEventListener("DOMContentLoaded", init);
