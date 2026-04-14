@@ -464,8 +464,8 @@ async function handleDropdownFilter() {
       const bbox = geojsonBbox(areaGeo);
       const wqResults = await fetchWaterQualityByEnvelope(bbox);
       renderWaterQuality(wqResults);
-    } catch {
-      setWQStatus("error", "Could not load water quality data.");
+    } catch (err) {
+      setWQStatus("error", `Could not load water quality data: ${err.message}`);
       clearWQResults();
     }
   } catch {
@@ -890,6 +890,7 @@ const WQ_LAYER_IDS = Object.keys(WQ_LAYERS);
 async function querySepaLayer(layerId, params) {
   const base = `${CONFIG.SEPA_BASE}/${layerId}/query`;
   const qs = new URLSearchParams({
+    where: "1=1",
     outFields: "WATER_BODY_NAME,OVERALL_CLASSIFICATION,CLASSIFICATION_YEAR,TARGET_CLASS",
     inSR: "4326",
     spatialRel: "esriSpatialRelIntersects",
@@ -922,6 +923,16 @@ function deduplicateWQ(items) {
   return [...seen.values()];
 }
 
+async function queryAllSepaLayers(params) {
+  const settled = await Promise.allSettled(WQ_LAYER_IDS.map(id => querySepaLayer(id, params)));
+  const successes = settled.filter(r => r.status === "fulfilled");
+  if (!successes.length) {
+    const firstErr = settled.find(r => r.status === "rejected");
+    throw new Error(firstErr?.reason?.message || "All SEPA queries failed");
+  }
+  return deduplicateWQ(successes.flatMap(r => r.value));
+}
+
 async function fetchWaterQualityByPoint(lat, lng, radiusKm) {
   const params = {
     geometry: `${lng},${lat}`,
@@ -929,8 +940,7 @@ async function fetchWaterQualityByPoint(lat, lng, radiusKm) {
     distance: String(radiusKm * 1000),
     units: "esriSRUnit_Meter",
   };
-  const results = await Promise.all(WQ_LAYER_IDS.map(id => querySepaLayer(id, params).catch(() => [])));
-  return deduplicateWQ(results.flat());
+  return queryAllSepaLayers(params);
 }
 
 async function fetchWaterQualityByEnvelope(bbox) {
@@ -938,8 +948,7 @@ async function fetchWaterQualityByEnvelope(bbox) {
     geometry: `${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]}`,
     geometryType: "esriGeometryEnvelope",
   };
-  const results = await Promise.all(WQ_LAYER_IDS.map(id => querySepaLayer(id, params).catch(() => [])));
-  return deduplicateWQ(results.flat());
+  return queryAllSepaLayers(params);
 }
 
 function geojsonBbox(geo) {
@@ -966,8 +975,8 @@ async function fetchAndRenderWaterQuality(lat, lng) {
   try {
     const results = await fetchWaterQualityByPoint(lat, lng, CONFIG.PROXIMITY_KM);
     renderWaterQuality(results);
-  } catch {
-    setWQStatus("error", "Could not load water quality data.");
+  } catch (err) {
+    setWQStatus("error", `Could not load water quality data: ${err.message}`);
     clearWQResults();
   }
 }
