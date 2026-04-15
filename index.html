@@ -200,10 +200,9 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .bw-items{display:flex;flex-direction:column;gap:4px}
 .bw-row{border:1px solid var(--rule);background:var(--field-bg);cursor:pointer;transition:border-color .1s,box-shadow .15s;overflow:hidden}
 .bw-row:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(36,130,77,0.1)}
-.bw-header{display:grid;grid-template-columns:1fr auto auto auto;gap:1rem;align-items:center;padding:.85rem 1.2rem}
+.bw-header{display:grid;grid-template-columns:1fr auto auto;gap:1rem;align-items:center;padding:.85rem 1.2rem}
 .bw-name{font-weight:700;font-size:.9rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bw-name .site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.75rem}
-.bw-medium{font-size:.7rem;color:var(--mid);white-space:nowrap}
 .bw-class{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:3px;white-space:nowrap}
 .bw-excellent{background:#dbeafe;color:#1d4ed8}
 .bw-good{background:var(--success-light);color:var(--success)}
@@ -216,9 +215,10 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .bw-row.open .bw-detail{display:block}
 .bw-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem}
 .bw-detail-section h4{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
-.bw-history{display:flex;gap:3px;align-items:end;height:2.5rem}
+.bw-history{display:flex;gap:3px;align-items:end}
 .bw-history-bar{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}
-.bw-history-pip{width:100%;min-width:8px;max-width:24px;border-radius:2px}
+.bw-history-track{height:3rem;display:flex;align-items:end}
+.bw-history-pip{width:14px;min-width:8px;border-radius:2px}
 .bw-history-year{font-size:.55rem;color:var(--mid);font-family:var(--mono)}
 .bw-sample-table{width:100%;border-collapse:collapse;font-size:.75rem}
 .bw-sample-table th{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--mid);padding:.4rem .5rem;text-align:left;border-bottom:2px solid var(--rule)}
@@ -232,7 +232,6 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 #bathing-water .cond-bar-label{width:10rem}
 @media(max-width:600px){
   .bw-header{grid-template-columns:1fr auto;gap:.5rem}
-  .bw-medium{display:none}
   .bw-detail-grid{grid-template-columns:1fr}
 }
 </style>
@@ -1223,12 +1222,10 @@ function renderBathingWater(results, showDistance) {
   for (const site of results) {
     const distStr = showDistance && site.dist !== null ? `<span class="site-distance">${site.dist} km</span>` : "";
     const clsCss = bwClassCss(site.classification);
-    const yearStr = site.latestYear ? ` (${site.latestYear})` : "";
 
     html += `<div class="bw-row">
       <div class="bw-header">
         <div class="bw-name">${esc(site.name)}${distStr}</div>
-        <div class="bw-medium">${esc(site.medium)}</div>
         <div class="bw-class ${clsCss}">${esc(site.classification)}</div>
         <div class="bw-expand-icon">\u25B6</div>
       </div>
@@ -1250,24 +1247,24 @@ function renderBWDetail(site) {
   if (site.classHistory && site.classHistory.length) {
     html += '<div class="bw-detail-section"><h4>Classification history</h4><div class="bw-history">';
     const classColours = { "Excellent": "#2563eb", "Good": "#176b32", "Sufficient": "#b8860b", "Poor": "#c22929" };
-    const classHeights = { "Excellent": "100%", "Good": "75%", "Sufficient": "50%", "Poor": "25%" };
+    const classPixels = { "Excellent": 48, "Good": 36, "Sufficient": 24, "Poor": 12 };
     for (const h of site.classHistory) {
       const col = classColours[h.class] || "var(--mid)";
-      const ht = classHeights[h.class] || "10%";
-      html += `<div class="bw-history-bar"><div class="bw-history-pip" style="height:${ht};background:${col}" title="${h.class} (${h.year})"></div><span class="bw-history-year">${String(h.year).slice(-2)}</span></div>`;
+      const px = classPixels[h.class] || 6;
+      html += `<div class="bw-history-bar"><div class="bw-history-track"><div class="bw-history-pip" style="height:${px}px;background:${col}" title="${h.class} (${h.year})"></div></div><span class="bw-history-year">${String(h.year).slice(-2)}</span></div>`;
     }
     html += '</div></div>';
   }
 
   // Yearly summary stats
   if (site.yearly && Object.keys(site.yearly).length) {
-    html += '<div class="bw-detail-section"><h4>Recent seasons (mean / max)</h4><div class="bw-yearly-stats">';
+    html += '<div class="bw-detail-section"><h4>Recent seasons (litter / sewage detected)</h4><div class="bw-yearly-stats">';
     const years = Object.keys(site.yearly).sort();
     for (const yr of years) {
       const y = site.yearly[yr];
-      const ecoliStr = y.ecoli_mean != null ? `E.coli: ${y.ecoli_mean} / ${y.ecoli_max}` : "E.coli: —";
-      const ieStr = y.ie_mean != null ? `IE: ${y.ie_mean} / ${y.ie_max}` : "IE: —";
-      html += `<div class="bw-yearly-row"><span class="bw-yearly-label">${yr} (${y.n} samples)</span><span class="bw-yearly-val">${ecoliStr} &nbsp; ${ieStr}</span></div>`;
+      const litterStr = `Litter: ${y.litter_present}/${y.n}`;
+      const sewageStr = `Sewage: ${y.sewage_present}/${y.n}`;
+      html += `<div class="bw-yearly-row"><span class="bw-yearly-label">${yr} (${y.n} samples)</span><span class="bw-yearly-val">${litterStr} &nbsp; ${sewageStr}</span></div>`;
     }
     html += '</div></div>';
   }
@@ -1277,11 +1274,11 @@ function renderBWDetail(site) {
   // Latest season samples table
   if (site.latestSamples && site.latestSamples.length) {
     html += `<div class="bw-detail-section"><h4>${site.latestYear} samples</h4>`;
-    html += '<table class="bw-sample-table"><thead><tr><th>Date</th><th>E. coli</th><th>IE</th></tr></thead><tbody>';
+    html += '<table class="bw-sample-table"><thead><tr><th>Date</th><th>Litter</th><th>Sewage solids</th></tr></thead><tbody>';
     for (const s of site.latestSamples) {
-      const eClass = s.ecoli != null && s.ecoli > 500 ? ' class="bw-val-high"' : "";
-      const iClass = s.ie != null && s.ie > 200 ? ' class="bw-val-high"' : "";
-      html += `<tr><td style="font-family:var(--sans)">${esc(s.date)}</td><td${eClass}>${s.ecoli != null ? s.ecoli : "—"}</td><td${iClass}>${s.ie != null ? s.ie : "—"}</td></tr>`;
+      const lClass = s.litter && s.litter !== "None" && s.litter !== "Trace" ? ' class="bw-val-high"' : "";
+      const sClass = s.sewage && s.sewage !== "None" && s.sewage !== "Trace" ? ' class="bw-val-high"' : "";
+      html += `<tr><td style="font-family:var(--sans)">${esc(s.date)}</td><td${lClass}>${esc(s.litter || "—")}</td><td${sClass}>${esc(s.sewage || "—")}</td></tr>`;
     }
     html += '</tbody></table></div>';
   }
@@ -1307,16 +1304,7 @@ function renderBWSummary(results) {
   }
   classHtml += '</div>';
 
-  const mediumCounts = {};
-  for (const r of results) { mediumCounts[r.medium] = (mediumCounts[r.medium] || 0) + 1; }
-  const maxM = Math.max(...Object.values(mediumCounts), 1);
-  let medHtml = '<div class="pressure-rank">';
-  for (const [type, count] of Object.entries(mediumCounts).sort((a, b) => b[1] - a[1])) {
-    medHtml += `<div class="pressure-rank-item"><span class="pressure-rank-name">${esc(type)}</span><div class="pressure-rank-bar"><div class="pressure-rank-fill" style="width:${(count / maxM * 100).toFixed(1)}%"></div></div><span class="pressure-rank-count">${count}</span></div>`;
-  }
-  medHtml += '</div>';
-
-  return `<div class="summary-panel"><div class="summary-section"><h3>Bathing water classification (${total} sites)</h3>${classHtml}</div><div class="summary-section"><h3>Water type</h3>${medHtml}</div></div>`;
+  return `<div class="summary-panel"><div class="summary-section"><h3>Bathing water classification (${total} sites)</h3>${classHtml}</div></div>`;
 }
 
 function bwClassCss(classification) {

@@ -116,6 +116,23 @@ def parse_number(val):
         return None
 
 
+def normalise_visual(val):
+    """Normalise visual assessment text to a consistent category."""
+    if not val:
+        return "None"
+    val = val.strip().strip(",").strip()
+    low = val.lower()
+    if not low or low == "none" or low == "none, none" or low == "none , none":
+        return "None"
+    if "gross" in low or "severe" in low:
+        return "Severe"
+    if "obvious" in low:
+        return "Obvious"
+    if "trace" in low:
+        return "Trace"
+    return val
+
+
 def parse_date(val):
     """Parse date string like '17 May 2005'."""
     if not val or not val.strip():
@@ -209,6 +226,8 @@ def main():
 
         ecoli = parse_number(row.get("E. coli", ""))
         ie = parse_number(row.get("IE", ""))
+        litter = normalise_visual(row.get("Litter & Non-Sewage Solids", ""))
+        sewage = normalise_visual(row.get("Sewage Solids", ""))
 
         sites[name]["medium"] = medium
         sites[name]["samples"].append({
@@ -216,6 +235,8 @@ def main():
             "year": date.year,
             "ecoli": ecoli,
             "ie": ie,
+            "litter": litter,
+            "sewage": sewage,
         })
 
     # Build output
@@ -236,15 +257,13 @@ def main():
         yearly = {}
         for year in years:
             year_samples = [s for s in samples if s["year"] == year]
-            ecoli_vals = [s["ecoli"] for s in year_samples if s["ecoli"] is not None]
-            ie_vals = [s["ie"] for s in year_samples if s["ie"] is not None]
+            litter_present = sum(1 for s in year_samples if s["litter"] != "None")
+            sewage_present = sum(1 for s in year_samples if s["sewage"] != "None")
 
             yearly[year] = {
                 "n": len(year_samples),
-                "ecoli_mean": round(sum(ecoli_vals) / len(ecoli_vals)) if ecoli_vals else None,
-                "ecoli_max": max(ecoli_vals) if ecoli_vals else None,
-                "ie_mean": round(sum(ie_vals) / len(ie_vals)) if ie_vals else None,
-                "ie_max": max(ie_vals) if ie_vals else None,
+                "litter_present": litter_present,
+                "sewage_present": sewage_present,
             }
 
         # Classification using last 4 years of data
@@ -260,8 +279,8 @@ def main():
                 if s["year"] == latest_year:
                     latest_samples.append({
                         "date": s["date"].strftime("%d %b %Y"),
-                        "ecoli": s["ecoli"],
-                        "ie": s["ie"],
+                        "litter": s["litter"],
+                        "sewage": s["sewage"],
                     })
 
         # Build yearly classification history (rolling 4-year windows)
