@@ -192,6 +192,49 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .wq-bad{background:#fbe8e8;color:var(--unfav-decline)}
 .wq-unknown{background:var(--paper);color:var(--mid)}
 #water-quality .cond-bar-label{width:14rem}
+
+/* ── Bathing Water Quality ── */
+.bw-group{margin-bottom:1.5rem}
+.bw-group-title{font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:.5rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule)}
+.bw-group-count{font-weight:400;color:var(--mid);font-size:.75rem}
+.bw-items{display:flex;flex-direction:column;gap:4px}
+.bw-row{border:1px solid var(--rule);background:var(--field-bg);cursor:pointer;transition:border-color .1s,box-shadow .15s;overflow:hidden}
+.bw-row:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(36,130,77,0.1)}
+.bw-header{display:grid;grid-template-columns:1fr auto auto auto;gap:1rem;align-items:center;padding:.85rem 1.2rem}
+.bw-name{font-weight:700;font-size:.9rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bw-name .site-distance{font-family:var(--mono);font-weight:400;color:var(--mid);margin-left:.5rem;font-size:.75rem}
+.bw-medium{font-size:.7rem;color:var(--mid);white-space:nowrap}
+.bw-class{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:3px;white-space:nowrap}
+.bw-excellent{background:#dbeafe;color:#1d4ed8}
+.bw-good{background:var(--success-light);color:var(--success)}
+.bw-sufficient{background:#fef3c7;color:#92400e}
+.bw-poor{background:#fbe8e8;color:var(--unfav-decline)}
+.bw-unknown{background:var(--paper);color:var(--mid)}
+.bw-expand-icon{font-size:.8rem;color:var(--accent);transition:transform .15s;width:1.2rem;text-align:center}
+.bw-row.open .bw-expand-icon{transform:rotate(90deg)}
+.bw-detail{display:none;border-top:1px solid var(--rule);padding:1rem 1.2rem;background:var(--field-bg)}
+.bw-row.open .bw-detail{display:block}
+.bw-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem}
+.bw-detail-section h4{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
+.bw-history{display:flex;gap:3px;align-items:end;height:2.5rem}
+.bw-history-bar{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}
+.bw-history-pip{width:100%;min-width:8px;max-width:24px;border-radius:2px}
+.bw-history-year{font-size:.55rem;color:var(--mid);font-family:var(--mono)}
+.bw-sample-table{width:100%;border-collapse:collapse;font-size:.75rem}
+.bw-sample-table th{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--mid);padding:.4rem .5rem;text-align:left;border-bottom:2px solid var(--rule)}
+.bw-sample-table td{padding:.4rem .5rem;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:.7rem}
+.bw-sample-table tbody tr:hover{background:var(--paper)}
+.bw-val-high{color:var(--unfav-decline);font-weight:700}
+.bw-yearly-stats{display:flex;flex-direction:column;gap:.35rem;font-size:.75rem}
+.bw-yearly-row{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0}
+.bw-yearly-label{color:var(--ink);font-weight:600;font-size:.7rem}
+.bw-yearly-val{font-family:var(--mono);font-size:.7rem;color:var(--mid)}
+#bathing-water .cond-bar-label{width:10rem}
+@media(max-width:600px){
+  .bw-header{grid-template-columns:1fr auto;gap:.5rem}
+  .bw-medium{display:none}
+  .bw-detail-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -292,8 +335,24 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
       </div>
     </section>
 
+    <section id="bathing-water" class="data-section">
+      <header class="section-header">
+        <h2 class="section-title">Bathing water quality</h2>
+      </header>
+      <div class="status-bar">
+        <span class="status-text" id="bw-status"></span>
+        <span class="status-count" id="bw-count"></span>
+      </div>
+      <div id="bw-results">
+        <div class="state-message" id="bw-empty-state">
+          <span class="state-icon">⌖</span>
+          <p>Enter a Scottish postcode or select a region above to view bathing water quality near you.</p>
+        </div>
+      </div>
+    </section>
+
     <footer class="colophon">
-      <span>Data: NatureScot SiteLink &amp; SCM, <a href="https://www.sepa.org.uk" target="_blank" rel="noopener">SEPA</a>. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
+      <span>Data: NatureScot SiteLink &amp; SCM, <a href="https://www.sepa.org.uk" target="_blank" rel="noopener">SEPA</a>. Bathing water: <a href="https://www.sepa.org.uk" target="_blank" rel="noopener">SEPA</a>. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
     </footer>
 
   </main>
@@ -306,7 +365,7 @@ const CONFIG = {
   MAPIT_API_KEY: "ELNTpDEh11ZUqJUj21zLAmKSWsBOCVSiSniMPIu6",
   MAPIT_BASE: "https://mapit.mysociety.org",
   DATA_DIR: "data/",
-  FILES: { siteData: "site_data.json", metadata: "metadata.json", regions: "regions.json", sites: "sites.json", pressures: "pressures.json", otherDesignations: "other_designations.geojson" },
+  FILES: { siteData: "site_data.json", metadata: "metadata.json", regions: "regions.json", sites: "sites.json", pressures: "pressures.json", otherDesignations: "other_designations.geojson", bathingWater: "bathing_water.json" },
   PROXIMITY_KM: 10,
   SEPA_BASE: "https://map.sepa.org.uk/server/rest/services/Open/Hydrography/MapServer",
 };
@@ -314,7 +373,7 @@ const CONFIG = {
 /* ═══════════════════════════════════════════════════════════
    STATE
    ═══════════════════════════════════════════════════════════ */
-const STATE = { siteData: null, metadata: null, regions: null, sites: null, pressures: null, otherDesigIndex: null, lastQuery: null };
+const STATE = { siteData: null, metadata: null, regions: null, sites: null, pressures: null, otherDesigIndex: null, bathingWater: null, lastQuery: null };
 
 const $ = s => document.querySelector(s);
 const EL = {
@@ -324,6 +383,7 @@ const EL = {
   status: $("#status"), count: $("#count"), results: $("#results"),
   odStatus: $("#od-status"), odCount: $("#od-count"), odResults: $("#od-results"),
   wqStatus: $("#wq-status"), wqCount: $("#wq-count"), wqResults: $("#wq-results"),
+  bwStatus: $("#bw-status"), bwCount: $("#bw-count"), bwResults: $("#bw-results"),
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -332,17 +392,19 @@ const EL = {
 async function init() {
   setStatus("loading", "Loading data…");
   try {
-    const [siteData, metadata, regions, sites, pressures, otherDesigGeo] = await Promise.all([
+    const [siteData, metadata, regions, sites, pressures, otherDesigGeo, bathingWater] = await Promise.all([
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.siteData),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.metadata),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.regions),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.sites),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.pressures),
       fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.otherDesignations),
+      fetchJSON(CONFIG.DATA_DIR + CONFIG.FILES.bathingWater),
     ]);
     STATE.siteData = siteData; STATE.metadata = metadata;
     STATE.regions = regions; STATE.sites = sites; STATE.pressures = pressures;
     STATE.otherDesigIndex = buildDesignationIndex(otherDesigGeo);
+    STATE.bathingWater = bathingWater;
     populateDropdowns(); bindEvents(); setStatus("", "");
   } catch (err) {
     setStatus("error", `Failed to load data: ${err.message}`);
@@ -448,6 +510,8 @@ async function handlePostcodeSearch() {
 
     fetchAndRenderWaterQuality(lat, lng, radiusKm);
 
+    searchAndRenderBathingWater(lat, lng, radiusKm);
+
   } catch (err) {
     if (err.message.includes("Usage limit")) setStatus("error", "MapIt API quota exceeded.");
     else setStatus("error", err.message);
@@ -465,7 +529,7 @@ async function handleDropdownFilter() {
       labels.push(dd.options[dd.selectedIndex].textContent);
     }
   }
-  if (!selectedIds.length) { clearResults(); clearODResults(); clearWQResults(); setStatus("", ""); setODStatus("", ""); setWQStatus("", ""); return; }
+  if (!selectedIds.length) { clearResults(); clearODResults(); clearWQResults(); clearBWResults(); setStatus("", ""); setODStatus("", ""); setWQStatus("", ""); setBWStatus("", ""); return; }
 
   const siteSet = new Set();
   for (const areaId of selectedIds) {
@@ -478,6 +542,7 @@ async function handleDropdownFilter() {
 
   setODStatus("loading", "Searching designations…");
   setWQStatus("loading", "Searching water bodies…");
+  setBWStatus("loading", "Searching bathing waters…");
   try {
     const areaUrl = `${CONFIG.MAPIT_BASE}/area/${selectedIds[0]}.geojson`;
     const areaResp = await fetch(areaUrl, { headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY } });
@@ -490,6 +555,10 @@ async function handleDropdownFilter() {
     }
     odResults.sort((a, b) => a.name.localeCompare(b.name));
     renderOtherDesignations(odResults, false);
+
+    const bwInArea = (STATE.bathingWater || []).filter(s => pointInGeometry(s.lat, s.lng, areaGeo));
+    bwInArea.sort((a, b) => a.name.localeCompare(b.name));
+    renderBathingWater(bwInArea.map(s => ({ ...s, dist: null })), false);
 
     try {
       const bbox = geojsonBbox(areaGeo);
@@ -504,6 +573,8 @@ async function handleDropdownFilter() {
     clearODResults();
     setWQStatus("error", "Could not load boundary data.");
     clearWQResults();
+    setBWStatus("error", "Could not load boundary data.");
+    clearBWResults();
   }
 }
 
@@ -1117,6 +1188,153 @@ function setWQStatus(state, text) {
 function clearWQResults() {
   EL.wqResults.innerHTML = '<div class="state-message"><span class="state-icon">\u2205</span><p>No results to display.</p></div>';
   EL.wqCount.textContent = "";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BATHING WATER QUALITY
+   ═══════════════════════════════════════════════════════════ */
+function searchAndRenderBathingWater(lat, lng, radiusKm) {
+  if (!STATE.bathingWater) { setBWStatus("", ""); return; }
+  setBWStatus("loading", "Searching bathing waters…");
+  const results = [];
+  for (const site of STATE.bathingWater) {
+    const dist = haversine(lat, lng, site.lat, site.lng);
+    if (dist <= radiusKm) {
+      results.push({ ...site, dist: Math.round(dist * 10) / 10 });
+    }
+  }
+  results.sort((a, b) => a.dist - b.dist);
+  renderBathingWater(results, true);
+}
+
+function renderBathingWater(results, showDistance) {
+  if (!results.length) {
+    setBWStatus("", "");
+    EL.bwResults.innerHTML = '<div class="state-message"><span class="state-icon">\u2205</span><p>No bathing waters found in this area.</p></div>';
+    EL.bwCount.textContent = "";
+    return;
+  }
+  setBWStatus("success", STATE.lastQuery || "");
+  EL.bwCount.textContent = `${results.length} bathing waters`;
+
+  let html = renderBWSummary(results);
+  html += '<div class="bw-items">';
+
+  for (const site of results) {
+    const distStr = showDistance && site.dist !== null ? `<span class="site-distance">${site.dist} km</span>` : "";
+    const clsCss = bwClassCss(site.classification);
+    const yearStr = site.latestYear ? ` (${site.latestYear})` : "";
+
+    html += `<div class="bw-row">
+      <div class="bw-header">
+        <div class="bw-name">${esc(site.name)}${distStr}</div>
+        <div class="bw-medium">${esc(site.medium)}</div>
+        <div class="bw-class ${clsCss}">${esc(site.classification)}</div>
+        <div class="bw-expand-icon">\u25B6</div>
+      </div>
+      <div class="bw-detail">${renderBWDetail(site)}</div>
+    </div>`;
+  }
+  html += '</div>';
+  EL.bwResults.innerHTML = html;
+
+  EL.bwResults.querySelectorAll(".bw-row").forEach(row => {
+    row.querySelector(".bw-header").addEventListener("click", () => row.classList.toggle("open"));
+  });
+}
+
+function renderBWDetail(site) {
+  let html = '<div class="bw-detail-grid">';
+
+  // Classification history chart
+  if (site.classHistory && site.classHistory.length) {
+    html += '<div class="bw-detail-section"><h4>Classification history</h4><div class="bw-history">';
+    const classColours = { "Excellent": "#2563eb", "Good": "#176b32", "Sufficient": "#b8860b", "Poor": "#c22929" };
+    const classHeights = { "Excellent": "100%", "Good": "75%", "Sufficient": "50%", "Poor": "25%" };
+    for (const h of site.classHistory) {
+      const col = classColours[h.class] || "var(--mid)";
+      const ht = classHeights[h.class] || "10%";
+      html += `<div class="bw-history-bar"><div class="bw-history-pip" style="height:${ht};background:${col}" title="${h.class} (${h.year})"></div><span class="bw-history-year">${String(h.year).slice(-2)}</span></div>`;
+    }
+    html += '</div></div>';
+  }
+
+  // Yearly summary stats
+  if (site.yearly && Object.keys(site.yearly).length) {
+    html += '<div class="bw-detail-section"><h4>Recent seasons (mean / max)</h4><div class="bw-yearly-stats">';
+    const years = Object.keys(site.yearly).sort();
+    for (const yr of years) {
+      const y = site.yearly[yr];
+      const ecoliStr = y.ecoli_mean != null ? `E.coli: ${y.ecoli_mean} / ${y.ecoli_max}` : "E.coli: —";
+      const ieStr = y.ie_mean != null ? `IE: ${y.ie_mean} / ${y.ie_max}` : "IE: —";
+      html += `<div class="bw-yearly-row"><span class="bw-yearly-label">${yr} (${y.n} samples)</span><span class="bw-yearly-val">${ecoliStr} &nbsp; ${ieStr}</span></div>`;
+    }
+    html += '</div></div>';
+  }
+
+  html += '</div>';
+
+  // Latest season samples table
+  if (site.latestSamples && site.latestSamples.length) {
+    html += `<div class="bw-detail-section"><h4>${site.latestYear} samples</h4>`;
+    html += '<table class="bw-sample-table"><thead><tr><th>Date</th><th>E. coli</th><th>IE</th></tr></thead><tbody>';
+    for (const s of site.latestSamples) {
+      const eClass = s.ecoli != null && s.ecoli > 500 ? ' class="bw-val-high"' : "";
+      const iClass = s.ie != null && s.ie > 200 ? ' class="bw-val-high"' : "";
+      html += `<tr><td style="font-family:var(--sans)">${esc(s.date)}</td><td${eClass}>${s.ecoli != null ? s.ecoli : "—"}</td><td${iClass}>${s.ie != null ? s.ie : "—"}</td></tr>`;
+    }
+    html += '</tbody></table></div>';
+  }
+
+  return html;
+}
+
+function renderBWSummary(results) {
+  const classCounts = {};
+  for (const r of results) {
+    classCounts[r.classification] = (classCounts[r.classification] || 0) + 1;
+  }
+  const total = results.length;
+  const levelOrder = ["Excellent", "Good", "Sufficient", "Poor", "Insufficient data"];
+  const levelColours = { "Excellent": "#2563eb", "Good": "var(--success)", "Sufficient": "#b8860b", "Poor": "var(--unfav-decline)", "Insufficient data": "var(--mid)" };
+
+  let classHtml = '<div class="condition-bars">';
+  for (const label of levelOrder) {
+    const count = classCounts[label] || 0;
+    if (!count) continue;
+    const pct = total ? (count / total * 100) : 0;
+    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${levelColours[label]}"></div></div><span class="cond-bar-count">${count}</span></div>`;
+  }
+  classHtml += '</div>';
+
+  const mediumCounts = {};
+  for (const r of results) { mediumCounts[r.medium] = (mediumCounts[r.medium] || 0) + 1; }
+  const maxM = Math.max(...Object.values(mediumCounts), 1);
+  let medHtml = '<div class="pressure-rank">';
+  for (const [type, count] of Object.entries(mediumCounts).sort((a, b) => b[1] - a[1])) {
+    medHtml += `<div class="pressure-rank-item"><span class="pressure-rank-name">${esc(type)}</span><div class="pressure-rank-bar"><div class="pressure-rank-fill" style="width:${(count / maxM * 100).toFixed(1)}%"></div></div><span class="pressure-rank-count">${count}</span></div>`;
+  }
+  medHtml += '</div>';
+
+  return `<div class="summary-panel"><div class="summary-section"><h3>Bathing water classification (${total} sites)</h3>${classHtml}</div><div class="summary-section"><h3>Water type</h3>${medHtml}</div></div>`;
+}
+
+function bwClassCss(classification) {
+  const c = (classification || "").toLowerCase();
+  if (c === "excellent") return "bw-excellent";
+  if (c === "good") return "bw-good";
+  if (c === "sufficient") return "bw-sufficient";
+  if (c === "poor") return "bw-poor";
+  return "bw-unknown";
+}
+
+function setBWStatus(state, text) {
+  EL.bwStatus.dataset.state = state;
+  EL.bwStatus.innerHTML = state === "loading" ? `<span class="spinner"></span>${esc(text)}` : esc(text);
+}
+function clearBWResults() {
+  EL.bwResults.innerHTML = '<div class="state-message"><span class="state-icon">\u2205</span><p>No results to display.</p></div>';
+  EL.bwCount.textContent = "";
 }
 
 document.addEventListener("DOMContentLoaded", init);
