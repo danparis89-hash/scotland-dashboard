@@ -37,12 +37,19 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .hero-sub{font-size:1rem;color:var(--accent-light);letter-spacing:.05em;font-weight:600}
 .cta-primary{background:var(--paper);color:var(--ink);font-weight:700;padding:1rem 2rem;text-decoration:none;font-size:.9rem;letter-spacing:.05em;text-transform:uppercase;transition:all .2s ease;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
 .cta-primary:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.2);background:#fff}
+.hero-credit{display:block;margin-top:.75rem;font-size:.75rem;color:var(--rule);font-weight:400}
+.hero-credit a{color:var(--accent-light);text-decoration:none}
+.hero-credit a:hover{text-decoration:underline;color:#fff}
 
 /* ── Layout Scaffolding ── */
 .frame{max-width:1120px;margin:0 auto;padding:0 2rem 4rem}
+.area-selector{margin-bottom:2.5rem}
+.selector-intro{font-size:.95rem;color:var(--mid);margin-bottom:1.25rem;line-height:1.6}
 .data-section{background:var(--field-bg);border:1px solid var(--rule);padding:2.5rem;margin-bottom:2.5rem;box-shadow:0 4px 20px rgba(15,43,29,0.04)}
-.section-header{margin-bottom:2rem;border-bottom:2px solid var(--accent-light);padding-bottom:1rem}
+.section-header{margin-bottom:2rem;border-bottom:2px solid var(--accent-light);padding-bottom:1rem;display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
 .section-title{font-family:var(--display);font-size:1.8rem;color:var(--ink)}
+.section-about-link{font-size:.75rem;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap}
+.section-about-link:hover{text-decoration:underline}
 .placeholder-content{background:var(--paper);border:2px dashed var(--rule);padding:3rem;text-align:center;color:var(--mid);font-style:italic}
 
 /* ── Controls ── */
@@ -187,17 +194,14 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
     <div class="hero-text">
       <h1 class="hero-title">Scottish Nature Data</h1>
       <span class="hero-sub">Environmental information for your local area</span>
+      <span class="hero-credit">Website by <a href="https://www.danparis.net" target="_blank" rel="noopener">Dan Paris</a></span>
     </div>
-    <a href="aboutprotectedsites.html" class="cta-primary">About Protected Areas ➔</a>
   </header>
 
   <main class="frame">
-    
-    <section id="protected-areas" class="data-section">
-      <header class="section-header">
-        <h2 class="section-title">Protected areas</h2>
-      </header>
-      
+
+    <div class="area-selector">
+      <p class="selector-intro">Enter a postcode or select an area to find information on protected nature sites and local water quality.</p>
       <div class="controls">
         <div class="field-group">
           <label class="field-label" for="postcode">Postcode</label>
@@ -222,6 +226,13 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
           <select id="dd-spe" class="field-input"><option value="">— All —</option></select>
         </div>
       </div>
+    </div>
+
+    <section id="protected-areas" class="data-section">
+      <header class="section-header">
+        <h2 class="section-title">Protected areas</h2>
+        <a href="aboutprotectedsites.html" class="section-about-link">About protected areas ➔</a>
+      </header>
 
       <div class="status-bar">
         <span class="status-text" id="status"></span>
@@ -239,6 +250,7 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
     <section id="other-designations" class="data-section">
       <header class="section-header">
         <h2 class="section-title">Other nature designations</h2>
+        <a href="#" class="section-about-link">About other designations ➔</a>
       </header>
       <div class="status-bar">
         <span class="status-text" id="od-status"></span>
@@ -255,6 +267,7 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
     <section id="water-quality" class="data-section">
       <header class="section-header">
         <h2 class="section-title">Water quality</h2>
+        <a href="#" class="section-about-link">About water quality ➔</a>
       </header>
       <div class="status-bar">
         <span class="status-text" id="wq-status"></span>
