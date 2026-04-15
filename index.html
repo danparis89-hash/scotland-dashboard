@@ -48,7 +48,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .data-section{background:var(--field-bg);border:1px solid var(--rule);padding:2.5rem;margin-bottom:2.5rem;box-shadow:0 4px 20px rgba(15,43,29,0.04)}
 .section-header{margin-bottom:2rem;border-bottom:2px solid var(--accent-light);padding-bottom:1rem;display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
 .section-title{font-family:var(--display);font-size:1.8rem;color:var(--ink)}
-.section-about-link{font-size:.75rem;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap}
+.section-about-link{font-size:1rem;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap}
 .section-about-link:hover{text-decoration:underline}
 .placeholder-content{background:var(--paper);border:2px dashed var(--rule);padding:3rem;text-align:center;color:var(--mid);font-style:italic}
 
@@ -63,6 +63,12 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .btn-search{font-family:var(--sans);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:.55rem 1.2rem;border:2px solid var(--accent);background:var(--accent);color:var(--paper);cursor:pointer;white-space:nowrap;transition:background .15s;border-radius:0 4px 4px 0}
 .field-row .field-input{border-radius:4px 0 0 4px;border-right:none}
 .btn-search:hover{background:var(--ink);border-color:var(--ink)}
+.radius-row{display:flex;align-items:center;gap:.5rem;margin-top:.4rem}
+.radius-row .field-label{margin:0;min-width:auto}
+.radius-slider{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:var(--rule);border-radius:2px;outline:none;cursor:pointer}
+.radius-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid var(--field-bg);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer}
+.radius-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid var(--field-bg);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer}
+.radius-value{font-family:var(--mono);font-size:.75rem;color:var(--mid);white-space:nowrap;min-width:3.5rem}
 select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23597866' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;padding-right:2rem}
 
 /* ── Status & Lists ── */
@@ -209,6 +215,11 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
             <input type="text" id="postcode" class="field-input" placeholder="e.g. EH1 1RF" autocomplete="postal-code" spellcheck="false">
             <button class="btn-search" id="btn-search">Search</button>
           </div>
+          <div class="radius-row">
+            <label class="field-label" for="radius-slider">Radius</label>
+            <input type="range" id="radius-slider" min="1" max="25" value="10" step="1" class="radius-slider">
+            <span class="radius-value" id="radius-value">10 km</span>
+          </div>
         </div>
         <div class="field-group" style="align-self:end">
           <span class="field-label" style="color:var(--rule);text-align:center;">or filter by</span>
@@ -242,7 +253,7 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
       <div id="results">
         <div class="state-message" id="empty-state">
           <span class="state-icon">⌖</span>
-          <p>Enter a Scottish postcode to find protected areas within 10km, or select a region to view all sites.</p>
+          <p>Enter a Scottish postcode to find protected areas nearby, or select a region to view all sites.</p>
         </div>
       </div>
     </section>
@@ -308,6 +319,7 @@ const STATE = { siteData: null, metadata: null, regions: null, sites: null, pres
 const $ = s => document.querySelector(s);
 const EL = {
   postcode: $("#postcode"), btnSearch: $("#btn-search"),
+  radiusSlider: $("#radius-slider"), radiusValue: $("#radius-value"),
   ddUTA: $("#dd-uta"), ddSPC: $("#dd-spc"), ddSPE: $("#dd-spe"),
   status: $("#status"), count: $("#count"), results: $("#results"),
   odStatus: $("#od-status"), odCount: $("#od-count"), odResults: $("#od-results"),
@@ -364,6 +376,9 @@ function fillSelect(el, items) {
 function bindEvents() {
   EL.btnSearch.addEventListener("click", handlePostcodeSearch);
   EL.postcode.addEventListener("keydown", e => { if (e.key === "Enter") handlePostcodeSearch(); });
+  EL.radiusSlider.addEventListener("input", () => {
+    EL.radiusValue.textContent = EL.radiusSlider.value + " km";
+  });
   EL.postcode.addEventListener("input", () => {
     if (EL.postcode.value.trim()) { EL.ddUTA.value = ""; EL.ddSPC.value = ""; EL.ddSPE.value = ""; }
   });
@@ -385,6 +400,8 @@ async function handlePostcodeSearch() {
   if (!raw) return;
   const pc = raw.replace(/\s+/g, "").toUpperCase();
   if (pc.length < 5 || pc.length > 7) { setStatus("error", "Invalid postcode format."); return; }
+
+  const radiusKm = parseInt(EL.radiusSlider.value, 10);
 
   setStatus("loading", "Looking up postcode…");
   try {
@@ -417,19 +434,19 @@ async function handlePostcodeSearch() {
       } else {
         dist = haversine(lat, lng, info.lat, info.lng);
       }
-      if (dist <= CONFIG.PROXIMITY_KM) {
+      if (dist <= radiusKm) {
         nearby.push({ paCode, dist: Math.round(dist * 10) / 10 });
       }
     }
 
     nearby.sort((a, b) => a.dist - b.dist);
-    STATE.lastQuery = `${raw.toUpperCase()} — ${nearby.length} sites within ${CONFIG.PROXIMITY_KM}km`;
+    STATE.lastQuery = `${raw.toUpperCase()} — ${nearby.length} sites within ${radiusKm}km`;
     renderSites(nearby, true);
 
-    const odResults = searchDesignationsByProximity(lat, lng, CONFIG.PROXIMITY_KM);
+    const odResults = searchDesignationsByProximity(lat, lng, radiusKm);
     renderOtherDesignations(odResults, true);
 
-    fetchAndRenderWaterQuality(lat, lng);
+    fetchAndRenderWaterQuality(lat, lng, radiusKm);
 
   } catch (err) {
     if (err.message.includes("Usage limit")) setStatus("error", "MapIt API quota exceeded.");
@@ -990,10 +1007,11 @@ function geojsonBbox(geo) {
   return [mnLng, mnLat, mxLng, mxLat];
 }
 
-async function fetchAndRenderWaterQuality(lat, lng) {
+async function fetchAndRenderWaterQuality(lat, lng, radiusKm) {
+  radiusKm = radiusKm || parseInt(EL.radiusSlider.value, 10);
   setWQStatus("loading", "Searching water bodies…");
   try {
-    const results = await fetchWaterQualityByPoint(lat, lng, CONFIG.PROXIMITY_KM);
+    const results = await fetchWaterQualityByPoint(lat, lng, radiusKm);
     renderWaterQuality(results);
   } catch (err) {
     setWQStatus("error", `Could not load water quality data: ${err.message}`);
