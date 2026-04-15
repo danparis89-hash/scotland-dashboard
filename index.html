@@ -1259,7 +1259,7 @@ function renderBWDetail(site) {
   // Yearly summary stats
   if (site.yearly && Object.keys(site.yearly).length) {
     html += '<div class="bw-detail-section"><h4>Recent seasons (litter / sewage detected)</h4><div class="bw-yearly-stats">';
-    const years = Object.keys(site.yearly).sort();
+    const years = Object.keys(site.yearly).sort().reverse();
     for (const yr of years) {
       const y = site.yearly[yr];
       const litterStr = `Litter: ${y.litter_present}/${y.n}`;
@@ -1275,7 +1275,7 @@ function renderBWDetail(site) {
   if (site.latestSamples && site.latestSamples.length) {
     html += `<div class="bw-detail-section"><h4>${site.latestYear} samples</h4>`;
     html += '<table class="bw-sample-table"><thead><tr><th>Date</th><th>Litter</th><th>Sewage solids</th></tr></thead><tbody>';
-    for (const s of site.latestSamples) {
+    for (const s of [...site.latestSamples].reverse()) {
       const lClass = s.litter && s.litter !== "None" && s.litter !== "Trace" ? ' class="bw-val-high"' : "";
       const sClass = s.sewage && s.sewage !== "None" && s.sewage !== "Trace" ? ' class="bw-val-high"' : "";
       html += `<tr><td style="font-family:var(--sans)">${esc(s.date)}</td><td${lClass}>${esc(s.litter || "—")}</td><td${sClass}>${esc(s.sewage || "—")}</td></tr>`;
