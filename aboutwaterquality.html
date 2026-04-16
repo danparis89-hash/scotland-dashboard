@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Water Quality — Scottish Nature Data</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#2C3E50;--paper:#F4F5F7;--accent:#0277BD;--accent-light:#e1f5fe;
+  --mid:#6C757D;--rule:#E0E0E0;--field-bg:#ffffff;
+  --mono:'JetBrains Mono','Fira Code','Consolas',monospace;
+  --sans:system-ui,-apple-system,'Inter','Roboto',sans-serif;
+}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5;min-height:100vh}
+
+.frame{max-width:1120px;margin:0 auto;padding:2rem 2rem 4rem}
+.masthead{display:flex;align-items:center;gap:1rem;padding:1.5rem 2rem;margin-bottom:2rem;background:var(--accent);color:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.masthead-title{font-family:var(--sans);font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
+.masthead-nav{margin-left:auto;font-size:.75rem}
+.masthead-nav a{color:rgba(255,255,255,0.9);text-decoration:underline;text-underline-offset:2px}
+.masthead-nav a:hover{color:#fff}
+
+.about-content{margin-bottom:2rem}
+.about-content p{font-size:.9rem;line-height:1.7;margin-bottom:1rem}
+.about-content ul{font-size:.9rem;line-height:1.7;margin:0 0 1rem 1.5rem;padding:0}
+.about-content li{margin-bottom:.4rem}
+.about-content a{color:var(--accent)}
+.about-content h2{font-size:1rem;font-weight:700;margin:1.5rem 0 .5rem;color:var(--ink)}
+
+/* ── Summary panel ── */
+.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;padding:1rem 1.25rem;border:1px solid var(--rule);background:var(--field-bg);box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.summary-section h3{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
+.condition-bars{display:flex;flex-direction:column;gap:.35rem}
+.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.65rem}
+.cond-bar-track{flex:1;height:.65rem;background:var(--paper);border-radius:3px;position:relative;overflow:hidden}
+.cond-bar-fill{height:100%;position:absolute;left:0;top:0;border-radius:3px}
+.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+.stat-grid{display:flex;flex-direction:column;gap:.6rem}
+.stat-item{display:flex;flex-direction:column;gap:.1rem}
+.stat-value{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--ink)}
+.stat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid)}
+
+/* ── Classification key ── */
+.class-key{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+.class-key-row{display:flex;align-items:center;gap:.75rem;font-size:.85rem}
+.class-swatch{width:.9rem;height:.9rem;border-radius:2px;flex-shrink:0}
+.class-key-label{font-weight:700;min-width:6rem}
+.class-key-desc{color:var(--mid);font-size:.8rem}
+
+@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label{width:8rem}}
+
+/* ── Footer ── */
+.colophon{margin-top:3rem;padding-top:.75rem;border-top:1px solid var(--rule);font-size:.65rem;color:var(--mid);display:flex;justify-content:space-between}
+.colophon a{color:var(--accent);text-decoration:none}
+.colophon a:hover{text-decoration:underline}
+
+@media(max-width:600px){.frame{padding:1rem}.masthead{flex-direction:column;gap:.25rem;padding:1.25rem 1.5rem;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header class="masthead">
+    <h1 class="masthead-title">About Water Quality</h1>
+    <nav class="masthead-nav"><a href="index.html">Back to dashboard</a></nav>
+  </header>
+
+  <div id="summary-loading" style="display:none"></div>
+  <div id="summary">
+    <div class="summary-panel">
+      <div class="summary-section">
+        <h3>WFD classification scale</h3>
+        <div class="condition-bars">
+          <div class="cond-bar-row"><span class="cond-bar-label">High</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:100%;background:#2563eb"></div></div><span class="cond-bar-count" style="color:#2563eb;font-weight:700">Best</span></div>
+          <div class="cond-bar-row"><span class="cond-bar-label">Good</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:80%;background:#176b32"></div></div><span class="cond-bar-count"></span></div>
+          <div class="cond-bar-row"><span class="cond-bar-label">Moderate</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:60%;background:#b8860b"></div></div><span class="cond-bar-count"></span></div>
+          <div class="cond-bar-row"><span class="cond-bar-label">Poor</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:40%;background:#b85c00"></div></div><span class="cond-bar-count"></span></div>
+          <div class="cond-bar-row"><span class="cond-bar-label">Bad</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:20%;background:#c22929"></div></div><span class="cond-bar-count" style="color:#c22929;font-weight:700">Worst</span></div>
+        </div>
+      </div>
+      <div class="summary-section">
+        <h3>Water body types covered</h3>
+        <div class="stat-grid">
+          <div class="stat-item"><span class="stat-value">5</span><span class="stat-label">Types: River, Loch, Coastal, Estuaries, Groundwater</span></div>
+          <div class="stat-item"><span class="stat-value">2027</span><span class="stat-label">Target year to achieve Good status or better</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-content">
+    <p>Water quality data in this dashboard comes from the <a href="https://www.sepa.org.uk">Scottish Environment Protection Agency (SEPA)</a> and reflects classification under the Water Framework Directive (WFD) — a piece of EU-derived legislation that Scotland continues to apply through the Water Environment and Water Services (Scotland) Act 2003.</p>
+
+    <h2>The classification system</h2>
+    <p>Each water body is assigned an overall ecological status on a five-point scale:</p>
+    <ul>
+      <li><strong>High</strong> — the water body shows no or minimal human impact; essentially undisturbed conditions.</li>
+      <li><strong>Good</strong> — slight impacts from human activity, but ecological values remain largely intact. This is the minimum target for all water bodies.</li>
+      <li><strong>Moderate</strong> — moderate deviation from undisturbed conditions; ecological functions are impaired.</li>
+      <li><strong>Poor</strong> — major deviation; ecosystems are significantly altered.</li>
+      <li><strong>Bad</strong> — severe alteration; the water body is heavily degraded.</li>
+    </ul>
+    <p>The overall status is determined by whichever element — biological, chemical, or hydromorphological — scores worst. Scotland's target is for all water bodies to achieve at least Good status.</p>
+
+    <h2>Water body types</h2>
+    <p>This dashboard queries five categories of water body from SEPA's mapping service:</p>
+    <ul>
+      <li><strong>Rivers</strong> — flowing freshwater bodies, from upland burns to major rivers.</li>
+      <li><strong>Lochs</strong> — standing freshwater bodies, including natural lochs and reservoirs.</li>
+      <li><strong>Coastal</strong> — transitional and coastal marine waters within one nautical mile of the shore.</li>
+      <li><strong>Estuaries</strong> — tidal reaches where rivers meet the sea, often highly productive but sensitive to pollution.</li>
+      <li><strong>Groundwater</strong> — subsurface water bodies, assessed on quantity as well as chemical quality.</li>
+    </ul>
+
+    <h2>Pressures on water quality</h2>
+    <p>Common pressures affecting water quality in Scotland include agriculture (diffuse pollution from nutrients and sediment), urban drainage, historic land use, and physical modification of watercourses such as straightening or culverting. SEPA publishes River Basin Management Plans setting out how these pressures will be addressed.</p>
+    <p>For detailed classification data and the latest River Basin Management Plan, see <a href="https://www.sepa.org.uk/environment/water/river-basin-management-planning/">SEPA's water pages</a>.</p>
+  </div>
+
+  <footer class="colophon">
+    <span>Data: <a href="https://www.sepa.org.uk" target="_blank" rel="noopener">SEPA</a> Hydrography MapServer. Classifications reflect Water Framework Directive ecological status.</span>
+  </footer>
+
+</div>
+</body>
+</html>
