@@ -78,25 +78,25 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
     <nav class="masthead-nav"><a href="index.html">Back to dashboard</a></nav>
   </header>
 
-  <div id="summary-loading" style="display:none"></div>
-  <div id="summary">
-    <div class="summary-panel">
-      <div class="summary-section">
-        <h3>WFD classification scale</h3>
-        <div class="condition-bars">
-          <div class="cond-bar-row"><span class="cond-bar-label">High</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:100%;background:#2563eb"></div></div><span class="cond-bar-count" style="color:#2563eb;font-weight:700">Best</span></div>
-          <div class="cond-bar-row"><span class="cond-bar-label">Good</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:80%;background:#176b32"></div></div><span class="cond-bar-count"></span></div>
-          <div class="cond-bar-row"><span class="cond-bar-label">Moderate</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:60%;background:#b8860b"></div></div><span class="cond-bar-count"></span></div>
-          <div class="cond-bar-row"><span class="cond-bar-label">Poor</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:40%;background:#b85c00"></div></div><span class="cond-bar-count"></span></div>
-          <div class="cond-bar-row"><span class="cond-bar-label">Bad</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:20%;background:#c22929"></div></div><span class="cond-bar-count" style="color:#c22929;font-weight:700">Worst</span></div>
-        </div>
+  <div class="summary-panel">
+    <div class="summary-section">
+      <h3>Ecological status — what each level means</h3>
+      <div class="class-key">
+        <div class="class-key-row"><span class="class-swatch" style="background:#2563eb"></span><span class="class-key-label">High</span><span class="class-key-desc">Near-natural conditions; no or minimal human impact</span></div>
+        <div class="class-key-row"><span class="class-swatch" style="background:#176b32"></span><span class="class-key-label">Good</span><span class="class-key-desc">Slight impact; ecological values largely intact — the minimum target</span></div>
+        <div class="class-key-row"><span class="class-swatch" style="background:#b8860b"></span><span class="class-key-label">Moderate</span><span class="class-key-desc">Moderate deviation from natural; ecological functions impaired</span></div>
+        <div class="class-key-row"><span class="class-swatch" style="background:#b85c00"></span><span class="class-key-label">Poor</span><span class="class-key-desc">Major deviation; ecosystems significantly altered</span></div>
+        <div class="class-key-row"><span class="class-swatch" style="background:#c22929"></span><span class="class-key-label">Bad</span><span class="class-key-desc">Severe alteration; water body heavily degraded</span></div>
       </div>
-      <div class="summary-section">
-        <h3>Water body types covered</h3>
-        <div class="stat-grid">
-          <div class="stat-item"><span class="stat-value">5</span><span class="stat-label">Types: River, Loch, Coastal, Estuaries, Groundwater</span></div>
-          <div class="stat-item"><span class="stat-value">2027</span><span class="stat-label">Target year to achieve Good status or better</span></div>
-        </div>
+    </div>
+    <div class="summary-section">
+      <h3>Water body types in this dashboard</h3>
+      <div class="class-key">
+        <div class="class-key-row"><span class="class-key-label">Rivers</span><span class="class-key-desc">Flowing freshwater, from upland burns to major rivers</span></div>
+        <div class="class-key-row"><span class="class-key-label">Lochs</span><span class="class-key-desc">Standing freshwater, including natural lochs and reservoirs</span></div>
+        <div class="class-key-row"><span class="class-key-label">Coastal</span><span class="class-key-desc">Marine waters within one nautical mile of the shore</span></div>
+        <div class="class-key-row"><span class="class-key-label">Estuaries</span><span class="class-key-desc">Tidal reaches where rivers meet the sea</span></div>
+        <div class="class-key-row"><span class="class-key-label">Groundwater</span><span class="class-key-desc">Subsurface water bodies, assessed on quantity and chemistry</span></div>
       </div>
     </div>
   </div>
@@ -104,26 +104,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
   <div class="about-content">
     <p>Water quality data in this dashboard comes from the <a href="https://www.sepa.org.uk">Scottish Environment Protection Agency (SEPA)</a> and reflects classification under the Water Framework Directive (WFD) — a piece of EU-derived legislation that Scotland continues to apply through the Water Environment and Water Services (Scotland) Act 2003.</p>
 
-    <h2>The classification system</h2>
-    <p>Each water body is assigned an overall ecological status on a five-point scale:</p>
-    <ul>
-      <li><strong>High</strong> — the water body shows no or minimal human impact; essentially undisturbed conditions.</li>
-      <li><strong>Good</strong> — slight impacts from human activity, but ecological values remain largely intact. This is the minimum target for all water bodies.</li>
-      <li><strong>Moderate</strong> — moderate deviation from undisturbed conditions; ecological functions are impaired.</li>
-      <li><strong>Poor</strong> — major deviation; ecosystems are significantly altered.</li>
-      <li><strong>Bad</strong> — severe alteration; the water body is heavily degraded.</li>
-    </ul>
-    <p>The overall status is determined by whichever element — biological, chemical, or hydromorphological — scores worst. Scotland's target is for all water bodies to achieve at least Good status.</p>
-
-    <h2>Water body types</h2>
-    <p>This dashboard queries five categories of water body from SEPA's mapping service:</p>
-    <ul>
-      <li><strong>Rivers</strong> — flowing freshwater bodies, from upland burns to major rivers.</li>
-      <li><strong>Lochs</strong> — standing freshwater bodies, including natural lochs and reservoirs.</li>
-      <li><strong>Coastal</strong> — transitional and coastal marine waters within one nautical mile of the shore.</li>
-      <li><strong>Estuaries</strong> — tidal reaches where rivers meet the sea, often highly productive but sensitive to pollution.</li>
-      <li><strong>Groundwater</strong> — subsurface water bodies, assessed on quantity as well as chemical quality.</li>
-    </ul>
+    <p>The overall status is determined by whichever element — biological, chemical, or hydromorphological — scores worst. Scotland's target is for all water bodies to achieve at least Good status by 2027.</p>
 
     <h2>Pressures on water quality</h2>
     <p>Common pressures affecting water quality in Scotland include agriculture (diffuse pollution from nutrients and sediment), urban drainage, historic land use, and physical modification of watercourses such as straightening or culverting. SEPA publishes River Basin Management Plans setting out how these pressures will be addressed.</p>
