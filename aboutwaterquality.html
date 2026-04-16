@@ -19,6 +19,7 @@
 :root{
   --ink:#2C3E50;--paper:#F4F5F7;--accent:#0277BD;--accent-light:#e1f5fe;
   --mid:#6C757D;--rule:#E0E0E0;--field-bg:#ffffff;
+  --success:#176b32;--warning:#b85c00;--unfav-decline:#c22929;
   --mono:'JetBrains Mono','Fira Code','Consolas',monospace;
   --sans:system-ui,-apple-system,'Inter','Roboto',sans-serif;
 }
@@ -53,14 +54,18 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .stat-value{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--ink)}
 .stat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid)}
 
-/* ── Classification key ── */
-.class-key{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
-.class-key-row{display:flex;align-items:center;gap:.75rem;font-size:.85rem}
-.class-swatch{width:.9rem;height:.9rem;border-radius:2px;flex-shrink:0}
-.class-key-label{font-weight:700;min-width:6rem}
-.class-key-desc{color:var(--mid);font-size:.8rem}
+.pressure-rank{display:flex;flex-direction:column;gap:.3rem}
+.pressure-rank-item{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.pressure-rank-bar{flex:1;height:.65rem;background:var(--paper);border-radius:3px;position:relative;overflow:hidden}
+.pressure-rank-fill{height:100%;background:var(--accent);opacity:.7;position:absolute;left:0;top:0;border-radius:3px}
+.pressure-rank-name{width:10rem;text-align:right;font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pressure-rank-count{width:2.5rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
 
-@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label{width:8rem}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--rule);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.5rem}
+.status-text{font-size:.75rem;color:var(--mid)}
+
+@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label{width:8rem}.pressure-rank-name{width:7rem}}
 
 /* ── Footer ── */
 .colophon{margin-top:3rem;padding-top:.75rem;border-top:1px solid var(--rule);font-size:.65rem;color:var(--mid);display:flex;justify-content:space-between}
@@ -78,28 +83,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
     <nav class="masthead-nav"><a href="index.html">Back to dashboard</a></nav>
   </header>
 
-  <div class="summary-panel">
-    <div class="summary-section">
-      <h3>Ecological status — what each level means</h3>
-      <div class="class-key">
-        <div class="class-key-row"><span class="class-swatch" style="background:#2563eb"></span><span class="class-key-label">High</span><span class="class-key-desc">Near-natural conditions; no or minimal human impact</span></div>
-        <div class="class-key-row"><span class="class-swatch" style="background:#176b32"></span><span class="class-key-label">Good</span><span class="class-key-desc">Slight impact; ecological values largely intact — the minimum target</span></div>
-        <div class="class-key-row"><span class="class-swatch" style="background:#b8860b"></span><span class="class-key-label">Moderate</span><span class="class-key-desc">Moderate deviation from natural; ecological functions impaired</span></div>
-        <div class="class-key-row"><span class="class-swatch" style="background:#b85c00"></span><span class="class-key-label">Poor</span><span class="class-key-desc">Major deviation; ecosystems significantly altered</span></div>
-        <div class="class-key-row"><span class="class-swatch" style="background:#c22929"></span><span class="class-key-label">Bad</span><span class="class-key-desc">Severe alteration; water body heavily degraded</span></div>
-      </div>
-    </div>
-    <div class="summary-section">
-      <h3>Water body types in this dashboard</h3>
-      <div class="class-key">
-        <div class="class-key-row"><span class="class-key-label">Rivers</span><span class="class-key-desc">Flowing freshwater, from upland burns to major rivers</span></div>
-        <div class="class-key-row"><span class="class-key-label">Lochs</span><span class="class-key-desc">Standing freshwater, including natural lochs and reservoirs</span></div>
-        <div class="class-key-row"><span class="class-key-label">Coastal</span><span class="class-key-desc">Marine waters within one nautical mile of the shore</span></div>
-        <div class="class-key-row"><span class="class-key-label">Estuaries</span><span class="class-key-desc">Tidal reaches where rivers meet the sea</span></div>
-        <div class="class-key-row"><span class="class-key-label">Groundwater</span><span class="class-key-desc">Subsurface water bodies, assessed on quantity and chemistry</span></div>
-      </div>
-    </div>
-  </div>
+  <div id="summary-loading" class="status-text"><span class="spinner"></span>Loading national water quality data&hellip;</div>
+  <div id="summary"></div>
 
   <div class="about-content">
     <p>Water quality data in this dashboard comes from the <a href="https://www.sepa.org.uk">Scottish Environment Protection Agency (SEPA)</a> and reflects classification under the Water Framework Directive (WFD) — a piece of EU-derived legislation that Scotland continues to apply through the Water Environment and Water Services (Scotland) Act 2003.</p>
@@ -116,5 +101,113 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
   </footer>
 
 </div>
+
+<script>
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+const SEPA_BASE = "https://map.sepa.org.uk/server/rest/services/Open/Hydrography/MapServer";
+const WQ_LAYERS = { 0: "Groundwater", 1: "Estuaries", 2: "Coastal", 3: "Loch", 4: "River" };
+const WQ_LAYER_IDS = Object.keys(WQ_LAYERS);
+
+async function querySepaLayer(layerId, params) {
+  const base = `${SEPA_BASE}/${layerId}/query`;
+  const fixed = { outFields: "*", inSR: "4326", spatialRel: "esriSpatialRelIntersects", returnGeometry: "false", f: "json", ...params };
+  const qs = Object.entries(fixed).map(([k, v]) => `${k}=${v}`).join("&");
+  const resp = await fetch(`${base}?${qs}`);
+  if (!resp.ok) throw new Error(`SEPA HTTP ${resp.status} for layer ${layerId}`);
+  const data = await resp.json();
+  if (data.error) throw new Error(`${data.error.message || "SEPA query failed"} (code ${data.error.code || "?"})`);
+  return (data.features || []).map(f => {
+    const a = f.attributes || {};
+    return {
+      name: a.WATER_BODY_NAME || a.water_body_name || a.WaterBodyName || "Unknown",
+      classification: a.OVERALL_CLASSIFICATION || a.overall_classification || a.OverallClassification || "Not assessed",
+      year: a.CLASSIFICATION_YEAR || a.classification_year || a.ClassificationYear || null,
+      type: WQ_LAYERS[layerId],
+    };
+  });
+}
+
+function deduplicateWQ(items) {
+  const seen = new Map();
+  for (const item of items) {
+    const key = `${item.name}\0${item.type}`;
+    const existing = seen.get(key);
+    if (!existing || (item.year && (!existing.year || item.year > existing.year))) seen.set(key, item);
+  }
+  return [...seen.values()];
+}
+
+async function queryAllSepaLayers(params) {
+  const settled = await Promise.allSettled(WQ_LAYER_IDS.map(id => querySepaLayer(id, params)));
+  const successes = settled.filter(r => r.status === "fulfilled");
+  if (!successes.length) {
+    const firstErr = settled.find(r => r.status === "rejected");
+    throw new Error(firstErr?.reason?.message || "All SEPA queries failed");
+  }
+  return deduplicateWQ(successes.flatMap(r => r.value));
+}
+
+function extractWfdLevel(classification) {
+  const c = (classification || "").toLowerCase();
+  if (c.includes("bad")) return "Bad";
+  if (c.includes("poor")) return "Poor";
+  if (c.includes("moderate")) return "Moderate";
+  if (c.includes("good")) return "Good";
+  if (c.includes("high")) return "High";
+  return null;
+}
+
+function renderWQSummary(results) {
+  const classCounts = {};
+  const typeCounts = {};
+  for (const r of results) {
+    classCounts[r.classification] = (classCounts[r.classification] || 0) + 1;
+    typeCounts[r.type] = (typeCounts[r.type] || 0) + 1;
+  }
+  const total = results.length;
+  const levelColours = { "High": "#2563eb", "Good": "var(--success)", "Moderate": "#b8860b", "Poor": "var(--warning)", "Bad": "var(--unfav-decline)" };
+  const levelRank = { "High": 0, "Good": 1, "Moderate": 2, "Poor": 3, "Bad": 4 };
+  const sorted = Object.entries(classCounts).sort((a, b) => {
+    const la = extractWfdLevel(a[0]), lb = extractWfdLevel(b[0]);
+    return (levelRank[la] ?? 5) - (levelRank[lb] ?? 5);
+  });
+
+  let classHtml = '<div class="condition-bars">';
+  for (const [label, count] of sorted) {
+    const pct = total ? (count / total * 100) : 0;
+    const colour = levelColours[extractWfdLevel(label)] || "var(--mid)";
+    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${colour}"></div></div><span class="cond-bar-count">${count}</span></div>`;
+  }
+  classHtml += '</div>';
+
+  const typeOrder = ["River", "Loch", "Coastal", "Estuaries", "Groundwater"];
+  const maxT = Math.max(...Object.values(typeCounts), 1);
+  let typeHtml = '<div class="pressure-rank">';
+  for (const type of typeOrder) {
+    const count = typeCounts[type] || 0;
+    if (!count) continue;
+    typeHtml += `<div class="pressure-rank-item"><span class="pressure-rank-name">${esc(type)}</span><div class="pressure-rank-bar"><div class="pressure-rank-fill" style="width:${(count / maxT * 100).toFixed(1)}%"></div></div><span class="pressure-rank-count">${count}</span></div>`;
+  }
+  typeHtml += '</div>';
+
+  return `<div class="summary-panel"><div class="summary-section"><h3>WFD classification (${total} water bodies)</h3>${classHtml}</div><div class="summary-section"><h3>Water body types</h3>${typeHtml}</div></div>`;
+}
+
+async function init() {
+  try {
+    const results = await queryAllSepaLayers({
+      geometry: "-7.7,54.6,-0.7,60.9",
+      geometryType: "esriGeometryEnvelope",
+    });
+    document.getElementById("summary-loading").style.display = "none";
+    document.getElementById("summary").innerHTML = renderWQSummary(results);
+  } catch (err) {
+    document.getElementById("summary-loading").textContent = "Failed to load data: " + err.message;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
 </body>
 </html>
