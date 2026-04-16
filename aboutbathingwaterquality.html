@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Bathing Water Quality — Scottish Nature Data</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#2C3E50;--paper:#F4F5F7;--accent:#0277BD;--accent-light:#e1f5fe;
+  --mid:#6C757D;--rule:#E0E0E0;--field-bg:#ffffff;
+  --mono:'JetBrains Mono','Fira Code','Consolas',monospace;
+  --sans:system-ui,-apple-system,'Inter','Roboto',sans-serif;
+}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5;min-height:100vh}
+
+.frame{max-width:1120px;margin:0 auto;padding:2rem 2rem 4rem}
+.masthead{display:flex;align-items:center;gap:1rem;padding:1.5rem 2rem;margin-bottom:2rem;background:var(--accent);color:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.masthead-title{font-family:var(--sans);font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
+.masthead-nav{margin-left:auto;font-size:.75rem}
+.masthead-nav a{color:rgba(255,255,255,0.9);text-decoration:underline;text-underline-offset:2px}
+.masthead-nav a:hover{color:#fff}
+
+.about-content{margin-bottom:2rem}
+.about-content p{font-size:.9rem;line-height:1.7;margin-bottom:1rem}
+.about-content ul{font-size:.9rem;line-height:1.7;margin:0 0 1rem 1.5rem;padding:0}
+.about-content li{margin-bottom:.4rem}
+.about-content a{color:var(--accent)}
+.about-content h2{font-size:1rem;font-weight:700;margin:1.5rem 0 .5rem;color:var(--ink)}
+
+/* ── Summary panel ── */
+.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;padding:1rem 1.25rem;border:1px solid var(--rule);background:var(--field-bg);box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.summary-section h3{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
+.condition-bars{display:flex;flex-direction:column;gap:.35rem}
+.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.65rem}
+.cond-bar-track{flex:1;height:.65rem;background:var(--paper);border-radius:3px;position:relative;overflow:hidden}
+.cond-bar-fill{height:100%;position:absolute;left:0;top:0;border-radius:3px}
+.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+.stat-grid{display:flex;flex-direction:column;gap:.6rem}
+.stat-item{display:flex;flex-direction:column;gap:.1rem}
+.stat-value{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--ink)}
+.stat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid)}
+
+/* ── Loading ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--rule);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.5rem}
+.status-text{font-size:.75rem;color:var(--mid)}
+
+@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label{width:8rem}}
+
+/* ── Footer ── */
+.colophon{margin-top:3rem;padding-top:.75rem;border-top:1px solid var(--rule);font-size:.65rem;color:var(--mid);display:flex;justify-content:space-between}
+.colophon a{color:var(--accent);text-decoration:none}
+.colophon a:hover{text-decoration:underline}
+
+@media(max-width:600px){.frame{padding:1rem}.masthead{flex-direction:column;gap:.25rem;padding:1.25rem 1.5rem;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header class="masthead">
+    <h1 class="masthead-title">About Bathing Water Quality</h1>
+    <nav class="masthead-nav"><a href="index.html">Back to dashboard</a></nav>
+  </header>
+
+  <div id="summary-loading" class="status-text"><span class="spinner"></span>Loading national data&hellip;</div>
+  <div id="summary"></div>
+
+  <div class="about-content">
+    <p>Bathing water quality in Scotland is monitored and classified by the <a href="https://www.sepa.org.uk">Scottish Environment Protection Agency (SEPA)</a> under the Bathing Waters (Scotland) Regulations 2008, which implement the EU Bathing Water Directive. Scotland has 89 designated bathing waters — mostly coastal beaches, with a small number of inland sites.</p>
+
+    <h2>The classification system</h2>
+    <p>Each designated bathing water receives an annual classification based on samples collected throughout the bathing season (typically May to September). There are four categories:</p>
+    <ul>
+      <li><strong>Excellent</strong> — consistently very low levels of pollution; the highest standard.</li>
+      <li><strong>Good</strong> — low levels of pollution; safe for swimming under normal conditions.</li>
+      <li><strong>Sufficient</strong> — meets minimum standards; safe for swimming but with more variability.</li>
+      <li><strong>Poor</strong> — fails to meet minimum standards; swimming is not recommended.</li>
+    </ul>
+    <p>Classifications are based on a four-year rolling dataset, so a single poor year does not immediately drop a site to Poor status. Sites that fail to reach Sufficient classification must display a pollution advisory notice and work towards improvement.</p>
+
+    <h2>What is monitored</h2>
+    <p>SEPA collects water samples throughout the season and tests for bacterial indicators of faecal contamination — primarily <em>Escherichia coli</em> and intestinal enterococci. Samples are also recorded for visible litter and sewage-related debris, and these are shown in the dashboard alongside the annual classification.</p>
+
+    <h2>Common sources of pollution</h2>
+    <p>Bathing water pollution in Scotland typically comes from:</p>
+    <ul>
+      <li>Agricultural runoff carrying animal waste into rivers and coastal waters.</li>
+      <li>Combined sewer overflows (CSOs) that discharge during heavy rainfall.</li>
+      <li>Septic tanks and private sewage systems near the coast.</li>
+      <li>Urban surface water drainage carrying contaminants to the sea.</li>
+    </ul>
+    <p>For real-time water quality information and advice before swimming, see <a href="https://www.sepa.org.uk/environment/water/bathing-waters/">SEPA's bathing water pages</a>.</p>
+  </div>
+
+  <footer class="colophon">
+    <span>Data: <a href="https://www.sepa.org.uk" target="_blank" rel="noopener">SEPA</a>. Classifications under the Bathing Waters (Scotland) Regulations 2008.</span>
+  </footer>
+
+</div>
+
+<script>
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+async function init() {
+  try {
+    const resp = await fetch("data/bathing_water.json");
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    const total = data.length;
+    const classCounts = {};
+    const mediumCounts = {};
+    for (const site of data) {
+      const c = site.classification || "Insufficient data";
+      classCounts[c] = (classCounts[c] || 0) + 1;
+      const m = site.medium || "Unknown";
+      mediumCounts[m] = (mediumCounts[m] || 0) + 1;
+    }
+
+    const levelOrder = ["Excellent", "Good", "Sufficient", "Poor", "Insufficient data"];
+    const levelColours = {
+      "Excellent": "#2563eb",
+      "Good": "#176b32",
+      "Sufficient": "#b8860b",
+      "Poor": "#c22929",
+      "Insufficient data": "var(--mid)",
+    };
+    const maxCount = Math.max(...Object.values(classCounts), 1);
+
+    let barsHtml = '<div class="condition-bars">';
+    for (const label of levelOrder) {
+      const count = classCounts[label] || 0;
+      if (!count) continue;
+      const pct = (count / maxCount * 100).toFixed(1);
+      barsHtml += `<div class="cond-bar-row">
+        <span class="cond-bar-label">${esc(label)}</span>
+        <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct}%;background:${levelColours[label]}"></div></div>
+        <span class="cond-bar-count">${count}</span>
+      </div>`;
+    }
+    barsHtml += '</div>';
+
+    const coastalCount = mediumCounts["Coastal"] || 0;
+    const inlandCount = mediumCounts["Inland"] || 0;
+    const statsHtml = `<div class="stat-grid">
+      <div class="stat-item"><span class="stat-value">${total}</span><span class="stat-label">Designated bathing waters in Scotland</span></div>
+      <div class="stat-item"><span class="stat-value">${coastalCount}</span><span class="stat-label">Coastal sites</span></div>
+      <div class="stat-item"><span class="stat-value">${inlandCount}</span><span class="stat-label">Inland sites</span></div>
+    </div>`;
+
+    document.getElementById("summary-loading").style.display = "none";
+    document.getElementById("summary").innerHTML = `<div class="summary-panel">
+      <div class="summary-section"><h3>Classification breakdown (${total} sites)</h3>${barsHtml}</div>
+      <div class="summary-section"><h3>National totals</h3>${statsHtml}</div>
+    </div>`;
+
+  } catch (err) {
+    document.getElementById("summary-loading").textContent = "Failed to load data: " + err.message;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
