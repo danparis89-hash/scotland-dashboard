@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Other Nature Designations — Scottish Nature Data</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  /* Scottish Landscape Palette */
+  --ink:#2C3E50;--paper:#F4F5F7;--accent:#2E7D32;--accent-light:#e8f5e9;
+  --mid:#6C757D;--rule:#E0E0E0;--field-bg:#ffffff;--field-border:#BDBDBD;
+  --success:#176b32;--success-light:#e2f0e6;--warning:#b85c00;--warning-light:#fef3e5;
+  --unfav:#9e3a00;--unfav-light:#fef0e8;--unfav-decline:#c22929;
+  --mono:'JetBrains Mono','Fira Code','Consolas',monospace;
+  --sans:system-ui,-apple-system,'Inter','Roboto',sans-serif;
+  --display:'Georgia','Times New Roman',serif;
+}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5;min-height:100vh}
+
+.frame{max-width:1120px;margin:0 auto;padding:2rem 2rem 4rem}
+.masthead{display:flex;align-items:center;gap:1rem;padding:1.5rem 2rem;border-bottom:none;margin-bottom:2rem;background:var(--accent);color:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.masthead-title{font-family:var(--sans);font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
+.masthead-nav{margin-left:auto;font-size:.75rem}
+.masthead-nav a{color:rgba(255,255,255,0.9);text-decoration:underline;text-underline-offset:2px}
+.masthead-nav a:hover{color:#fff}
+
+.about-content{margin-bottom:2rem}
+.about-content p{font-size:.9rem;line-height:1.7;margin-bottom:1rem}
+.about-content ul{font-size:.9rem;line-height:1.7;margin:0 0 1rem 1.5rem;padding:0}
+.about-content li{margin-bottom:.4rem}
+.about-content a{color:var(--accent)}
+
+/* ── Summary panel ── */
+.summary-panel{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;padding:1rem 1.25rem;border:1px solid var(--rule);background:var(--field-bg);box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.summary-section h3{font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem;font-weight:700}
+.condition-bars{display:flex;flex-direction:column;gap:.35rem}
+.cond-bar-row{display:flex;align-items:center;gap:.5rem;font-size:.7rem}
+.cond-bar-label{width:12rem;text-align:right;font-weight:600;font-size:.65rem}
+.cond-bar-track{flex:1;height:.65rem;background:var(--paper);border-radius:3px;position:relative;overflow:hidden}
+.cond-bar-fill{height:100%;position:absolute;left:0;top:0;border-radius:3px}
+.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+.stat-grid{display:flex;flex-direction:column;gap:.6rem}
+.stat-item{display:flex;flex-direction:column;gap:.1rem}
+.stat-value{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--ink)}
+.stat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mid)}
+@media(max-width:700px){.summary-panel{grid-template-columns:1fr}.cond-bar-label{width:9rem}}
+
+/* ── Loading ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--rule);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.5rem}
+.status-text{font-size:.75rem;color:var(--mid)}
+
+/* ── Footer ── */
+.colophon{margin-top:3rem;padding-top:.75rem;border-top:1px solid var(--rule);font-size:.65rem;color:var(--mid);display:flex;justify-content:space-between}
+.colophon a{color:var(--accent);text-decoration:none}
+.colophon a:hover{text-decoration:underline}
+
+/* ── Responsive ── */
+@media(max-width:600px){.frame{padding:1rem}.masthead{flex-direction:column;gap:.25rem;padding:1.25rem 1.5rem;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header class="masthead">
+    <h1 class="masthead-title">About Other Nature Designations</h1>
+    <nav class="masthead-nav"><a href="index.html">Back to dashboard</a></nav>
+  </header>
+
+  <div id="summary-loading" class="status-text"><span class="spinner"></span>Loading national data&hellip;</div>
+  <div id="summary"></div>
+
+  <div class="about-content">
+    <p>Beyond the statutory protected area network, Scotland has a range of other nature designations that recognise and protect landscapes and habitats of local, national, and international significance. These designations are managed by a mix of national agencies, local authorities, and communities.</p>
+    <p>This dashboard includes six designation types:</p>
+    <ul>
+      <li><strong>National Nature Reserves (NNRs)</strong> — Scotland's finest examples of habitats and landscapes, managed by NatureScot or approved bodies. NNRs are chosen for their national importance and often overlap with SSSI designations.</li>
+      <li><strong>Local Nature Reserves (LNRs)</strong> — designated by local authorities under the National Parks and Access to the Countryside Act 1949. LNRs are places with wildlife or geological features that are of special interest locally and provide opportunities for people to study or enjoy nature.</li>
+      <li><strong>Country Parks</strong> — areas managed to provide outdoor recreation close to where people live. While primarily recreational, many support significant biodiversity and are managed with nature in mind.</li>
+      <li><strong>Biosphere Reserves</strong> — UNESCO-designated areas that demonstrate how people and nature can live and work together sustainably. Scotland has several, including the Galloway and Southern Ayrshire Biosphere.</li>
+      <li><strong>Regional Parks</strong> — large areas of countryside protected for their landscape quality and recreational value, typically managed by local authorities or partnerships.</li>
+      <li><strong>Nature30</strong> — sites identified under Scotland's commitment to protect 30% of land and sea for nature by 2030.</li>
+    </ul>
+    <p>For more information on these designations, see <a href="https://www.nature.scot/professional-advice/protected-areas-and-species/protected-areas">NatureScot</a> and your <a href="https://www.cosla.gov.uk">local authority</a>.</p>
+  </div>
+
+  <footer class="colophon">
+    <span>Data: NatureScot. Boundaries: <a href="https://mapit.mysociety.org" target="_blank" rel="noopener">Powered by MapIt</a>.</span>
+  </footer>
+
+</div>
+
+<script>
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+async function init() {
+  try {
+    const resp = await fetch("data/other_designations.geojson");
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const geojson = await resp.json();
+
+    // Count unique sites per designation type (deduplicate by code)
+    const seenCodes = new Set();
+    const typeCounts = {};
+    let totalSites = 0;
+
+    for (const feat of geojson.features) {
+      const code = feat.properties.code;
+      if (seenCodes.has(code)) continue;
+      seenCodes.add(code);
+      totalSites++;
+      const type = feat.properties.designation_type || "Other";
+      typeCounts[type] = (typeCounts[type] || 0) + 1;
+    }
+
+    const typeOrder = [
+      "National Nature Reserve",
+      "Local Nature Reserve",
+      "Country Park",
+      "Biosphere Reserve",
+      "Regional Park",
+      "Nature30",
+    ];
+    const maxCount = Math.max(...Object.values(typeCounts), 1);
+
+    let barsHtml = '<div class="condition-bars">';
+    for (const type of typeOrder) {
+      const count = typeCounts[type] || 0;
+      if (!count) continue;
+      const pct = (count / maxCount * 100).toFixed(1);
+      barsHtml += `<div class="cond-bar-row">
+        <span class="cond-bar-label">${esc(type)}</span>
+        <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct}%;background:var(--accent)"></div></div>
+        <span class="cond-bar-count">${count}</span>
+      </div>`;
+    }
+    // Any types not in our ordered list
+    for (const [type, count] of Object.entries(typeCounts)) {
+      if (typeOrder.includes(type)) continue;
+      const pct = (count / maxCount * 100).toFixed(1);
+      barsHtml += `<div class="cond-bar-row">
+        <span class="cond-bar-label">${esc(type)}</span>
+        <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct}%;background:var(--accent)"></div></div>
+        <span class="cond-bar-count">${count}</span>
+      </div>`;
+    }
+    barsHtml += '</div>';
+
+    const typeCount = Object.keys(typeCounts).length;
+    const statsHtml = `<div class="stat-grid">
+      <div class="stat-item"><span class="stat-value">${totalSites}</span><span class="stat-label">Total designated sites</span></div>
+      <div class="stat-item"><span class="stat-value">${typeCount}</span><span class="stat-label">Designation types</span></div>
+    </div>`;
+
+    document.getElementById("summary-loading").style.display = "none";
+    document.getElementById("summary").innerHTML = `<div class="summary-panel">
+      <div class="summary-section"><h3>Sites by designation type</h3>${barsHtml}</div>
+      <div class="summary-section"><h3>National totals</h3>${statsHtml}</div>
+    </div>`;
+
+  } catch (err) {
+    document.getElementById("summary-loading").textContent = "Failed to load data: " + err.message;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
