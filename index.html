@@ -843,13 +843,13 @@ function renderSummaryPanel(cards) {
    ═══════════════════════════════════════════════════════════ */
 function getWorstCondition(features) {
   const ranks = { "unfavourable": 4, "unfavourable declining": 5, "unfavourable no change": 4,
-    "unfavourable recovering": 3, "favourable": 1, "not assessed": 0 };
+    "unfavourable recovering": 3, "favourable declining": 2, "favourable": 1, "not assessed": 0 };
   let worst = ""; let worstRank = -1;
   for (const f of features) {
     const s = (f.conditionSummary || "").toLowerCase();
     const d = (f.condition || "").toLowerCase();
     const rank = ranks[d] || ranks[s] || 0;
-    if (rank > worstRank) { worstRank = rank; worst = f.conditionSummary || f.condition || ""; }
+    if (rank > worstRank) { worstRank = rank; worst = f.condition || f.conditionSummary || ""; }
   }
   return worst;
 }
@@ -1246,7 +1246,7 @@ function renderWQSummary(results) {
   for (const [label, count] of sorted) {
     const pct = total ? (count / total * 100) : 0;
     const colour = levelColours[extractWfdLevel(label)] || "var(--mid)";
-    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${colour}"></div></div><span class="cond-bar-count">${count}</span></div>`;
+    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${colour}"></div></div><span class="cond-bar-count">${count} (${pct.toFixed(1)}%)</span></div>`;
   }
   classHtml += '</div>';
 
@@ -1427,7 +1427,7 @@ function renderBWSummary(results) {
     const count = classCounts[label] || 0;
     if (!count) continue;
     const pct = total ? (count / total * 100) : 0;
-    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${levelColours[label]}"></div></div><span class="cond-bar-count">${count}</span></div>`;
+    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${levelColours[label]}"></div></div><span class="cond-bar-count">${count} (${pct.toFixed(1)}%)</span></div>`;
   }
   classHtml += '</div>';
 
