@@ -843,13 +843,13 @@ function renderSummaryPanel(cards) {
    ═══════════════════════════════════════════════════════════ */
 function getWorstCondition(features) {
   const ranks = { "unfavourable": 4, "unfavourable declining": 5, "unfavourable no change": 4,
-    "unfavourable recovering": 3, "favourable": 1, "not assessed": 0 };
+    "unfavourable recovering": 3, "favourable declining": 2, "favourable": 1, "not assessed": 0 };
   let worst = ""; let worstRank = -1;
   for (const f of features) {
     const s = (f.conditionSummary || "").toLowerCase();
     const d = (f.condition || "").toLowerCase();
     const rank = ranks[d] || ranks[s] || 0;
-    if (rank > worstRank) { worstRank = rank; worst = f.conditionSummary || f.condition || ""; }
+    if (rank > worstRank) { worstRank = rank; worst = f.condition || f.conditionSummary || ""; }
   }
   return worst;
 }
