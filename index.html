@@ -34,6 +34,7 @@
   --warning:#b85c00;--warning-light:#fef3e5;
   --unfav:#9e3a00;--unfav-light:#fef0e8;
   --unfav-decline:#c22929;
+  --fav-decline:#8a6c00;--fav-decline-light:#fef9e1;
 
   --mono:'JetBrains Mono','Fira Code','Consolas',monospace;
   --sans:system-ui,-apple-system,'Inter','Roboto',sans-serif;
@@ -103,10 +104,18 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .site-condition-summary{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:3px;white-space:nowrap}
 
 .cond-fav{background:var(--success-light);color:var(--success)}
+.cond-fav-dec{background:var(--fav-decline-light);color:var(--fav-decline)}
 .cond-unfav-rec{background:var(--warning-light);color:var(--warning)}
 .cond-unfav{background:var(--unfav-light);color:var(--unfav)}
 .cond-unfav-dec{background:#fbe8e8;color:var(--unfav-decline)}
 .cond-unknown{background:var(--paper);color:var(--mid)}
+
+.filter-bar{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;padding:.5rem 0;margin-bottom:.75rem}
+.filter-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mid);font-weight:700;margin-right:.25rem;flex-shrink:0}
+.filter-chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;font-weight:600;padding:.25rem .6rem;border-radius:99px;border:1.5px solid var(--rule);background:var(--field-bg);color:var(--ink);cursor:pointer;line-height:1.4;transition:border-color .1s;font-family:inherit}
+.filter-chip:hover{border-color:var(--mid)}
+.filter-chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip-count{font-family:var(--mono);font-size:.6rem;opacity:.8}
 
 .site-expand-icon{font-size:.8rem;color:var(--accent);transition:transform .15s;width:1.2rem;text-align:center}
 .site-row.open .site-expand-icon{transform:rotate(90deg)}
@@ -119,7 +128,7 @@ select.field-input{font-family:var(--sans);font-size:.8rem;cursor:pointer;appear
 .cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.7rem;color:var(--ink)}
 .cond-bar-track{flex:1;height:.5rem;background:var(--field-bg);border-radius:3px;position:relative;overflow:hidden}
 .cond-bar-fill{height:100%;position:absolute;left:0;top:0;border-radius:3px}
-.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.7rem;color:var(--mid)}
+.cond-bar-count{width:6rem;font-family:var(--mono);font-size:.7rem;color:var(--mid)}
 .pressure-rank{display:flex;flex-direction:column;gap:.4rem}
 .pressure-rank-item{display:flex;align-items:center;gap:.5rem;font-size:.75rem}
 .pressure-rank-bar{flex:1;height:.5rem;background:var(--field-bg);border-radius:3px;position:relative;overflow:hidden}
@@ -390,7 +399,9 @@ const CONFIG = {
 /* ═══════════════════════════════════════════════════════════
    STATE
    ═══════════════════════════════════════════════════════════ */
-const STATE = { siteData: null, metadata: null, regions: null, sites: null, pressures: null, otherDesigIndex: null, bathingWater: null, lastQuery: null };
+const STATE = { siteData: null, metadata: null, regions: null, sites: null, pressures: null, otherDesigIndex: null, bathingWater: null, lastQuery: null,
+  currentSites: null, currentOD: null, showDistanceOD: false, currentWQ: null, currentBW: null, showDistanceBW: false,
+  activeFilters: { sites: [], od: [], wq: [], bw: [] } };
 
 const $ = s => document.querySelector(s);
 const EL = {
@@ -457,6 +468,9 @@ function bindEvents() {
   EL.postcode.addEventListener("keydown", e => { if (e.key === "Enter") handlePostcodeSearch(); });
   EL.radiusSlider.addEventListener("input", () => {
     EL.radiusValue.textContent = EL.radiusSlider.value + " km";
+  });
+  EL.radiusSlider.addEventListener("change", () => {
+    if (EL.postcode.value.trim()) handlePostcodeSearch();
   });
   EL.postcode.addEventListener("input", () => {
     if (EL.postcode.value.trim()) { EL.ddUTA.value = ""; EL.ddSPC.value = ""; EL.ddSPE.value = ""; }
@@ -678,22 +692,39 @@ function renderSites(sitesArr, showDistance) {
   }
 
   setStatus("success", STATE.lastQuery || "");
-  EL.count.textContent = `${cards.length} sites`;
+  STATE.currentSites = cards;
+  STATE.activeFilters.sites = [];
+  displaySites();
+}
 
-  let html = renderSummaryPanel(cards);
+function displaySites() {
+  const cards = STATE.currentSites;
+  const active = STATE.activeFilters.sites;
+  const COND_ORDER = ["cond-fav","cond-fav-dec","cond-unfav-rec","cond-unfav","cond-unfav-dec","cond-unknown"];
+  const COND_LABEL = {"cond-fav":"Favourable","cond-fav-dec":"Fav. Declining","cond-unfav-rec":"Unfav. Recovering","cond-unfav":"Unfavourable","cond-unfav-dec":"Unfav. Declining","cond-unknown":"Not Assessed"};
+  const catCounts = {};
+  for (const c of cards) { const k = conditionClass(c.worstCondition); catCounts[k] = (catCounts[k] || 0) + 1; }
+  const filtered = active.length ? cards.filter(c => active.includes(conditionClass(c.worstCondition))) : cards;
+  EL.count.textContent = `${filtered.length}${active.length ? `/${cards.length}` : ""} sites`;
+  let html = '<div class="filter-bar"><span class="filter-label">Filter:</span>';
+  for (const k of COND_ORDER) {
+    if (!catCounts[k]) continue;
+    html += `<button class="filter-chip${active.includes(k) ? " active" : ""}" data-fs="${k}">${COND_LABEL[k]} <span class="chip-count">${catCounts[k]}</span></button>`;
+  }
+  html += '</div>';
+  html += renderSummaryPanel(filtered);
   html += '<div class="site-list">';
-  for (const c of cards) {
+  for (const c of filtered) {
     const distStr = c.dist !== null ? `<span class="site-distance">${c.dist} km</span>` : "";
-    const condClass = conditionClass(c.worstCondition);
-    const condLabel = c.worstCondition || "Not assessed";
+    const cls = conditionClass(c.worstCondition);
+    const lbl = c.worstCondition || "Not assessed";
     const areaStr = c.area ? `${Math.round(c.area)} ha` : "";
     const desigHtml = c.designations.map(d => `<span class="desig-tag">${esc(d)}</span>`).join("");
-
     html += `<div class="site-row" data-pa="${esc(c.paCode)}">
       <div class="site-header">
         <div class="site-name">${esc(c.name)}<span class="site-designations">${desigHtml}</span>${distStr}</div>
         <div class="site-meta">${esc(areaStr)}</div>
-        <div class="site-condition-summary ${condClass}">${esc(condLabel)}</div>
+        <div class="site-condition-summary ${cls}">${esc(lbl)}</div>
         <div class="site-expand-icon">▶</div>
       </div>
       <div class="site-detail">${renderFeatureTable(c)}</div>
@@ -701,7 +732,14 @@ function renderSites(sitesArr, showDistance) {
   }
   html += '</div>';
   EL.results.innerHTML = html;
-
+  EL.results.querySelectorAll("[data-fs]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const k = btn.dataset.fs;
+      const i = STATE.activeFilters.sites.indexOf(k);
+      if (i >= 0) STATE.activeFilters.sites.splice(i, 1); else STATE.activeFilters.sites.push(k);
+      displaySites();
+    });
+  });
   EL.results.querySelectorAll(".site-row").forEach(row => {
     row.querySelector(".site-header").addEventListener("click", () => row.classList.toggle("open"));
   });
@@ -776,7 +814,7 @@ function renderSummaryPanel(cards) {
     condHtml += `<div class="cond-bar-row">
       <span class="cond-bar-label">${esc(label)}</span>
       <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${condColours[label]}"></div></div>
-      <span class="cond-bar-count">${count}</span>
+      <span class="cond-bar-count">${count} (${pct.toFixed(1)}%)</span>
     </div>`;
   }
   condHtml += '</div>';
@@ -818,6 +856,7 @@ function getWorstCondition(features) {
 
 function conditionClass(cond) {
   const c = (cond || "").toLowerCase();
+  if (c.includes("favourable") && !c.includes("unfavourable") && c.includes("declining")) return "cond-fav-dec";
   if (c.includes("favourable") && !c.includes("unfavourable")) return "cond-fav";
   if (c.includes("recovering")) return "cond-unfav-rec";
   if (c.includes("declining")) return "cond-unfav-dec";
@@ -968,16 +1007,27 @@ function renderOtherDesignations(designations, showDistance) {
     return;
   }
   setODStatus("success", STATE.lastQuery || "");
-  EL.odCount.textContent = `${designations.length} designations`;
+  STATE.currentOD = designations;
+  STATE.showDistanceOD = showDistance;
+  STATE.activeFilters.od = [];
+  displayOD();
+}
 
-  const groups = {};
-  for (const d of designations) {
-    const t = d.designationType;
-    if (!groups[t]) groups[t] = [];
-    groups[t].push(d);
+function displayOD() {
+  const designations = STATE.currentOD;
+  const showDistance = STATE.showDistanceOD;
+  const active = STATE.activeFilters.od;
+  const typeCounts = {};
+  for (const d of designations) { typeCounts[d.designationType] = (typeCounts[d.designationType] || 0) + 1; }
+  const filtered = active.length ? designations.filter(d => active.includes(d.designationType)) : designations;
+  EL.odCount.textContent = `${filtered.length}${active.length ? `/${designations.length}` : ""} designations`;
+  let html = '<div class="filter-bar"><span class="filter-label">Filter:</span>';
+  for (const [t, cnt] of Object.entries(typeCounts).sort((a, b) => a[0].localeCompare(b[0]))) {
+    html += `<button class="filter-chip${active.includes(t) ? " active" : ""}" data-fo="${esc(t)}">${esc(t)} <span class="chip-count">${cnt}</span></button>`;
   }
-
-  let html = "";
+  html += '</div>';
+  const groups = {};
+  for (const d of filtered) { (groups[d.designationType] || (groups[d.designationType] = [])).push(d); }
   for (const [type, items] of Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0]))) {
     html += `<div class="od-group"><h3 class="od-group-title">${esc(type)} <span class="od-group-count">(${items.length})</span></h3><div class="od-items">`;
     for (const d of items) {
@@ -988,6 +1038,14 @@ function renderOtherDesignations(designations, showDistance) {
     html += "</div></div>";
   }
   EL.odResults.innerHTML = html;
+  EL.odResults.querySelectorAll("[data-fo]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const t = btn.dataset.fo;
+      const i = STATE.activeFilters.od.indexOf(t);
+      if (i >= 0) STATE.activeFilters.od.splice(i, 1); else STATE.activeFilters.od.push(t);
+      displayOD();
+    });
+  });
 }
 
 function setODStatus(state, text) {
@@ -1118,12 +1176,31 @@ function renderWaterQuality(results) {
     return;
   }
   setWQStatus("success", STATE.lastQuery || "");
-  EL.wqCount.textContent = `${results.length} water bodies`;
+  STATE.currentWQ = results;
+  STATE.activeFilters.wq = [];
+  displayWQ();
+}
 
-  let html = renderWQSummary(results);
+function displayWQ() {
+  const results = STATE.currentWQ;
+  const active = STATE.activeFilters.wq;
+  const WFD_ORDER = ["High","Good","Moderate","Poor","Bad"];
+  const levelCounts = {};
+  for (const r of results) { const l = extractWfdLevel(r.classification) || "Other"; levelCounts[l] = (levelCounts[l] || 0) + 1; }
+  const filtered = active.length ? results.filter(r => active.includes(extractWfdLevel(r.classification) || "Other")) : results;
+  EL.wqCount.textContent = `${filtered.length}${active.length ? `/${results.length}` : ""} water bodies`;
+  let html = '<div class="filter-bar"><span class="filter-label">Filter:</span>';
+  for (const l of WFD_ORDER) {
+    if (!levelCounts[l]) continue;
+    html += `<button class="filter-chip${active.includes(l) ? " active" : ""}" data-fwq="${l}">${l} <span class="chip-count">${levelCounts[l]}</span></button>`;
+  }
+  if (levelCounts["Other"]) {
+    html += `<button class="filter-chip${active.includes("Other") ? " active" : ""}" data-fwq="Other">Other <span class="chip-count">${levelCounts["Other"]}</span></button>`;
+  }
+  html += '</div>';
+  html += renderWQSummary(filtered);
   const groups = {};
-  for (const r of results) { (groups[r.type] || (groups[r.type] = [])).push(r); }
-
+  for (const r of filtered) { (groups[r.type] || (groups[r.type] = [])).push(r); }
   const typeOrder = ["River", "Loch", "Coastal", "Estuaries", "Groundwater"];
   for (const type of typeOrder) {
     const items = groups[type];
@@ -1140,6 +1217,14 @@ function renderWaterQuality(results) {
     html += "</div></div>";
   }
   EL.wqResults.innerHTML = html;
+  EL.wqResults.querySelectorAll("[data-fwq]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const l = btn.dataset.fwq;
+      const i = STATE.activeFilters.wq.indexOf(l);
+      if (i >= 0) STATE.activeFilters.wq.splice(i, 1); else STATE.activeFilters.wq.push(l);
+      displayWQ();
+    });
+  });
 }
 
 function renderWQSummary(results) {
@@ -1232,15 +1317,32 @@ function renderBathingWater(results, showDistance) {
     return;
   }
   setBWStatus("success", STATE.lastQuery || "");
-  EL.bwCount.textContent = `${results.length} bathing waters`;
+  STATE.currentBW = results;
+  STATE.showDistanceBW = showDistance;
+  STATE.activeFilters.bw = [];
+  displayBW();
+}
 
-  let html = renderBWSummary(results);
+function displayBW() {
+  const results = STATE.currentBW;
+  const showDistance = STATE.showDistanceBW;
+  const active = STATE.activeFilters.bw;
+  const BW_ORDER = ["Excellent","Good","Sufficient","Poor","Insufficient data"];
+  const classCounts = {};
+  for (const r of results) { const c = r.classification || "Insufficient data"; classCounts[c] = (classCounts[c] || 0) + 1; }
+  const filtered = active.length ? results.filter(r => active.includes(r.classification || "Insufficient data")) : results;
+  EL.bwCount.textContent = `${filtered.length}${active.length ? `/${results.length}` : ""} bathing waters`;
+  let html = '<div class="filter-bar"><span class="filter-label">Filter:</span>';
+  for (const cls of BW_ORDER) {
+    if (!classCounts[cls]) continue;
+    html += `<button class="filter-chip${active.includes(cls) ? " active" : ""}" data-fbw="${esc(cls)}">${esc(cls)} <span class="chip-count">${classCounts[cls]}</span></button>`;
+  }
+  html += '</div>';
+  html += renderBWSummary(filtered);
   html += '<div class="bw-items">';
-
-  for (const site of results) {
+  for (const site of filtered) {
     const distStr = showDistance && site.dist !== null ? `<span class="site-distance">${site.dist} km</span>` : "";
     const clsCss = bwClassCss(site.classification);
-
     html += `<div class="bw-row">
       <div class="bw-header">
         <div class="bw-name">${esc(site.name)}${distStr}</div>
@@ -1252,7 +1354,14 @@ function renderBathingWater(results, showDistance) {
   }
   html += '</div>';
   EL.bwResults.innerHTML = html;
-
+  EL.bwResults.querySelectorAll("[data-fbw]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const c = btn.dataset.fbw;
+      const i = STATE.activeFilters.bw.indexOf(c);
+      if (i >= 0) STATE.activeFilters.bw.splice(i, 1); else STATE.activeFilters.bw.push(c);
+      displayBW();
+    });
+  });
   EL.bwResults.querySelectorAll(".bw-row").forEach(row => {
     row.querySelector(".bw-header").addEventListener("click", () => row.classList.toggle("open"));
   });
