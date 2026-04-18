@@ -72,9 +72,25 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 
 /* ── Responsive ── */
 @media(max-width:600px){.frame{padding:1rem}.masthead{flex-direction:column;gap:.25rem;padding:1.25rem 1.5rem;align-items:flex-start}}
+
+.hero{background:var(--accent);color:#fff;padding:4rem 2rem;margin-bottom:3rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.hero-text{max-width:600px}
+.hero-title{font-family:var(--sans);font-size:3rem;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:.5rem}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,0.9);letter-spacing:.05em;font-weight:600}
+.hero-credit{display:block;margin-top:.75rem;font-size:.75rem;color:rgba(255,255,255,0.7);font-weight:400}
+.hero-credit a{color:#fff;text-decoration:none}
+.hero-credit a:hover{text-decoration:underline}
+@media(max-width:700px){.hero{padding:2.5rem 1.5rem}.hero-title{font-size:2.2rem}}
 </style>
 </head>
 <body>
+<header class="hero">
+  <div class="hero-text">
+    <h1 class="hero-title">Scottish Nature Data</h1>
+    <span class="hero-sub">Environmental information for your local area</span>
+    <span class="hero-credit"><b></b>Website by <a href="https://www.danparis.net" target="_blank" rel="noopener">Dan Paris</a></b></span>
+  </div>
+</header>
 <div class="frame">
 
   <header class="masthead">
