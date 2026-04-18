@@ -70,8 +70,16 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .colophon a{color:var(--accent);text-decoration:none}
 .colophon a:hover{text-decoration:underline}
 
+.conditions-table{width:100%;border-collapse:collapse;font-size:.875rem;margin:.75rem 0 1rem}
+.conditions-table td{padding:.6rem .75rem;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.6}
+.conditions-table td:first-child{font-weight:700;width:13rem;color:var(--ink)}
+.conditions-table tr:last-child td{border-bottom:none}
+.conditions-source{font-size:.8rem;color:var(--mid);margin-top:.25rem}
+.conditions-source a{color:var(--accent)}
+
 /* ── Responsive ── */
 @media(max-width:600px){.frame{padding:1rem}.masthead{flex-direction:column;gap:.25rem;padding:1.25rem 1.5rem;align-items:flex-start}}
+@media(max-width:600px){.conditions-table td:first-child{width:auto;display:block;padding-bottom:.2rem}.conditions-table td{display:block;padding:.4rem .75rem}.conditions-table tr{display:block;padding:.4rem 0;border-bottom:1px solid var(--rule)}.conditions-table td{border-bottom:none}.conditions-table tr:last-child{border-bottom:none}}
 
 .hero{background:var(--accent);color:#fff;padding:4rem 2rem;margin-bottom:3rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
 .hero-text{max-width:600px}
@@ -111,7 +119,20 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
       <li><strong>Ramsar sites</strong> — designated as internationally important wetlands.</li>
     </ul>
     <p>An individual site can have multiple or overlapping designations. SACs and SPAs have their roots in EU policy and are often referred to as European sites (or Natura sites).</p>
-    <p>NatureScot are responsible for monitoring the condition of protected sites. Sites are categorised on a range between <i>favourable maintained</i> to <i>totally destroyed</i>. An explanation of each category is published by <a href=https://www.nature.scot/professional-advice/protected-areas-and-species/protected-areas/site-condition-monitoring/assessment-condition>NatureScot</a>.</p>
+    <p><strong>Explanation of assessment conditions:</strong></p>
+    <table class="conditions-table">
+      <tbody>
+        <tr><td>Favourable maintained</td><td>An interest feature should be recorded as maintained when its conservation objectives were being met at the previous assessment, and are still being met.</td></tr>
+        <tr><td>Favourable recovered</td><td>A feature of interest can be recorded as having recovered if it has regained favourable condition, having been recorded as unfavourable at the previous assessment.</td></tr>
+        <tr><td>Favourable declining</td><td>The attribute targets set for the natural feature have been met, but evidence suggests that its condition will worsen unless remedial action is taken.</td></tr>
+        <tr><td>Unfavourable recovering</td><td>A feature of interest can be recorded as recovering after damage if it has begun to show, or is continuing to show, a trend towards favourable condition.</td></tr>
+        <tr><td>Unfavourable no change</td><td>An interest feature may be retained in a more-or-less steady state by repeated or continuing damage – it is unfavourable but neither declining or recovering. In rare cases, an interest feature may be unable to regain its original condition following a damaging activity, but a new stable state might be achieved.</td></tr>
+        <tr><td>Unfavourable declining</td><td>Decline is another possible consequence of a damaging activity. In this case, recovery is possible and may occur either spontaneously or if suitable management input is made.</td></tr>
+        <tr><td>Partially destroyed</td><td>It is possible to destroy sections or areas of certain features or to destroy parts of sites with no hope of reinstatement because part of the feature itself, or the habitat or processes essential to support it, has been removed or irretrievably altered. In these cases, the remainder of the feature is given an assessed condition.</td></tr>
+        <tr><td>Totally destroyed</td><td>The recording of a feature as destroyed will indicate the entire interest feature has been affected to such an extent that there is no hope of recovery, perhaps because its supporting habitat or processes have been removed or irretrievably altered.</td></tr>
+      </tbody>
+    </table>
+    <p class="conditions-source">Source: <a href="https://www.nature.scot/professional-advice/protected-areas-and-species/protected-areas/site-condition-monitoring/assessment-condition" target="_blank" rel="noopener">NatureScot</a></p>
     <p>Data on identified pressures is accurate to March 2026, and will be updated in future.</p>
     <p>For more information on protected sites and site condition monitoring, see <a href="https://www.nature.scot/professional-advice/protected-areas-and-species/protected-areas">NatureScot</a>.</p>
   </div>
