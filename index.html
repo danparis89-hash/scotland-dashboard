@@ -758,7 +758,7 @@ function renderFeatureTable(card) {
   </tr></thead><tbody>`;
 
   for (const f of features) {
-    const cClass = conditionClass(f.conditionSummary || "");
+    const cClass = conditionClass(f.condition || f.conditionSummary || "");
     const pressuresHtml = (f.pressures || []).length
       ? (f.pressures || []).map(p => {
           const effectClass = (p.effect || "").toLowerCase().includes("negative") ? "effect-neg" : (p.effect || "").toLowerCase().includes("positive") ? "effect-pos" : "";
