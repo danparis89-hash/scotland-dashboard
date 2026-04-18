@@ -47,7 +47,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .cond-bar-label{width:10rem;text-align:right;font-weight:600;font-size:.65rem}
 .cond-bar-track{flex:1;height:.65rem;background:var(--paper);border-radius:3px;position:relative;overflow:hidden}
 .cond-bar-fill{height:100%;position:absolute;left:0;top:0;border-radius:3px}
-.cond-bar-count{width:3rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
+.cond-bar-count{width:6rem;font-family:var(--mono);font-size:.65rem;color:var(--mid)}
 .stat-grid{display:flex;flex-direction:column;gap:.6rem}
 .stat-item{display:flex;flex-direction:column;gap:.1rem}
 .stat-value{font-family:var(--mono);font-size:1.4rem;font-weight:700;color:var(--ink)}
@@ -146,7 +146,7 @@ async function init() {
       barsHtml += `<div class="cond-bar-row">
         <span class="cond-bar-label">${esc(label)}</span>
         <div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct}%;background:${levelColours[label]}"></div></div>
-        <span class="cond-bar-count">${count}</span>
+        <span class="cond-bar-count">${count} (${(count / total * 100).toFixed(1)}%)</span>
       </div>`;
     }
     barsHtml += '</div>';

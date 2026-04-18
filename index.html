@@ -1246,7 +1246,7 @@ function renderWQSummary(results) {
   for (const [label, count] of sorted) {
     const pct = total ? (count / total * 100) : 0;
     const colour = levelColours[extractWfdLevel(label)] || "var(--mid)";
-    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${colour}"></div></div><span class="cond-bar-count">${count}</span></div>`;
+    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${colour}"></div></div><span class="cond-bar-count">${count} (${pct.toFixed(1)}%)</span></div>`;
   }
   classHtml += '</div>';
 
@@ -1427,7 +1427,7 @@ function renderBWSummary(results) {
     const count = classCounts[label] || 0;
     if (!count) continue;
     const pct = total ? (count / total * 100) : 0;
-    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${levelColours[label]}"></div></div><span class="cond-bar-count">${count}</span></div>`;
+    classHtml += `<div class="cond-bar-row"><span class="cond-bar-label">${esc(label)}</span><div class="cond-bar-track"><div class="cond-bar-fill" style="width:${pct.toFixed(1)}%;background:${levelColours[label]}"></div></div><span class="cond-bar-count">${count} (${pct.toFixed(1)}%)</span></div>`;
   }
   classHtml += '</div>';
 
