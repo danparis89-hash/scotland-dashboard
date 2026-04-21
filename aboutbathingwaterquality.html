@@ -28,9 +28,16 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .frame{max-width:1120px;margin:0 auto;padding:2rem 2rem 4rem}
 .masthead{display:flex;align-items:center;gap:1rem;padding:1.5rem 2rem;margin-bottom:2rem;background:var(--accent);color:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
 .masthead-title{font-family:var(--sans);font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
-.masthead-nav{margin-left:auto;font-size:.75rem}
-.masthead-nav a{color:rgba(255,255,255,0.9);text-decoration:underline;text-underline-offset:2px}
-.masthead-nav a:hover{color:#fff}
+.hero-nav{position:relative;margin-left:auto}
+.hero-nav-btn{font-family:var(--sans);font-size:.85rem;font-weight:600;padding:.65rem 1.1rem;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.45);color:#fff;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:.45rem;letter-spacing:.03em;transition:background .15s,border-color .15s;white-space:nowrap}
+.hero-nav-btn:hover,.hero-nav:focus-within .hero-nav-btn{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.75)}
+.hero-nav-chevron{transition:transform .2s;font-size:.7rem}
+.hero-nav:hover .hero-nav-chevron,.hero-nav:focus-within .hero-nav-chevron{transform:rotate(180deg)}
+.hero-nav-menu{display:none;position:absolute;top:100%;right:0;background:#fff;border-radius:0;box-shadow:0 4px 20px rgba(0,0,0,0.15);list-style:none;min-width:240px;overflow:hidden;z-index:100}
+.hero-nav:hover .hero-nav-menu,.hero-nav:focus-within .hero-nav-menu{display:block}
+.hero-nav-menu a{display:block;padding:1.1rem 1.75rem;color:var(--ink);text-decoration:none;font-size:1rem;font-weight:500;transition:background .1s,color .1s}
+.hero-nav-menu a:hover{background:var(--accent-light);color:var(--accent)}
+.hero-nav-menu li+li a{border-top:1px solid var(--rule)}
 
 .about-content{margin-bottom:2rem}
 .about-content p{font-size:.9rem;line-height:1.7;margin-bottom:1rem}
@@ -89,7 +96,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 
   <header class="masthead">
     <h1 class="masthead-title">About Bathing Water Quality</h1>
-    <nav class="masthead-nav"><a href="index.html">Back to dashboard</a></nav>
+    <nav class="hero-nav" aria-label="Site navigation">
+      <button class="hero-nav-btn" aria-haspopup="true">Pages <span class="hero-nav-chevron">▾</span></button>
+      <ul class="hero-nav-menu" role="menu">
+        <li role="none"><a href="index.html" role="menuitem">Nature data</a></li>
+        <li role="none"><a href="pollingdashboard.html" role="menuitem">Polling data</a></li>
+      </ul>
+    </nav>
   </header>
 
   <div id="summary-loading" class="status-text"><span class="spinner"></span>Loading national data&hellip;</div>
