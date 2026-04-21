@@ -88,6 +88,16 @@
     }
     .hero-credit a { color: #fff; text-decoration: none; }
     .hero-credit a:hover { text-decoration: underline; }
+    .hero-nav { position: relative; align-self: flex-start; }
+    .hero-nav-btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; padding: 0.65rem 1.1rem; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.45); color: #fff; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 0.45rem; letter-spacing: 0.03em; transition: background 0.15s, border-color 0.15s; white-space: nowrap; }
+    .hero-nav-btn:hover, .hero-nav:focus-within .hero-nav-btn { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.75); }
+    .hero-nav-chevron { transition: transform 0.2s; font-size: 0.7rem; }
+    .hero-nav:hover .hero-nav-chevron, .hero-nav:focus-within .hero-nav-chevron { transform: rotate(180deg); }
+    .hero-nav-menu { display: none; position: absolute; top: 100%; right: 0; background: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); list-style: none; min-width: 170px; overflow: hidden; z-index: 100; }
+    .hero-nav:hover .hero-nav-menu, .hero-nav:focus-within .hero-nav-menu { display: block; }
+    .hero-nav-menu a { display: block; padding: 0.75rem 1.25rem; color: var(--ink); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: background 0.1s, color 0.1s; }
+    .hero-nav-menu a:hover { background: var(--accent-light); color: var(--accent); }
+    .hero-nav-menu li + li a { border-top: 1px solid var(--rule); }
 
     @media (max-width: 768px) {
       .hero { padding: 2.5rem 1.5rem; }
@@ -575,6 +585,13 @@
     <span class="hero-sub">Scottish environmental opinion polling</span>
     <span class="hero-credit">Website by <a href="https://www.danparis.net" target="_blank" rel="noopener">Dan Paris</a></span>
   </div>
+  <nav class="hero-nav" aria-label="Site navigation">
+    <button class="hero-nav-btn" aria-haspopup="true">Pages <span class="hero-nav-chevron">▾</span></button>
+    <ul class="hero-nav-menu" role="menu">
+      <li role="none"><a href="index.html" role="menuitem">Nature data</a></li>
+      <li role="none"><a href="pollingdashboard.html" role="menuitem">Polling data</a></li>
+    </ul>
+  </nav>
 </header>
 
 <div class="layout">
