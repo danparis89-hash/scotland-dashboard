@@ -1,0 +1,1073 @@
+[
+  {
+    "id": "shs-climate-perceptions",
+    "name": "Perceptions about Climate Change",
+    "type": "tracking",
+    "source": "Scottish Household Survey",
+    "topic": "Climate Change",
+    "sampleSize": "~10,000 households",
+    "frequency": "Annual",
+    "description": "Percentage of adults by their perception of climate change. Note: 2020 and 2021 data not available.",
+    "labels": ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"],
+    "series": [
+      { "name": "Immediate and urgent problem", "data": [46, 45, 50, 55, 61, 65, 68, null, null, 74, 74] },
+      { "name": "More of a problem for the future", "data": [25, 26, 23, 23, 18, 16, 14, null, null, 12, 11] },
+      { "name": "Not really a problem", "data": [7, 8, 7, 6, 5, 4, 3, null, null, 3, 3] },
+      { "name": "Not convinced it is happening", "data": [13, 11, 11, 9, 8, 7, 6, null, null, 5, 6] }
+    ],
+    "demographics": [
+      {
+        "name": "Deprivation (SIMD)",
+        "series": [
+          { "name": "Quintile 1 - most deprived", "data": [39, 44, 44, 42, 50, 52, 60, null, null, 65, 64] },
+          { "name": "Quintile 2", "data": [44, 44, 45, 52, 52, 50, 63, null, null, 69, 73] },
+          { "name": "Quintile 3", "data": [47, 45, 51, 57, 64, 65, 71, null, null, 72, 72] },
+          { "name": "Quintile 4", "data": [47, 50, 51, 57, 66, 70, 72, null, null, 76, 76] },
+          { "name": "Quintile 5 - least deprived", "data": [52, 54, 58, 60, 72, 75, 76, null, null, 85, 82] }
+        ]
+      },
+      {
+        "name": "Urban/Rural",
+        "series": [
+          { "name": "Large urban areas", "data": [48, 50, 55, 59, 67, 71, 71, null, null, 77, 78] },
+          { "name": "Small accessible towns", "data": [41, 44, 45, 52, 64, 64, 68, null, null, 78, 74] },
+          { "name": "Accessible rural", "data": [49, 45, 49, 54, 56, 60, 69, null, null, 69, 73] },
+          { "name": "Other urban", "data": [43, 42, 46, 52, 58, 62, 66, null, null, 73, 70] },
+          { "name": "Small remote towns", "data": [48, 41, 44, 56, 56, 55, 62, null, null, 71, 69] },
+          { "name": "Remote rural", "data": [44, 47, 53, 54, 55, 56, 69, null, null, 72, 68] }
+        ]
+      },
+      {
+        "name": "Age",
+        "series": [
+          { "name": "16 to 24", "data": [38, 40, 46, 53, 58, 67, 69, null, null, 60, 71] },
+          { "name": "25 to 34", "data": [47, 45, 45, 54, 68, 67, 67, null, null, 78, 81] },
+          { "name": "35 to 44", "data": [54, 52, 58, 61, 70, 72, 72, null, null, 77, 77] },
+          { "name": "45 to 59", "data": [51, 51, 54, 57, 62, 68, 72, null, null, 77, 75] },
+          { "name": "60 to 74", "data": [42, 43, 50, 58, 58, 58, 68, null, null, 76, 69] },
+          { "name": "75 plus", "data": [33, 31, 36, 37, 44, 46, 56, null, null, 65, 65] }
+        ]
+      },
+      {
+        "name": "Sex",
+        "series": [
+          { "name": "Male", "data": [45, 45, 49, 55, 61, 66, 66, null, null, 74, 72] },
+          { "name": "Female", "data": [47, 46, 50, 55, 61, 63, 70, null, null, 74, 76] }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scottish-gov-pim-climate",
+    "name": "Public Insight Monitor",
+    "type": "tracking",
+    "source": "Scottish Government",
+    "sourceUrl": "https://www.gov.scot/publications/public-attitudes-to-cost-of-living-and-other-topics-tracker-data-tables/",
+    "pollster": "YouGov",
+    "topic": "Climate change",
+    "sampleSize": "1,000",
+    "frequency": "Quarterly",
+    "description": "Tracking poll on Scottish public attitudes to climate change, including concern and trust in the Scottish Government to act in Scotland's best interests.",
+    "labels": ["Jan-24", "Mar-24", "Jul-24", "Sep-24", "Dec-24", "Mar-25", "Jun-25", "Sep-25", "Dec-25", "Feb-26"],
+    "series": [
+      {
+        "name": "Q1: Concerned about climate change in the year ahead",
+        "data": [18, 16, 18, 15, 17, 15, 15, 14, 13, 15]
+      }
+    ],
+    "additionalQuestions": [
+      {
+        "text": "Q2: How much do you trust the Scottish Government to work in Scotland's best interests in relation to climate change?",
+        "series": [
+          { "name": "A great deal", "data": [12, 13, 9, 9, 9, 9, 8, 9, 7, 9] },
+          { "name": "Quite a lot", "data": [24, 25, 26, 22, 24, 26, 23, 23, 26, 28] },
+          { "name": "Not very much", "data": [33, 33, 36, 35, 37, 33, 36, 35, 34, 33] },
+          { "name": "Not at all", "data": [21, 18, 20, 24, 19, 20, 19, 21, 20, 19] },
+          { "name": "Unsure", "data": [10, 11, 10, 10, 11, 12, 13, 12, 14, 11] }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "link-nature-2022",
+    "name": "Attitudes to nature",
+    "type": "snapshot",
+    "source": "Scottish Environment LINK",
+    "sourceUrl": "https://www.scotlink.org/publication/attitudes-to-nature-opinion-poll/",
+    "pollster": "Survation",
+    "topic": ["Nature", "Agriculture", "Marine"],
+    "sampleSize": "1,033",
+    "date": "November 2022",
+    "description": "Scottish public attitudes to nature and the natural environment.",
+    "questions": [
+      {
+        "text": "The natural environment includes Scotland's landscapes, seas, coasts and wildlife. How important, if at all, do you think Scotland's natural environment is to the country as a whole?",
+        "options": [
+          { "label": "NET Important", "value": 96 },
+          { "label": "NET Unimportant", "value": 3 },
+          { "label": "Don't Know", "value": 1 }
+        ]
+      },
+      {
+        "text": "How important is the natural environment to you personally?",
+        "options": [
+          { "label": "NET: Important", "value": 92 },
+          { "label": "NET: Unimportant", "value": 7 },
+          { "label": "Don't Know", "value": 1 }
+        ]
+      },
+      {
+        "text": "How would you rate the condition of Scotland's nature?",
+        "options": [
+          { "label": "NET: Good", "value": 82 },
+          { "label": "NET: Bad", "value": 4 },
+          { "label": "Neither good nor bad", "value": 12 },
+          { "label": "Don't Know", "value": 2 }
+        ]
+      },
+      {
+        "text": "Within your lifetime, do you think the state of Scotland's natural environment has improved or worsened?",
+        "options": [
+          { "label": "Improved", "value": 19 },
+          { "label": "Stayed the same", "value": 31 },
+          { "label": "Worsened", "value": 39 },
+          { "label": "Don't know", "value": 11 }
+        ]
+      },
+      {
+        "text": "Which of the following, if any, do you think poses the greatest risk to Scotland's nature? Please choose three.",
+        "options": [
+          { "label": "Pollution", "value": 82 },
+          { "label": "Climate change", "value": 78 },
+          { "label": "Ocean warming and acidification", "value": 53 },
+          { "label": "Invasive species", "value": 29 },
+          { "label": "Fishing and marine activities", "value": 23 },
+          { "label": "Farming", "value": 19 },
+          { "label": "Other activities (please specify)", "value": 9 },
+          { "label": "None of the above", "value": 1 },
+          { "label": "Don't know", "value": 2 }
+        ]
+      },
+      {
+        "text": "To what extent are you concerned, if at all, about the threat of climate change and human activity to Scotland's natural environment?",
+        "options": [
+          { "label": "NET: Concerned", "value": 82 },
+          { "label": "NET: Unconcerned", "value": 17 },
+          { "label": "Don't know", "value": 2 }
+        ]
+      },
+      {
+        "text": "How well or badly do you think the Scottish Government is doing in protecting nature?",
+        "options": [
+          { "label": "NET: Well", "value": 47 },
+          { "label": "NET: Badly", "value": 37 },
+          { "label": "Don't know", "value": 15 }
+        ]
+      },
+      {
+        "text": "At the upcoming UN Biodiversity Conference, a global target is expected to be agreed upon, working to protect 30% of land and sea by 2030. Which of the following statements is closest to your view?",
+        "options": [
+          { "label": "Scotland should adopt this '30 by 30' target", "value": 66 },
+          { "label": "Scotland should NOT adopt this '30 by 30' target", "value": 13 },
+          { "label": "Don't know", "value": 21 }
+        ]
+      },
+      {
+        "text": "The Scottish Government has set targets to plant more trees to help tackle climate change. On the right soils and with sensitive techniques, commercial forestry usually grows quicker and involves growing non-native tree species in an area. However, growing native species in woodlands has a greater biodiversity benefit and also reduces atmospheric carbon, albeit more slowly. Which of the following is closest to your view?",
+        "options": [
+          { "label": "There should be a focus on growing native woodlands across Scotland's landscapes, even if it takes time to grow them", "value": 80 },
+          { "label": "There should be a focus on growing non-native woodlands across Scotland's landscape, even if it reduces the biodiversity of these areas", "value": 10 },
+          { "label": "Don't know", "value": 10 }
+        ]
+      },
+      {
+        "text": "How important, if at all, is it to you personally that Scotland's seas are in a healthy state?",
+        "options": [
+          { "label": "NET Important", "value": 91 },
+          { "label": "NET Unimportant", "value": 5 },
+          { "label": "Don't know", "value": 3 }
+        ]
+      },
+      {
+        "text": "Which of the following do you think represent the greatest threat to the health of Scotland's seas? Please rank your top 3. (Sum % of Rank 1,2,3)",
+        "options": [
+          { "label": "Chemical or sewage pollution", "value": 69 },
+          { "label": "Litter pollution", "value": 61 },
+          { "label": "Impacts of climate change", "value": 48 },
+          { "label": "Industrial fishing", "value": 28 },
+          { "label": "Offshore oil and gas extraction", "value": 26 },
+          { "label": "Shipping and transport", "value": 14 },
+          { "label": "Energy infrastructure (wind turbines, subsea cables)", "value": 13 },
+          { "label": "Invasive non-native species", "value": 12 },
+          { "label": "Aquaculture (fish and shellfish farming)", "value": 11 },
+          { "label": "Coastal developments", "value": 9 },
+          { "label": "Marine Tourism", "value": 5 },
+          { "label": "Aquaculture (seaweed cultivation)", "value": 4 }
+        ]
+      },
+      {
+        "text": "The Scottish government spends around half a billion pounds on farm funding annually. Many current farming practices cause pollution and severely deplete wildlife, as well as making farming a large source of greenhouse gas emissions. Next year the Scottish Government will create a new system of farm funding. How important is it to you that public spending on farming should support methods that restore nature and tackle climate change in addition to producing food?",
+        "options": [
+          { "label": "NET Important", "value": 85 },
+          { "label": "NET Unimportant", "value": 10 },
+          { "label": "Don't know", "value": 5 }
+        ]
+      },
+      {
+        "text": "Under the current system, many farms are entitled to \"direct payments\" from the Scottish government, based on the amount of land they own, which some argue provides a steady income away from dependence solely on food prices. Bigger farm businesses receive most of this money and there are few conditions as to how they farm the land. To what extent would you support or oppose capping direct payments available to farmers so there is more available to spend on climate and nature-friendly farming?",
+        "options": [
+          { "label": "NET Support", "value": 62 },
+          { "label": "Neither support nor oppose", "value": 20 },
+          { "label": "NET Oppose", "value": 10 },
+          { "label": "Don't know", "value": 9 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "link-urban-rural-2024",
+    "name": "Urban and rural attitudes",
+    "type": "snapshot",
+    "source": "Scottish Environment LINK",
+    "sourceUrl": "https://www.scotlink.org/publication/polling-results-with-diffley-partnership-measuring-public-attitudes-in-scotland/",
+    "pollster": "Diffley",
+    "topic": ["Climate change", "Nature"],
+    "sampleSize": "2,309",
+    "date": "May 2024",
+    "description": "Scottish public attitudes to nature and the environment, with rural and Highlands & Islands demographic breakdowns.",
+    "questions": [
+      {
+        "text": "To what extent, if at all, do you feel connected to the natural environment?",
+        "options": [
+          { "label": "NET: Connected", "value": 77 },
+          { "label": "NET: Not connected", "value": 20 },
+          { "label": "Don't know", "value": 2 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "NET: Connected", "value": 85 },
+            { "label": "NET: Not connected", "value": 13 },
+            { "label": "Don't know", "value": 2 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "NET: Connected", "value": 83 },
+            { "label": "NET: Not connected", "value": 17 },
+            { "label": "Don't know", "value": 1 }
+          ]}
+        ]
+      },
+      {
+        "text": "And how often do you visit nature (e.g., woodlands, coastal areas, lochs and rivers, local parks and gardens, etc.)?",
+        "options": [
+          { "label": "NET: Once a week or more", "value": 57 },
+          { "label": "NET: Less than once a week", "value": 43 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "NET: Once a week or more", "value": 70 },
+            { "label": "NET: Less than once a week", "value": 30 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "NET: Once a week or more", "value": 67 },
+            { "label": "NET: Less than once a week", "value": 33 }
+          ]}
+        ]
+      },
+      {
+        "text": "Are you a member of, or have you in the past 12 months made any donations to, any charities involved in nature conservation?",
+        "options": [
+          { "label": "Currently a member", "value": 9 },
+          { "label": "Previously a member", "value": 9 },
+          { "label": "Donated in the last 12 months", "value": 13 },
+          { "label": "Donated prior to last 12 months", "value": 9 },
+          { "label": "None of the above", "value": 69 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "Currently a member", "value": 14 },
+            { "label": "Previously a member", "value": 12 },
+            { "label": "Donated in the last 12 months", "value": 16 },
+            { "label": "Donated prior to last 12 months", "value": 13 },
+            { "label": "None of the above", "value": 54 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "Currently a member", "value": 8 },
+            { "label": "Previously a member", "value": 10 },
+            { "label": "Donated in the last 12 months", "value": 16 },
+            { "label": "Donated prior to last 12 months", "value": 9 },
+            { "label": "None of the above", "value": 64 }
+          ]}
+        ]
+      },
+      {
+        "text": "How well informed, if at all, do you think you are about issues affecting the natural environment?",
+        "options": [
+          { "label": "NET: Informed", "value": 69 },
+          { "label": "NET: Not informed", "value": 29 },
+          { "label": "Don't know", "value": 2 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "NET: Informed", "value": 79 },
+            { "label": "NET: Not informed", "value": 18 },
+            { "label": "Don't know", "value": 3 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "NET: Informed", "value": 80 },
+            { "label": "NET: Not informed", "value": 19 },
+            { "label": "Don't know", "value": 1 }
+          ]}
+        ]
+      },
+      {
+        "text": "Before today, how much, if anything, did you know about the following concepts? (% knowing a fair amount or more)",
+        "options": [
+          { "label": "Climate Change", "value": 78 },
+          { "label": "Net Zero", "value": 52 },
+          { "label": "Nature Restoration", "value": 40 },
+          { "label": "Rewilding", "value": 41 },
+          { "label": "Sustainable/Regenerative Agriculture", "value": 35 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "Climate Change", "value": 80 },
+            { "label": "Net Zero", "value": 59 },
+            { "label": "Nature Restoration", "value": 47 },
+            { "label": "Rewilding", "value": 55 },
+            { "label": "Sustainable/Regenerative Agriculture", "value": 43 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "Climate Change", "value": 80 },
+            { "label": "Net Zero", "value": 53 },
+            { "label": "Nature Restoration", "value": 42 },
+            { "label": "Rewilding", "value": 48 },
+            { "label": "Sustainable/Regenerative Agriculture", "value": 39 }
+          ]}
+        ]
+      },
+      {
+        "text": "How often, if at all, do you worry about the natural environment (e.g., impacts of climate change, nature loss, etc.)?",
+        "options": [
+          { "label": "NET: Often/Occasionally", "value": 76 },
+          { "label": "NET: Rarely/Never", "value": 23 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "NET: Often/Occasionally", "value": 75 },
+            { "label": "NET: Rarely/Never", "value": 25 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "NET: Often/Occasionally", "value": 81 },
+            { "label": "NET: Rarely/Never", "value": 19 }
+          ]}
+        ]
+      },
+      {
+        "text": "How concerned, if at all, are you about the impact of climate change on food production in Scotland?",
+        "options": [
+          { "label": "NET: Concerned", "value": 66 },
+          { "label": "NET: Not concerned", "value": 31 },
+          { "label": "Don't know", "value": 4 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "NET: Concerned", "value": 64 },
+            { "label": "NET: Not concerned", "value": 33 },
+            { "label": "Don't know", "value": 3 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "NET: Concerned", "value": 63 },
+            { "label": "NET: Not concerned", "value": 35 },
+            { "label": "Don't know", "value": 2 }
+          ]}
+        ]
+      },
+      {
+        "text": "Have you taken or considered taking action to reduce your environmental impact, such as changing how you travel, what you eat, or what you buy?",
+        "options": [
+          { "label": "NET: Taken Action", "value": 69 },
+          { "label": "— Have taken action and look to continue", "value": 43 },
+          { "label": "— Have taken action but not looking to do more", "value": 25 },
+          { "label": "NET: Not Taken Action", "value": 31 },
+          { "label": "— Have considered taking action", "value": 14 },
+          { "label": "— Have not considered taking action", "value": 17 }
+        ]
+      },
+      {
+        "text": "In your lifetime, have you noticed any of the following in your local area:",
+        "options": [
+          { "label": "Impacts of climate change", "value": 68 },
+          { "label": "Impacts of nature loss", "value": 45 },
+          { "label": "Impacts of pollution", "value": 34 },
+          { "label": "None of the above", "value": 18 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "Impacts of climate change", "value": 66 },
+            { "label": "Impacts of nature loss", "value": 47 },
+            { "label": "Impacts of pollution", "value": 32 },
+            { "label": "None of the above", "value": 22 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "Impacts of climate change", "value": 65 },
+            { "label": "Impacts of nature loss", "value": 46 },
+            { "label": "Impacts of pollution", "value": 32 },
+            { "label": "None of the above", "value": 21 }
+          ]}
+        ]
+      },
+      {
+        "text": "How vulnerable, if at all, do you believe the following types of communities are to the effects of climate change? (NET: Vulnerable)",
+        "options": [
+          { "label": "Coastal areas", "value": 87 },
+          { "label": "Rural areas", "value": 75 },
+          { "label": "Urban areas (towns and cities)", "value": 64 },
+          { "label": "Your local area", "value": 58 }
+        ],
+        "demographics": [
+          { "name": "Rural", "options": [
+            { "label": "Coastal areas", "value": 81 },
+            { "label": "Rural areas", "value": 70 },
+            { "label": "Urban areas (towns and cities)", "value": 56 },
+            { "label": "Your local area", "value": 56 }
+          ]},
+          { "name": "Highlands and Islands", "options": [
+            { "label": "Coastal areas", "value": 86 },
+            { "label": "Rural areas", "value": 70 },
+            { "label": "Urban areas (towns and cities)", "value": 61 },
+            { "label": "Your local area", "value": 60 }
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "more-in-common-climate-outreach-scotland-2024",
+    "name": "Britain Talks Climate",
+    "type": "snapshot",
+    "source": "Climate Outreach",
+    "sourceUrl": "https://climateoutreach.org/britain-talks-climate/climate-big-picture-2024/scotland/",
+    "pollster": "More in Common",
+    "topic": ["Climate change"],
+    "sampleSize": "1,000",
+    "date": "2024",
+    "questions": [
+      {
+        "text": "Relating to actions you can take to help tackle climate change, where do you place yourself on the following scale?",
+        "options": [
+          { "label": "1 - I am highly motivated to take action on climate change", "value": 16 },
+          { "label": "2", "value": 29 },
+          { "label": "3", "value": 35 },
+          { "label": "4", "value": 10 },
+          { "label": "5 - I am not concerned about taking action on climate change", "value": 8 },
+          { "label": "Don't know", "value": 1 }
+        ]
+      },
+      {
+        "text": "Do you think that reaching Net Zero will be...",
+        "options": [
+          { "label": "Very good for Scotland", "value": 28 },
+          { "label": "Mostly good for Scotland", "value": 33 },
+          { "label": "Neither good nor bad for Scotland", "value": 16 },
+          { "label": "Mostly bad for Scotland", "value": 8 },
+          { "label": "Very bad for Scotland", "value": 7 },
+          { "label": "Don't know", "value": 8 }
+        ]
+      },
+      {
+        "text": "On the issue of tackling our contribution to climate change, would you say the Scottish government is doing...",
+        "options": [
+          { "label": "A better job than the Westminster government", "value": 28 },
+          { "label": "About the same as the Westminster government", "value": 36 },
+          { "label": "A worse job than the Westminster government", "value": 18 },
+          { "label": "Don't know", "value": 17 }
+        ]
+      },
+      {
+        "text": "How often do you use public transport?",
+        "options": [
+          { "label": "Every day", "value": 9 },
+          { "label": "Around every other day", "value": 17 },
+          { "label": "Around once a week", "value": 21 },
+          { "label": "Around once a month", "value": 32 },
+          { "label": "Never", "value": 21 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "diffley-uplift-energy-2025",
+    "name": "Oil and gas",
+    "type": "snapshot",
+    "source": "Uplift",
+    "sourceUrl": "https://diffleypartnership.co.uk/energy-survey-uplift-november-2025/",
+    "pollster": "Diffley",
+    "topic": ["Climate change", "Oil and gas"],
+    "sampleSize": "2,352",
+    "date": "November 2025",
+    "demographicsDefaultOff": true,
+    "questions": [
+      {
+        "text": "How much, if at all, do you care about climate change as an issue?",
+        "options": [
+          { "label": "I care a lot about climate change", "value": 28 },
+          { "label": "I care a fair amount about climate change", "value": 39 },
+          { "label": "I care a little", "value": 24 },
+          { "label": "I do not care about climate change", "value": 9 },
+          { "label": "I don't know", "value": 1 }
+        ],
+        "demographics": [
+          { "name": "Male", "options": [
+            { "label": "I care a lot about climate change", "value": 26 },
+            { "label": "I care a fair amount about climate change", "value": 36 },
+            { "label": "I care a little", "value": 23 },
+            { "label": "I do not care about climate change", "value": 14 },
+            { "label": "I don't know", "value": 1 }
+          ]},
+          { "name": "Female", "options": [
+            { "label": "I care a lot about climate change", "value": 29 },
+            { "label": "I care a fair amount about climate change", "value": 41 },
+            { "label": "I care a little", "value": 24 },
+            { "label": "I do not care about climate change", "value": 5 },
+            { "label": "I don't know", "value": 2 }
+          ]},
+          { "name": "16-34", "options": [
+            { "label": "I care a lot about climate change", "value": 33 },
+            { "label": "I care a fair amount about climate change", "value": 38 },
+            { "label": "I care a little", "value": 19 },
+            { "label": "I do not care about climate change", "value": 8 },
+            { "label": "I don't know", "value": 2 }
+          ]},
+          { "name": "35-44", "options": [
+            { "label": "I care a lot about climate change", "value": 26 },
+            { "label": "I care a fair amount about climate change", "value": 35 },
+            { "label": "I care a little", "value": 27 },
+            { "label": "I do not care about climate change", "value": 10 },
+            { "label": "I don't know", "value": 1 }
+          ]},
+          { "name": "45-54", "options": [
+            { "label": "I care a lot about climate change", "value": 22 },
+            { "label": "I care a fair amount about climate change", "value": 37 },
+            { "label": "I care a little", "value": 30 },
+            { "label": "I do not care about climate change", "value": 10 },
+            { "label": "I don't know", "value": 1 }
+          ]},
+          { "name": "55-64", "options": [
+            { "label": "I care a lot about climate change", "value": 22 },
+            { "label": "I care a fair amount about climate change", "value": 42 },
+            { "label": "I care a little", "value": 25 },
+            { "label": "I do not care about climate change", "value": 11 },
+            { "label": "I don't know", "value": 1 }
+          ]},
+          { "name": "65+", "options": [
+            { "label": "I care a lot about climate change", "value": 30 },
+            { "label": "I care a fair amount about climate change", "value": 39 },
+            { "label": "I care a little", "value": 23 },
+            { "label": "I do not care about climate change", "value": 8 },
+            { "label": "I don't know", "value": 1 }
+          ]}
+        ]
+      },
+      {
+        "text": "To what extent, if at all, do you think that tackling climate change should be high on the agenda for the Scottish government?",
+        "options": [
+          { "label": "Low priority (0-3)", "value": 17 },
+          { "label": "Medium priority (4-6)", "value": 26 },
+          { "label": "High priority (7-10)", "value": 57 }
+        ],
+        "demographics": [
+          { "name": "Male", "options": [
+            { "label": "Low priority (0-3)", "value": 24 },
+            { "label": "Medium priority (4-6)", "value": 26 },
+            { "label": "High priority (7-10)", "value": 50 }
+          ]},
+          { "name": "Female", "options": [
+            { "label": "Low priority (0-3)", "value": 10 },
+            { "label": "Medium priority (4-6)", "value": 26 },
+            { "label": "High priority (7-10)", "value": 64 }
+          ]},
+          { "name": "16-34", "options": [
+            { "label": "Low priority (0-3)", "value": 15 },
+            { "label": "Medium priority (4-6)", "value": 24 },
+            { "label": "High priority (7-10)", "value": 61 }
+          ]},
+          { "name": "35-44", "options": [
+            { "label": "Low priority (0-3)", "value": 16 },
+            { "label": "Medium priority (4-6)", "value": 30 },
+            { "label": "High priority (7-10)", "value": 55 }
+          ]},
+          { "name": "45-54", "options": [
+            { "label": "Low priority (0-3)", "value": 18 },
+            { "label": "Medium priority (4-6)", "value": 29 },
+            { "label": "High priority (7-10)", "value": 53 }
+          ]},
+          { "name": "55-64", "options": [
+            { "label": "Low priority (0-3)", "value": 20 },
+            { "label": "Medium priority (4-6)", "value": 27 },
+            { "label": "High priority (7-10)", "value": 54 }
+          ]},
+          { "name": "65+", "options": [
+            { "label": "Low priority (0-3)", "value": 16 },
+            { "label": "Medium priority (4-6)", "value": 25 },
+            { "label": "High priority (7-10)", "value": 59 }
+          ]}
+        ]
+      },
+      {
+        "text": "Which of the following statements is closest to your view on what the Scottish Government should do when it comes to North Sea oil and gas drilling?",
+        "options": [
+          { "label": "Oppose new drilling to protect future generations, communities, and nature, even if it costs oil and gas jobs in the short term", "value": 8 },
+          { "label": "Support new drilling to protect jobs now, even if it worsens climate change, harming communities, nature, and future generations", "value": 35 },
+          { "label": "Oppose new drilling and invest in creating jobs in Scotland's clean energy industries to protect future generations", "value": 57 }
+        ],
+        "demographics": [
+          { "name": "Male", "options": [
+            { "label": "Oppose new drilling to protect future generations, communities, and nature, even if it costs oil and gas jobs in the short term", "value": 6 },
+            { "label": "Support new drilling to protect jobs now, even if it worsens climate change, harming communities, nature, and future generations", "value": 47 },
+            { "label": "Oppose new drilling and invest in creating jobs in Scotland's clean energy industries to protect future generations", "value": 47 }
+          ]},
+          { "name": "Female", "options": [
+            { "label": "Oppose new drilling to protect future generations, communities, and nature, even if it costs oil and gas jobs in the short term", "value": 10 },
+            { "label": "Support new drilling to protect jobs now, even if it worsens climate change, harming communities, nature, and future generations", "value": 23 },
+            { "label": "Oppose new drilling and invest in creating jobs in Scotland's clean energy industries to protect future generations", "value": 67 }
+          ]},
+          { "name": "16-34", "options": [
+            { "label": "Oppose new drilling to protect future generations, communities, and nature, even if it costs oil and gas jobs in the short term", "value": 10 },
+            { "label": "Support new drilling to protect jobs now, even if it worsens climate change, harming communities, nature, and future generations", "value": 24 },
+            { "label": "Oppose new drilling and invest in creating jobs in Scotland's clean energy industries to protect future generations", "value": 66 }
+          ]},
+          { "name": "35-44", "options": [
+            { "label": "Oppose new drilling to protect future generations, communities, and nature, even if it costs oil and gas jobs in the short term", "value": 7 },
+            { "label": "Support new drilling to protect jobs now, even if it worsens climate change, harming communities, nature, and future generations", "value": 33 },
+            { "label": "Oppose new drilling and invest in creating jobs in Scotland's clean energy industries to protect future generations", "value": 61 }
+          ]},
+          { "name": "45-54", "options": [
+            { "label": "Oppose new drilling to protect future generations, communities, and nature, even if it costs oil and gas jobs in the short term", "value": 8 },
+            { "label": "Support new drilling to protect jobs now, even if it worsens climate change, harming communities, nature, and future generations", "value": 35 },
+            { "label": "Oppose new drilling and invest in creating jobs in Scotland's clean energy industries to protect future generations", "value": 57 }
+          ]},
+          { "name": "55-64", "options": [
+            { "label": "Oppose new drilling to protect future generations, communities, and nature, even if it costs oil and gas jobs in the short term", "value": 8 },
+            { "label": "Support new drilling to protect jobs now, even if it worsens climate change, harming communities, nature, and future generations", "value": 44 },
+            { "label": "Oppose new drilling and invest in creating jobs in Scotland's clean energy industries to protect future generations", "value": 48 }
+          ]},
+          { "name": "65+", "options": [
+            { "label": "Oppose new drilling to protect future generations, communities, and nature, even if it costs oil and gas jobs in the short term", "value": 7 },
+            { "label": "Support new drilling to protect jobs now, even if it worsens climate change, harming communities, nature, and future generations", "value": 41 },
+            { "label": "Oppose new drilling and invest in creating jobs in Scotland's clean energy industries to protect future generations", "value": 52 }
+          ]}
+        ]
+      },
+      {
+        "text": "Which of the following do you think is more likely to result in Scotland having a secure and affordable supply of energy in the future?",
+        "options": [
+          { "label": "More investment into North Sea oil and gas drilling", "value": 26 },
+          { "label": "More investment into renewables and energy efficiency measures", "value": 63 },
+          { "label": "Don't know", "value": 11 }
+        ],
+        "demographics": [
+          { "name": "Male", "options": [
+            { "label": "More investment into North Sea oil and gas drilling", "value": 34 },
+            { "label": "More investment into renewables and energy efficiency measures", "value": 59 },
+            { "label": "Don't know", "value": 7 }
+          ]},
+          { "name": "Female", "options": [
+            { "label": "More investment into North Sea oil and gas drilling", "value": 19 },
+            { "label": "More investment into renewables and energy efficiency measures", "value": 66 },
+            { "label": "Don't know", "value": 15 }
+          ]},
+          { "name": "16-34", "options": [
+            { "label": "More investment into North Sea oil and gas drilling", "value": 16 },
+            { "label": "More investment into renewables and energy efficiency measures", "value": 73 },
+            { "label": "Don't know", "value": 10 }
+          ]},
+          { "name": "35-44", "options": [
+            { "label": "More investment into North Sea oil and gas drilling", "value": 25 },
+            { "label": "More investment into renewables and energy efficiency measures", "value": 63 },
+            { "label": "Don't know", "value": 12 }
+          ]},
+          { "name": "45-54", "options": [
+            { "label": "More investment into North Sea oil and gas drilling", "value": 28 },
+            { "label": "More investment into renewables and energy efficiency measures", "value": 59 },
+            { "label": "Don't know", "value": 13 }
+          ]},
+          { "name": "55-64", "options": [
+            { "label": "More investment into North Sea oil and gas drilling", "value": 33 },
+            { "label": "More investment into renewables and energy efficiency measures", "value": 56 },
+            { "label": "Don't know", "value": 11 }
+          ]},
+          { "name": "65+", "options": [
+            { "label": "More investment into North Sea oil and gas drilling", "value": 32 },
+            { "label": "More investment into renewables and energy efficiency measures", "value": 57 },
+            { "label": "Don't know", "value": 11 }
+          ]}
+        ]
+      },
+      {
+        "text": "Which of the following do you think could/will provide the most opportunities for Scotland's energy workers in the next 5 years?",
+        "options": [
+          { "label": "Clean energy industries, including renewable energy", "value": 57 },
+          { "label": "Oil and gas industry", "value": 29 },
+          { "label": "Don't know", "value": 13 }
+        ],
+        "demographics": [
+          { "name": "Male", "options": [
+            { "label": "Clean energy industries, including renewable energy", "value": 50 },
+            { "label": "Oil and gas industry", "value": 39 },
+            { "label": "Don't know", "value": 11 }
+          ]},
+          { "name": "Female", "options": [
+            { "label": "Clean energy industries, including renewable energy", "value": 64 },
+            { "label": "Oil and gas industry", "value": 21 },
+            { "label": "Don't know", "value": 15 }
+          ]},
+          { "name": "16-34", "options": [
+            { "label": "Clean energy industries, including renewable energy", "value": 61 },
+            { "label": "Oil and gas industry", "value": 26 },
+            { "label": "Don't know", "value": 13 }
+          ]},
+          { "name": "35-44", "options": [
+            { "label": "Clean energy industries, including renewable energy", "value": 59 },
+            { "label": "Oil and gas industry", "value": 28 },
+            { "label": "Don't know", "value": 14 }
+          ]},
+          { "name": "45-54", "options": [
+            { "label": "Clean energy industries, including renewable energy", "value": 53 },
+            { "label": "Oil and gas industry", "value": 28 },
+            { "label": "Don't know", "value": 18 }
+          ]},
+          { "name": "55-64", "options": [
+            { "label": "Clean energy industries, including renewable energy", "value": 54 },
+            { "label": "Oil and gas industry", "value": 37 },
+            { "label": "Don't know", "value": 9 }
+          ]},
+          { "name": "65+", "options": [
+            { "label": "Clean energy industries, including renewable energy", "value": 57 },
+            { "label": "Oil and gas industry", "value": 30 },
+            { "label": "Don't know", "value": 13 }
+          ]}
+        ]
+      },
+      {
+        "text": "Thinking about Scotland's energy workers and supply chains, which statement best reflects your view?",
+        "options": [
+          { "label": "The UK and Scottish Governments should have delivered a transition plan to renewables a decade ago, because North Sea oil and gas production has been falling for years", "value": 34 },
+          { "label": "The UK and Scottish Governments should deliver a transition plan right now, because North Sea oil and gas production is declining", "value": 33 },
+          { "label": "The UK and Scottish Governments should delay any transition plan for another decade, because oil and gas production will continue for some time", "value": 22 }
+        ],
+        "demographics": [
+          { "name": "Male", "options": [
+            { "label": "The UK and Scottish Governments should have delivered a transition plan to renewables a decade ago, because North Sea oil and gas production has been falling for years", "value": 34 },
+            { "label": "The UK and Scottish Governments should deliver a transition plan right now, because North Sea oil and gas production is declining", "value": 29 },
+            { "label": "The UK and Scottish Governments should delay any transition plan for another decade, because oil and gas production will continue for some time", "value": 30 }
+          ]},
+          { "name": "Female", "options": [
+            { "label": "The UK and Scottish Governments should have delivered a transition plan to renewables a decade ago, because North Sea oil and gas production has been falling for years", "value": 34 },
+            { "label": "The UK and Scottish Governments should deliver a transition plan right now, because North Sea oil and gas production is declining", "value": 37 },
+            { "label": "The UK and Scottish Governments should delay any transition plan for another decade, because oil and gas production will continue for some time", "value": 14 }
+          ]},
+          { "name": "16-34", "options": [
+            { "label": "The UK and Scottish Governments should have delivered a transition plan to renewables a decade ago, because North Sea oil and gas production has been falling for years", "value": 37 },
+            { "label": "The UK and Scottish Governments should deliver a transition plan right now, because North Sea oil and gas production is declining", "value": 34 },
+            { "label": "The UK and Scottish Governments should delay any transition plan for another decade, because oil and gas production will continue for some time", "value": 16 }
+          ]},
+          { "name": "35-44", "options": [
+            { "label": "The UK and Scottish Governments should have delivered a transition plan to renewables a decade ago, because North Sea oil and gas production has been falling for years", "value": 37 },
+            { "label": "The UK and Scottish Governments should deliver a transition plan right now, because North Sea oil and gas production is declining", "value": 27 },
+            { "label": "The UK and Scottish Governments should delay any transition plan for another decade, because oil and gas production will continue for some time", "value": 19 }
+          ]},
+          { "name": "45-54", "options": [
+            { "label": "The UK and Scottish Governments should have delivered a transition plan to renewables a decade ago, because North Sea oil and gas production has been falling for years", "value": 36 },
+            { "label": "The UK and Scottish Governments should deliver a transition plan right now, because North Sea oil and gas production is declining", "value": 31 },
+            { "label": "The UK and Scottish Governments should delay any transition plan for another decade, because oil and gas production will continue for some time", "value": 21 }
+          ]},
+          { "name": "55-64", "options": [
+            { "label": "The UK and Scottish Governments should have delivered a transition plan to renewables a decade ago, because North Sea oil and gas production has been falling for years", "value": 29 },
+            { "label": "The UK and Scottish Governments should deliver a transition plan right now, because North Sea oil and gas production is declining", "value": 34 },
+            { "label": "The UK and Scottish Governments should delay any transition plan for another decade, because oil and gas production will continue for some time", "value": 29 }
+          ]},
+          { "name": "65+", "options": [
+            { "label": "The UK and Scottish Governments should have delivered a transition plan to renewables a decade ago, because North Sea oil and gas production has been falling for years", "value": 30 },
+            { "label": "The UK and Scottish Governments should deliver a transition plan right now, because North Sea oil and gas production is declining", "value": 37 },
+            { "label": "The UK and Scottish Governments should delay any transition plan for another decade, because oil and gas production will continue for some time", "value": 26 }
+          ]}
+        ]
+      },
+      {
+        "text": "How well do you think the Scottish Government has supported a fair transition for Scotland's energy workers?",
+        "options": [
+          { "label": "It has done everything it can with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 9 },
+          { "label": "It has taken some action, but not enough, with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 41 },
+          { "label": "It has not used the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 27 },
+          { "label": "Don't know", "value": 23 }
+        ],
+        "demographics": [
+          { "name": "Male", "options": [
+            { "label": "It has done everything it can with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 11 },
+            { "label": "It has taken some action, but not enough, with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 39 },
+            { "label": "It has not used the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 32 },
+            { "label": "Don't know", "value": 18 }
+          ]},
+          { "name": "Female", "options": [
+            { "label": "It has done everything it can with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 8 },
+            { "label": "It has taken some action, but not enough, with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 42 },
+            { "label": "It has not used the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 22 },
+            { "label": "Don't know", "value": 28 }
+          ]},
+          { "name": "16-34", "options": [
+            { "label": "It has done everything it can with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 4 },
+            { "label": "It has taken some action, but not enough, with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 43 },
+            { "label": "It has not used the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 25 },
+            { "label": "Don't know", "value": 28 }
+          ]},
+          { "name": "35-44", "options": [
+            { "label": "It has done everything it can with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 7 },
+            { "label": "It has taken some action, but not enough, with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 41 },
+            { "label": "It has not used the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 25 },
+            { "label": "Don't know", "value": 26 }
+          ]},
+          { "name": "45-54", "options": [
+            { "label": "It has done everything it can with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 10 },
+            { "label": "It has taken some action, but not enough, with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 37 },
+            { "label": "It has not used the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 27 },
+            { "label": "Don't know", "value": 26 }
+          ]},
+          { "name": "55-64", "options": [
+            { "label": "It has done everything it can with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 11 },
+            { "label": "It has taken some action, but not enough, with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 39 },
+            { "label": "It has not used the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 30 },
+            { "label": "Don't know", "value": 20 }
+          ]},
+          { "name": "65+", "options": [
+            { "label": "It has done everything it can with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 16 },
+            { "label": "It has taken some action, but not enough, with the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 41 },
+            { "label": "It has not used the powers it has to boost jobs in renewable energy, including wind manufacturing", "value": 29 },
+            { "label": "Don't know", "value": 15 }
+          ]}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "link-voting-2025",
+    "name": "Environment and voting intention",
+    "type": "snapshot",
+    "source": "Scottish Environment LINK",
+    "pollster": "Diffley",
+    "topic": ["Climate change", "Nature", "Voting intention"],
+    "sampleSize": "2,025",
+    "date": "October 2025",
+    "description": "Scottish public attitudes to the environment and climate change in the context of voting intention.",
+    "questions": [
+      {
+        "text": "On a scale from 0 to 10, where 0 is 'very unfavourable' and 10 is 'very favourable', how favourably do you view the following political parties? (NET: Favourable, 6–10)",
+        "options": [
+          { "label": "Scottish National Party (SNP)", "value": 38 },
+          { "label": "Reform UK", "value": 29 },
+          { "label": "Scottish Labour", "value": 29 },
+          { "label": "Scottish Liberal Democrats", "value": 24 },
+          { "label": "Scottish Greens", "value": 23 },
+          { "label": "Scottish Conservatives", "value": 22 },
+          { "label": "ALBA Party", "value": 13 }
+        ]
+      },
+      {
+        "text": "Which of the following issues are most important to you in this election? (Select up to five)",
+        "options": [
+          { "label": "Cost of living", "value": 75 },
+          { "label": "The NHS and health services", "value": 74 },
+          { "label": "The economy and jobs", "value": 51 },
+          { "label": "Immigration and asylum", "value": 45 },
+          { "label": "Education and schools", "value": 31 },
+          { "label": "Crime and policing", "value": 30 },
+          { "label": "Housing", "value": 28 },
+          { "label": "Climate change and the environment", "value": 27 },
+          { "label": "Scottish independence", "value": 23 },
+          { "label": "Transport and infrastructure", "value": 15 },
+          { "label": "Other", "value": 2 }
+        ]
+      },
+      {
+        "text": "To what extent do you agree or disagree? The next Scottish Government should clean up rivers and prevent pollution.",
+        "options": [
+          { "label": "NET: Agree", "value": 83 },
+          { "label": "Neither agree nor disagree", "value": 12 },
+          { "label": "NET: Disagree", "value": 3 },
+          { "label": "Don't know", "value": 3 }
+        ]
+      },
+      {
+        "text": "To what extent do you agree or disagree? The next Scottish Government should protect our seas from pollution, overfishing and damaging development.",
+        "options": [
+          { "label": "NET: Agree", "value": 81 },
+          { "label": "Neither agree nor disagree", "value": 13 },
+          { "label": "NET: Disagree", "value": 4 },
+          { "label": "Don't know", "value": 3 }
+        ]
+      },
+      {
+        "text": "To what extent do you agree or disagree? The next Scottish Government should do more to help farming be resilient in the face of climate impacts.",
+        "options": [
+          { "label": "NET: Agree", "value": 76 },
+          { "label": "Neither agree nor disagree", "value": 18 },
+          { "label": "NET: Disagree", "value": 3 },
+          { "label": "Don't know", "value": 3 }
+        ]
+      },
+      {
+        "text": "To what extent do you agree or disagree? The next Scottish Government should protect and restore Scotland's natural environment.",
+        "options": [
+          { "label": "NET: Agree", "value": 76 },
+          { "label": "Neither agree nor disagree", "value": 16 },
+          { "label": "NET: Disagree", "value": 4 },
+          { "label": "Don't know", "value": 3 }
+        ]
+      },
+      {
+        "text": "To what extent do you agree or disagree? The next Scottish Government should increase the extent of native woodlands.",
+        "options": [
+          { "label": "NET: Agree", "value": 67 },
+          { "label": "Neither agree nor disagree", "value": 24 },
+          { "label": "NET: Disagree", "value": 5 },
+          { "label": "Don't know", "value": 4 }
+        ]
+      },
+      {
+        "text": "To what extent do you agree or disagree? The next Scottish Government should increase investment in protecting the environment.",
+        "options": [
+          { "label": "NET: Agree", "value": 67 },
+          { "label": "Neither agree nor disagree", "value": 23 },
+          { "label": "NET: Disagree", "value": 7 },
+          { "label": "Don't know", "value": 3 }
+        ]
+      },
+      {
+        "text": "To what extent do you agree or disagree? The next Scottish Government should take stronger action to reduce emissions and tackle climate change.",
+        "options": [
+          { "label": "NET: Agree", "value": 59 },
+          { "label": "Neither agree nor disagree", "value": 22 },
+          { "label": "NET: Disagree", "value": 16 },
+          { "label": "Don't know", "value": 3 }
+        ]
+      },
+      {
+        "text": "How important are environmental and climate issues to you when deciding which party to vote for? (By 2024 UK General Election vote)",
+        "options": [
+          { "label": "NET: Important", "value": 69 },
+          { "label": "Not very important", "value": 19 },
+          { "label": "Not at all important", "value": 8 },
+          { "label": "Don't know", "value": 4 }
+        ],
+        "demographics": [
+          { "name": "Greens (2024)", "options": [
+            { "label": "NET: Important", "value": 99 },
+            { "label": "Not very important", "value": 1 },
+            { "label": "Not at all important", "value": 0 },
+            { "label": "Don't know", "value": 0 }
+          ]},
+          { "name": "SNP (2024)", "options": [
+            { "label": "NET: Important", "value": 80 },
+            { "label": "Not very important", "value": 13 },
+            { "label": "Not at all important", "value": 5 },
+            { "label": "Don't know", "value": 2 }
+          ]},
+          { "name": "Labour (2024)", "options": [
+            { "label": "NET: Important", "value": 71 },
+            { "label": "Not very important", "value": 18 },
+            { "label": "Not at all important", "value": 8 },
+            { "label": "Don't know", "value": 2 }
+          ]},
+          { "name": "Lib Dems (2024)", "options": [
+            { "label": "NET: Important", "value": 69 },
+            { "label": "Not very important", "value": 27 },
+            { "label": "Not at all important", "value": 4 },
+            { "label": "Don't know", "value": 1 }
+          ]},
+          { "name": "Reform UK (2024)", "options": [
+            { "label": "NET: Important", "value": 55 },
+            { "label": "Not very important", "value": 31 },
+            { "label": "Not at all important", "value": 14 },
+            { "label": "Don't know", "value": 1 }
+          ]},
+          { "name": "Conservatives (2024)", "options": [
+            { "label": "NET: Important", "value": 53 },
+            { "label": "Not very important", "value": 29 },
+            { "label": "Not at all important", "value": 16 },
+            { "label": "Don't know", "value": 2 }
+          ]}
+        ]
+      },
+      {
+        "text": "How likely would you be to vote for a party if you felt they were not willing to take action on environmental issues? (By 2024 UK General Election vote)",
+        "options": [
+          { "label": "NET: Likely", "value": 19 },
+          { "label": "Neither likely nor unlikely", "value": 33 },
+          { "label": "NET: Unlikely", "value": 42 },
+          { "label": "Don't know", "value": 6 }
+        ],
+        "demographics": [
+          { "name": "Greens (2024)", "options": [
+            { "label": "NET: Likely", "value": 23 },
+            { "label": "Neither likely nor unlikely", "value": 10 },
+            { "label": "NET: Unlikely", "value": 67 },
+            { "label": "Don't know", "value": 0 }
+          ]},
+          { "name": "SNP (2024)", "options": [
+            { "label": "NET: Likely", "value": 22 },
+            { "label": "Neither likely nor unlikely", "value": 31 },
+            { "label": "NET: Unlikely", "value": 45 },
+            { "label": "Don't know", "value": 2 }
+          ]},
+          { "name": "Conservatives (2024)", "options": [
+            { "label": "NET: Likely", "value": 21 },
+            { "label": "Neither likely nor unlikely", "value": 45 },
+            { "label": "NET: Unlikely", "value": 27 },
+            { "label": "Don't know", "value": 8 }
+          ]},
+          { "name": "Reform UK (2024)", "options": [
+            { "label": "NET: Likely", "value": 21 },
+            { "label": "Neither likely nor unlikely", "value": 50 },
+            { "label": "NET: Unlikely", "value": 22 },
+            { "label": "Don't know", "value": 5 }
+          ]},
+          { "name": "Labour (2024)", "options": [
+            { "label": "NET: Likely", "value": 20 },
+            { "label": "Neither likely nor unlikely", "value": 33 },
+            { "label": "NET: Unlikely", "value": 44 },
+            { "label": "Don't know", "value": 3 }
+          ]},
+          { "name": "Lib Dems (2024)", "options": [
+            { "label": "NET: Likely", "value": 15 },
+            { "label": "Neither likely nor unlikely", "value": 38 },
+            { "label": "NET: Unlikely", "value": 41 },
+            { "label": "Don't know", "value": 6 }
+          ]}
+        ]
+      },
+      {
+        "text": "In general, how would you characterise each party's approach to environmental issues? (NET: Pro-environment)",
+        "options": [
+          { "label": "Scottish Greens", "value": 68 },
+          { "label": "Scottish National Party", "value": 45 },
+          { "label": "Scottish Liberal Democrats", "value": 38 },
+          { "label": "Scottish Labour", "value": 34 },
+          { "label": "Scottish Conservatives", "value": 22 },
+          { "label": "ALBA Party", "value": 19 },
+          { "label": "Reform UK", "value": 17 }
+        ]
+      },
+      {
+        "text": "In general, how would you characterise each party's approach to environmental issues? (NET: Anti-environment)",
+        "options": [
+          { "label": "Reform UK", "value": 32 },
+          { "label": "Scottish Conservatives", "value": 27 },
+          { "label": "Scottish Labour", "value": 12 },
+          { "label": "ALBA Party", "value": 12 },
+          { "label": "Scottish National Party", "value": 10 },
+          { "label": "Scottish Liberal Democrats", "value": 8 },
+          { "label": "Scottish Greens", "value": 5 }
+        ]
+      }
+    ]
+  }
+]
