@@ -7,51 +7,87 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #f0f4f8;
-      --surface: #ffffff;
-      --surface-hover: #e8edf4;
-      --border: #d8dfe8;
-      --text: #1e293b;
-      --text-muted: #64748b;
-      --accent: #4f6df5;
-      --accent-hover: #3b5be0;
+      --ink: #2C3E50;
+      --paper: #F4F5F7;
+      --accent: #2E7D32;
+      --accent-light: #e8f5e9;
+      --mid: #6C757D;
+      --rule: #E0E0E0;
+      --field-bg: #ffffff;
+      --field-border: #BDBDBD;
+      --mono: 'JetBrains Mono','Fira Code','Consolas',monospace;
+      --sans: system-ui,-apple-system,'Inter','Roboto',sans-serif;
+      --display: 'Georgia','Times New Roman',serif;
+
+      /* pollingdashboard aliases */
+      --bg: var(--paper);
+      --surface: var(--field-bg);
+      --surface-hover: var(--accent-light);
+      --border: var(--rule);
+      --text: var(--ink);
+      --text-muted: var(--mid);
+      --accent-hover: #1b5e20;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *,*::before,*::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: var(--sans);
+      background: var(--paper);
+      color: var(--ink);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
     }
 
-    header {
-      background: linear-gradient(135deg, #4f6df5, #6d5bf7);
-      border-bottom: none;
-      padding: 1.25rem 2rem;
+    /* ── Hero Header ── */
+    .hero {
+      background: var(--accent);
+      color: #fff;
+      padding: 4rem 2rem;
       display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
       align-items: center;
       justify-content: space-between;
-      color: #fff;
-      box-shadow: 0 2px 12px rgba(79, 109, 245, 0.25);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      flex-shrink: 0;
     }
-
-    header h1 {
-      font-size: 1.4rem;
+    .hero-text { max-width: 600px; }
+    .hero-title {
+      font-family: var(--sans);
+      font-size: 3rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #fff;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
     }
+    .hero-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+    .hero-credit {
+      display: block;
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      font-weight: 400;
+    }
+    .hero-credit a { color: #fff; text-decoration: none; }
+    .hero-credit a:hover { text-decoration: underline; }
 
-    header .subtitle {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 0.85rem;
+    @media (max-width: 768px) {
+      .hero { padding: 2.5rem 1.5rem; }
+      .hero-title { font-size: 2.2rem; }
     }
 
     .layout {
       display: flex;
-      height: calc(100vh - 62px);
+      flex: 1;
+      min-height: 0;
     }
 
     /* Sidebar */
@@ -108,7 +144,7 @@
     .filter-tab.active {
       background: var(--accent);
       color: #fff;
-      box-shadow: 0 1px 4px rgba(79, 109, 245, 0.3);
+      box-shadow: 0 1px 4px rgba(46, 125, 50, 0.3);
     }
 
     .poll-list {
@@ -130,7 +166,7 @@
     }
 
     .poll-item.active {
-      background: #eef1fd;
+      background: var(--accent-light);
       border-left: 3px solid var(--accent);
     }
 
@@ -511,7 +547,7 @@
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
-      box-shadow: 0 1px 4px rgba(79, 109, 245, 0.3);
+      box-shadow: 0 1px 4px rgba(46, 125, 50, 0.3);
     }
 
     /* Scrollbar */
@@ -523,10 +559,11 @@
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>Polling Dashboard</h1>
-    <div class="subtitle">Scottish environmental opinion polling</div>
+<header class="hero">
+  <div class="hero-text">
+    <h1 class="hero-title">Opinion Polling</h1>
+    <span class="hero-sub">Scottish environmental opinion polling</span>
+    <span class="hero-credit">Website by <a href="https://www.danparis.net" target="_blank" rel="noopener">Dan Paris</a></span>
   </div>
 </header>
 
