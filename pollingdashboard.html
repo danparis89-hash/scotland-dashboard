@@ -14,7 +14,7 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Scottish Opinion Polling — Environmental &amp; Climate Attitudes in Scotland">
   <meta name="twitter:description" content="Interactive dashboard of Scottish public opinion polls on environment, climate change, and nature. Covers tracking surveys and snapshot polls from Ipsos, YouGov, Diffley, Survation and more.">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-rRoXxn2yHlrZYB587Ki9RO1tONhLdM6XfORg7Rw4uwH4/Fh/5nP7IUX91bkaKUgs" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
     :root {
       --ink: #2C3E50;
@@ -654,6 +654,11 @@ function getPartyColor(name) { return PARTY_COLORS[name] || '#64748b'; }
 function getTextColorForBg(hex) {
   const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
   return (0.299*r + 0.587*g + 0.114*b)/255 > 0.5 ? '#1e293b' : '#fff';
+}
+function esc(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 let polls = [
@@ -1757,15 +1762,15 @@ function populateFilterDropdowns() {
 
   const topicSel = document.getElementById('topicFilter');
   topicSel.innerHTML = '<option value="all">All topics</option>'
-    + topics.map(t => `<option value="${t}">${t}</option>`).join('');
+    + topics.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
 
   const sourceSel = document.getElementById('sourceFilter');
   sourceSel.innerHTML = '<option value="all">All sources</option>'
-    + sources.map(s => `<option value="${s}">${s}</option>`).join('');
+    + sources.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
 
   const pollsterSel = document.getElementById('pollsterFilter');
   pollsterSel.innerHTML = '<option value="all">All pollsters</option>'
-    + pollsters.map(p => `<option value="${p}">${p}</option>`).join('');
+    + pollsters.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
 }
 
 function setTypeFilter(type, btn) {
@@ -1779,7 +1784,8 @@ function safeUrl(url) {
   if (!url) return null;
   try {
     const parsed = new URL(url);
-    return parsed.protocol === 'https:' ? url : null;
+    if (parsed.protocol !== 'https:') return null;
+    return parsed.href;
   } catch {
     return null;
   }
@@ -1821,16 +1827,19 @@ function renderPollList() {
 
   list.innerHTML = sorted.map(p => `
     <div class="poll-item ${activePollId === p.id ? 'active' : ''}"
-         onclick="selectPoll('${p.id}')">
-      <div class="poll-name">${p.name}</div>
+         data-poll-id="${esc(p.id)}">
+      <div class="poll-name">${esc(p.name)}</div>
       <div class="poll-meta">
         <span class="poll-type-badge ${p.type === 'tracking' ? 'badge-tracking' : 'badge-snapshot'}">
-          ${p.type}
+          ${esc(p.type)}
         </span>
-        ${p.topic ? `<span class="poll-type-badge badge-topic">${Array.isArray(p.topic) ? p.topic.join(', ') : p.topic}</span>` : ''}
+        ${p.topic ? `<span class="poll-type-badge badge-topic">${esc(Array.isArray(p.topic) ? p.topic.join(', ') : p.topic)}</span>` : ''}
       </div>
     </div>
   `).join('');
+  list.querySelectorAll('[data-poll-id]').forEach(el => {
+    el.addEventListener('click', () => selectPoll(el.dataset.pollId));
+  });
 }
 
 // ──────────────────────────────────────────────
@@ -1860,22 +1869,23 @@ function selectPoll(id) {
 // ──────────────────────────────────────────────
 function renderTrackingPoll(poll) {
   const main = document.getElementById('mainContent');
+  const srcUrl = safeUrl(poll.sourceUrl);
   main.innerHTML = `
     <div class="poll-display">
       <div class="poll-title-bar">
-        <h2>${poll.name}</h2>
+        <h2>${esc(poll.name)}</h2>
       </div>
       <div class="poll-info-row">
-        <div class="info-chip"><span class="label">Source:</span>${safeUrl(poll.sourceUrl) ? `<a href="${safeUrl(poll.sourceUrl)}" target="_blank" rel="noopener noreferrer">${poll.source}</a>` : poll.source}</div>
-        <div class="info-chip"><span class="label">Sample:</span>${poll.sampleSize}</div>
-        <div class="info-chip"><span class="label">Frequency:</span>${poll.frequency}</div>
+        <div class="info-chip"><span class="label">Source:</span>${srcUrl ? `<a href="${esc(srcUrl)}" target="_blank" rel="noopener noreferrer">${esc(poll.source)}</a>` : esc(poll.source)}</div>
+        <div class="info-chip"><span class="label">Sample:</span>${esc(poll.sampleSize)}</div>
+        <div class="info-chip"><span class="label">Frequency:</span>${esc(poll.frequency)}</div>
       </div>
       ${poll.demographics ? `
       <div style="margin-bottom:0.75rem;">
         <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-right:0.5rem;">Demographic overlay:</span>
         <div class="demo-tabs" id="demoToggleTabs" style="display:inline-flex;">
-          <button class="demo-tab ${!activeDemographic ? 'active' : ''}" onclick="setDemographicOverlay(null)">None</button>
-          ${poll.demographics.map(d => `<button class="demo-tab ${activeDemographic === d.name ? 'active' : ''}" onclick="setDemographicOverlay('${d.name}')">${d.name}</button>`).join('')}
+          <button class="demo-tab ${!activeDemographic ? 'active' : ''}" data-demo-overlay="">None</button>
+          ${poll.demographics.map(d => `<button class="demo-tab ${activeDemographic === d.name ? 'active' : ''}" data-demo-overlay="${esc(d.name)}">${esc(d.name)}</button>`).join('')}
         </div>
       </div>` : ''}
       <div class="chart-card">
@@ -1884,12 +1894,19 @@ function renderTrackingPoll(poll) {
       </div>
       ${poll.additionalQuestions ? poll.additionalQuestions.map((q, qi) => `
       <div class="chart-card" style="margin-top:1.25rem;">
-        <div style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.75rem;">${q.text}</div>
+        <div style="font-size:0.875rem;color:var(--text-muted);margin-bottom:0.75rem;">${esc(q.text)}</div>
         <canvas id="additionalChart${qi}"></canvas>
         <div class="chart-legend" id="additionalLegend${qi}"></div>
       </div>`).join('') : ''}
     </div>
   `;
+
+  main.querySelectorAll('[data-demo-overlay]').forEach(el => {
+    el.addEventListener('click', () => {
+      const v = el.dataset.demoOverlay;
+      setDemographicOverlay(v === '' ? null : v);
+    });
+  });
 
   // Build charts
   buildTrackingChart(poll);
@@ -2011,9 +2028,9 @@ function buildTrackingChart(poll) {
   let legendHtml = mainSeries.map((s, i) => {
     const idx = datasetIndex++;
     return `
-    <div class="legend-item" onclick="toggleDataset(${idx}, this)">
+    <div class="legend-item" data-dataset-idx="${idx}">
       <div class="legend-dot" style="background:${COLORS[i % COLORS.length]}"></div>
-      <span>${s.name}</span>
+      <span>${esc(s.name)}</span>
     </div>`;
   }).join('');
 
@@ -2023,14 +2040,17 @@ function buildTrackingChart(poll) {
       legendHtml += demo.series.map((s, i) => {
         const idx = datasetIndex++;
         return `
-        <div class="legend-item" onclick="toggleDataset(${idx}, this)">
+        <div class="legend-item" data-dataset-idx="${idx}">
           <div class="legend-dot" style="background:${DEMO_COLORS[i % DEMO_COLORS.length]};border:1px dashed ${DEMO_COLORS[i % DEMO_COLORS.length]}"></div>
-          <span>${s.name}</span>
+          <span>${esc(s.name)}</span>
         </div>`;
       }).join('');
     }
   }
   legendEl.innerHTML = legendHtml;
+  legendEl.querySelectorAll('[data-dataset-idx]').forEach(el => {
+    el.addEventListener('click', () => toggleDataset(parseInt(el.dataset.datasetIdx, 10), el));
+  });
 }
 
 function buildAdditionalCharts(poll) {
@@ -2085,10 +2105,17 @@ function buildAdditionalCharts(poll) {
     const legendEl = document.getElementById(`additionalLegend${qi}`);
     if (legendEl) {
       legendEl.innerHTML = q.series.map((s, i) => `
-        <div class="legend-item" onclick="toggleAdditionalDataset(${qi}, ${i}, this)">
+        <div class="legend-item" data-chart-idx="${qi}" data-series-idx="${i}">
           <div class="legend-dot" style="background:${COLORS[i % COLORS.length]}"></div>
-          <span>${s.name}</span>
+          <span>${esc(s.name)}</span>
         </div>`).join('');
+      legendEl.querySelectorAll('[data-series-idx]').forEach(el => {
+        el.addEventListener('click', () => toggleAdditionalDataset(
+          parseInt(el.dataset.chartIdx, 10),
+          parseInt(el.dataset.seriesIdx, 10),
+          el
+        ));
+      });
     }
   });
 }
@@ -2118,7 +2145,7 @@ function renderPartyGroupedQuestion(q) {
       const tc = getTextColorForBg(color);
       return `
         <div class="bar-row-series">
-          <div class="bar-series-label" style="color:${color};">${opt.label}</div>
+          <div class="bar-series-label" style="color:${color};">${esc(opt.label)}</div>
           <div class="bar-track-compact">
             <div class="bar-fill-compact" style="width:${Math.min(val,100)}%;background:${color};color:${tc};">${val > 8 ? val + '%' : ''}</div>
           </div>
@@ -2128,12 +2155,12 @@ function renderPartyGroupedQuestion(q) {
     return `
       <div class="bar-group" style="border-left:3px solid ${group.color};padding-left:0.6rem;margin-bottom:1.35rem;">
         <div class="bar-group-header">
-          <div class="bar-group-label" style="color:${group.color};font-weight:600;">${group.name}</div>
+          <div class="bar-group-label" style="color:${group.color};font-weight:600;">${esc(group.name)}</div>
         </div>
         ${bars}
       </div>`;
   }).join('');
-  return `<div class="snapshot-question"><h3>${q.text}</h3>${groups}</div>`;
+  return `<div class="snapshot-question"><h3>${esc(q.text)}</h3>${groups}</div>`;
 }
 
 function renderPartyComparisonQuestion(q) {
@@ -2144,7 +2171,7 @@ function renderPartyComparisonQuestion(q) {
     return `
       <div class="bar-group" style="border-left:3px solid ${pc};padding-left:0.6rem;margin-bottom:1.35rem;">
         <div class="bar-group-header">
-          <div class="bar-group-label" style="color:${pc};font-weight:600;">${party.label}</div>
+          <div class="bar-group-label" style="color:${pc};font-weight:600;">${esc(party.label)}</div>
         </div>
         <div class="bar-row-series">
           <div class="bar-series-label" style="color:${proColor};">NET: Pro-environment</div>
@@ -2162,7 +2189,7 @@ function renderPartyComparisonQuestion(q) {
         </div>
       </div>`;
   }).join('');
-  return `<div class="snapshot-question"><h3>${q.text}</h3>${groups}</div>`;
+  return `<div class="snapshot-question"><h3>${esc(q.text)}</h3>${groups}</div>`;
 }
 
 // ──────────────────────────────────────────────
@@ -2175,16 +2202,17 @@ function renderSnapshotPoll(poll) {
   const allSeriesNames = hasSeriesData ? ['All voters', ...demoNames] : [];
   const seriesColors = ['#4a90d9', '#2ecc71', '#9b59b6'];
 
+  const srcUrl = safeUrl(poll.sourceUrl);
   main.innerHTML = `
     <div class="poll-display">
       <div class="poll-title-bar">
-        <h2>${poll.name}</h2>
+        <h2>${esc(poll.name)}</h2>
       </div>
       <div class="poll-info-row">
-        <div class="info-chip"><span class="label">Source:</span>${safeUrl(poll.sourceUrl) ? `<a href="${safeUrl(poll.sourceUrl)}" target="_blank" rel="noopener noreferrer">${poll.source}</a>` : poll.source}</div>
-        <div class="info-chip"><span class="label">Sample:</span>${poll.sampleSize}</div>
-        <div class="info-chip"><span class="label">Date:</span>${poll.date}</div>
-        ${poll.pollster ? `<div class="info-chip"><span class="label">Pollster:</span>${poll.pollster}</div>` : ''}
+        <div class="info-chip"><span class="label">Source:</span>${srcUrl ? `<a href="${esc(srcUrl)}" target="_blank" rel="noopener noreferrer">${esc(poll.source)}</a>` : esc(poll.source)}</div>
+        <div class="info-chip"><span class="label">Sample:</span>${esc(poll.sampleSize)}</div>
+        <div class="info-chip"><span class="label">Date:</span>${esc(poll.date)}</div>
+        ${poll.pollster ? `<div class="info-chip"><span class="label">Pollster:</span>${esc(poll.pollster)}</div>` : ''}
       </div>
       <div class="snapshot-container" id="snapshotContainer"></div>
       ${poll.demographics ? '<div id="demographicSection"></div>' : ''}
@@ -2202,7 +2230,7 @@ function renderSnapshotPoll(poll) {
         const width = (opt.value / 100) * 100;
         return `
           <div class="bar-row">
-            <div class="bar-label">${opt.label}</div>
+            <div class="bar-label">${esc(opt.label)}</div>
             <div class="bar-track">
               <div class="bar-fill" style="width:${width}%;background:${color};">${opt.value > 8 ? opt.value + '%' : ''}</div>
             </div>
@@ -2210,7 +2238,7 @@ function renderSnapshotPoll(poll) {
           </div>
         `;
       }).join('');
-      return `<div class="snapshot-question"><h3>${q.text}</h3>${bars}</div>`;
+      return `<div class="snapshot-question"><h3>${esc(q.text)}</h3>${bars}</div>`;
     }
 
     // Multi-series: group bars by option, one bar per visible series
@@ -2228,7 +2256,7 @@ function renderSnapshotPoll(poll) {
         const width = (val / 100) * 100;
         return `
           <div class="bar-row-series">
-            <div class="bar-series-label" style="color:${s.color};">${s.name}</div>
+            <div class="bar-series-label" style="color:${s.color};">${esc(s.name)}</div>
             <div class="bar-track-compact">
               <div class="bar-fill-compact" style="width:${width}%;background:${s.color};">${val > 8 ? val + '%' : ''}</div>
             </div>
@@ -2239,7 +2267,7 @@ function renderSnapshotPoll(poll) {
       return `
         <div class="bar-group">
           <div class="bar-group-header">
-            <div class="bar-group-label">${opt.label}</div>
+            <div class="bar-group-label">${esc(opt.label)}</div>
           </div>
           ${seriesBars}
         </div>
@@ -2251,13 +2279,17 @@ function renderSnapshotPoll(poll) {
         ${allSeriesNames.map((name, i) => {
           const color = seriesColors[i % seriesColors.length];
           const active = visibleSeries.has(name);
-          return `<button class="series-toggle-btn ${active ? 'active' : ''}" style="border-color:${color};color:${color};" onclick="toggleSnapshotSeries('${name}')">
-            <span class="series-toggle-dot" style="background:${active ? color : 'transparent'};border:2px solid ${color};"></span>${name}
+          return `<button class="series-toggle-btn ${active ? 'active' : ''}" style="border-color:${color};color:${color};" data-series="${esc(name)}">
+            <span class="series-toggle-dot" style="background:${active ? color : 'transparent'};border:2px solid ${color};"></span>${esc(name)}
           </button>`;
         }).join('')}
       </div>`;
-    return `<div class="snapshot-question"><h3>${q.text}</h3>${toggleBar}${groups}</div>`;
+    return `<div class="snapshot-question"><h3>${esc(q.text)}</h3>${toggleBar}${groups}</div>`;
   }).join('');
+
+  container.querySelectorAll('[data-series]').forEach(el => {
+    el.addEventListener('click', () => toggleSnapshotSeries(el.dataset.series));
+  });
 
   // Legacy flat demographics (snapshot uses bar charts for point-in-time breakdowns)
   if (poll.demographics) {
@@ -2269,7 +2301,7 @@ function renderSnapshotPoll(poll) {
         const width = (opt.value / 100) * 100;
         return `
           <div class="bar-row">
-            <div class="bar-label">${opt.label}</div>
+            <div class="bar-label">${esc(opt.label)}</div>
             <div class="bar-track">
               <div class="bar-fill" style="width:${width}%;background:${color};">${opt.value > 8 ? opt.value + '%' : ''}</div>
             </div>
@@ -2279,7 +2311,7 @@ function renderSnapshotPoll(poll) {
       }).join('');
       return `
         <div class="chart-card" style="margin-top:1rem;">
-          <h3 style="font-size:1.05rem; margin-bottom:1.25rem; font-weight:500;">${demo.text}</h3>
+          <h3 style="font-size:1.05rem; margin-bottom:1.25rem; font-weight:500;">${esc(demo.text)}</h3>
           ${bars}
         </div>
       `;

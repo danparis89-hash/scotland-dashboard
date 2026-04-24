@@ -593,7 +593,7 @@ async function handleDropdownFilter() {
   setWQStatus("loading", "Searching water bodies…");
   setBWStatus("loading", "Searching bathing waters…");
   try {
-    const areaUrl = `${CONFIG.MAPIT_BASE}/area/${selectedIds[0]}.geojson`;
+    const areaUrl = `${CONFIG.MAPIT_BASE}/area/${encodeURIComponent(selectedIds[0])}.geojson`;
     const areaResp = await fetch(areaUrl, { headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY } });
     if (!areaResp.ok) throw new Error(`HTTP ${areaResp.status}`);
     const areaGeo = await areaResp.json();
@@ -986,7 +986,7 @@ function searchDesignationsByProximity(lat, lng, radiusKm) {
 }
 
 async function searchDesignationsByArea(areaId) {
-  const url = `${CONFIG.MAPIT_BASE}/area/${areaId}.geojson`;
+  const url = `${CONFIG.MAPIT_BASE}/area/${encodeURIComponent(areaId)}.geojson`;
   const resp = await fetch(url, { headers: { "X-Api-Key": CONFIG.MAPIT_API_KEY } });
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const areaGeo = await resp.json();
@@ -1396,7 +1396,7 @@ function renderBWDetail(site) {
     for (const h of site.classHistory) {
       const col = classColours[h.class] || "var(--mid)";
       const px = classPixels[h.class] || 6;
-      html += `<div class="bw-history-bar"><div class="bw-history-track"><div class="bw-history-pip" style="height:${px}px;background:${col}" title="${h.class} (${h.year})"></div></div><span class="bw-history-year">${String(h.year).slice(-2)}</span></div>`;
+      html += `<div class="bw-history-bar"><div class="bw-history-track"><div class="bw-history-pip" style="height:${px}px;background:${col}" title="${esc(h.class)} (${esc(String(h.year))})"></div></div><span class="bw-history-year">${esc(String(h.year).slice(-2))}</span></div>`;
     }
     html += '</div></div>';
   }
